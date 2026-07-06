@@ -1,0 +1,5 @@
+# Troque pelo domínio/subdomínio real (ex.: evolution.blademidia.com.br)
+# Caddy emite e renova o certificado TLS automaticamente (Let's Encrypt).
+evolution.SEU_DOMINIO.com.br {
+    reverse_proxy evolution-api:8080
+}
