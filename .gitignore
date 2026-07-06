@@ -1,0 +1,6 @@
+# Clone de referência do site original (vodetmor/blademidia) — não faz parte deste repo
+vodetmor-blademidia-original/
+
+node_modules/
+.env
+.env.local
