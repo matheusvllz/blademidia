@@ -30,7 +30,7 @@
 - Mecânicas do produto prometidas: resposta automática no zap; **confirmação 24h antes**;
   **reativação após 21 dias** sem visita; relatório mensal de resultados.
 - Critério operacional herdado: onboarding completo de um cliente novo em **< 4 horas**.
-- Papéis: Vítor = técnico; sócio = comercial; conteúdo/precificação/onboarding = compartilhado.
+- Papéis: Vítor Machado = técnico; Matheus Vellozo = comercial; conteúdo/precificação/onboarding = compartilhado.
 
 ## Relatório mensal (justificativa da mensalidade)
 

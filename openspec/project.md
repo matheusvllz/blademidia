@@ -6,7 +6,7 @@
 
 ## O negócio
 
-A **Blade Mídia** é uma empresa especializada exclusivamente em barbearias (Brasília/DF na fase 1). Dois sócios: **Vítor** (implementação técnica) e o sócio comercial (prospecção, reuniões, fechamento).
+A **Blade Mídia** é uma empresa especializada exclusivamente em barbearias (Brasília/DF na fase 1). Dois sócios: **Vítor Machado** (implementação técnica) e **Matheus Vellozo** (comercial: prospecção, reuniões, fechamento).
 
 O produto é um **SaaS próprio de retenção e atendimento automatizado**. O objetivo NÃO é gerar leads para as barbearias — é resolver o gargalo operacional:
 
