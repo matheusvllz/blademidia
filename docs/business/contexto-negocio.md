@@ -32,6 +32,14 @@
 - Critério operacional herdado: onboarding completo de um cliente novo em **< 4 horas**.
 - Papéis: Vítor Machado = técnico; Matheus Vellozo = comercial; conteúdo/precificação/onboarding = compartilhado.
 
+> **Seção "Quem opera" na landing (parked 2026-07-06):** existe intenção estratégica de
+> apresentar Vítor e Matheus como operadores reais do sistema — mensagem de *accountability*
+> ("tem gente com nome respondendo por isso, não um call center terceirizado"), que reforça
+> a promessa "sem você operar nada" com um rosto humano. A primeira execução foi removida da
+> landing por não ter convencido visualmente (decisão de Vítor). O código da seção
+> (`Operators()` em `site/sections-bot.js`) está preservado, só desconectado do render.
+> Retomar quando houver uma apresentação à altura — a ideia é boa, a execução que precisa melhorar.
+
 ## Relatório mensal (justificativa da mensalidade)
 
 Formato definido no briefing — o produto deve produzir estes números por barbearia/mês:
