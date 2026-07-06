@@ -158,6 +158,13 @@ Netlify/Vercel ──▶ apps/web (Next.js)
 Todas com `barbershop_id` (ADR-0007). Nenhuma armazena conteúdo de mensagem nem estado
 bruto de sessão Baileys (isso fica dentro do Evolution API).
 
+## UI do painel e materiais de preset (diretriz de Vítor, 2026-07-06)
+- O painel da agência e qualquer material visual ligado aos presets (telas de
+  onboarding, cards de cliente, QR de pareamento) seguem o MESMO design system do
+  site em `site/` — Ink/Gold/Chalk/Steel, Barlow Condensed/Barlow/Space Mono,
+  monogramas tipográficos. "Faz nesse estilo para os presets" — o site é a
+  referência visual canônica da marca.
+
 ## Authentication and Authorization
 - `/painel-agencia` exige papel `agency_admin` (Vítor, Matheus). Better Auth com papel
   único "admin" na v1.

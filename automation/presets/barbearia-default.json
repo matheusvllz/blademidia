@@ -1,0 +1,50 @@
+{
+  "preset": "barbearia-default",
+  "version": 1,
+  "descricao": "Preset padrão de atendimento automático para barbearia nova. Copiar para presets/clientes/<slug>.json e preencher os dados do negócio no onboarding.",
+  "negocio": {
+    "nome": "PREENCHER — Nome da Barbearia",
+    "endereco": "PREENCHER — Endereço curto",
+    "servicos": [
+      { "nome": "Corte", "duracao_min": 40, "preco": "PREENCHER" },
+      { "nome": "Barba", "duracao_min": 30, "preco": "PREENCHER" },
+      { "nome": "Corte + Barba", "duracao_min": 60, "preco": "PREENCHER" }
+    ],
+    "barbeiros": ["PREENCHER"],
+    "horario_funcionamento": {
+      "seg": "09:00-19:00",
+      "ter": "09:00-19:00",
+      "qua": "09:00-19:00",
+      "qui": "09:00-19:00",
+      "sex": "09:00-20:00",
+      "sab": "08:00-18:00",
+      "dom": null
+    }
+  },
+  "instancia": {
+    "prefixo": "blade",
+    "webhook_eventos": ["MESSAGES_UPSERT", "CONNECTION_UPDATE"]
+  },
+  "warmup": {
+    "descricao": "Limite de mensagens ENVIADAS por dia nos primeiros dias da instância — número recém-conectado não pode disparar volume alto (padrão anti-ban).",
+    "dia_1": 20,
+    "dia_2": 40,
+    "dia_3_a_7": 80,
+    "regime_normal": 150
+  },
+  "regras": {
+    "confirmacao_horas_antes": 24,
+    "reativacao_dias_sem_visita": 21,
+    "escalar_para_humano_apos_msgs_sem_match": 2,
+    "responder_fora_do_horario": true
+  },
+  "respostas": {
+    "saudacao": "fala chefe! aqui é o atendimento da {{negocio.nome}} 💈 quer marcar um horário? me diz o serviço (corte, barba ou corte + barba) que eu te mostro os horários livres.",
+    "agendamento": "boa! pra {{servico}} eu tenho esses horários: {{horarios_disponiveis}}. qual prefere?",
+    "precos": "tabela da {{negocio.nome}}: {{lista_servicos}}. quer marcar? me diz o serviço e eu já te mostro os horários.",
+    "confirmacao_24h": "e aí! passando pra confirmar seu horário de amanhã às {{hora}} ({{servico}}). tá de pé? responde SIM pra confirmar ou me avisa se precisar remarcar 👍",
+    "reativacao_21d": "opa, sumido! 👀 já faz {{dias}} dias desde seu último corte na {{negocio.nome}}. bora renovar o visual? me responde aqui que eu já te passo os horários da semana.",
+    "fora_de_horario": "opa! agora a gente tá fora do horário de atendimento ({{horario_hoje}}), mas já anotei sua mensagem. assim que abrir eu te respondo — ou se quiser já deixa aqui o serviço e o melhor horário pra você.",
+    "fallback_humano": "boa pergunta — vou chamar o pessoal da {{negocio.nome}} pra te responder direitinho. já já alguém te chama aqui! 🙏"
+  }
+}

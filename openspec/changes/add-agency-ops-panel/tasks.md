@@ -1,8 +1,26 @@
 # Tasks: Painel de Operação da Agência
 
-> Pré-requisito: `init-project-skeleton` concluído (monorepo, Postgres, apps/web/worker
-> buildando). Escopo aqui assume hospedagem híbrida: painel serverless (Netlify/Vercel) +
-> gateway Evolution API em VPS/Docker (conforme `design.md`).
+> Pré-requisito (grupos 3-6): `init-project-skeleton` concluído. O grupo 0 (Fase 0)
+> não depende dele e foi entregue primeiro. Escopo assume hospedagem híbrida: painel
+> serverless (Netlify/Vercel) + gateway Evolution API em VPS/Docker (conforme `design.md`).
+
+## 0. Fase 0 — automação local + presets (entregue 2026-07-06)
+
+- [x] 0.1 Motor de auto-resposta com presets (`automation/lib/engine.mjs` + `presets/barbearia-default.json`)
+  - Evidência: teste de intenções 5/5 PASS (preços > agendamento > saudação; escalação
+    após 2 sem-match; silêncio pós-escalação; fora-de-horário avisa 1x por contato).
+- [x] 0.2 Webhook server local + simulador (`webhook-server.mjs`, `simulate.mjs`)
+  - Evidência: fluxo ponta a ponta rodado em dry-run — 6 mensagens simuladas, respostas
+    corretas, logs sem conteúdo de mensagem e com telefone mascarado.
+- [x] 0.3 Provisionamento e status por script (`provision.mjs`, `status.mjs`)
+  - Evidência: `node --check` OK; dry-run funcional. Validação contra Evolution real
+    pendente de Docker/VPS (bloqueio registrado abaixo).
+- [x] 0.4 Compose local do Evolution (`infra/evolution/docker-compose.local.yml`)
+  - Evidência: arquivo criado; execução bloqueada — Docker Desktop não instalado nesta
+    máquina (2026-07-06). Próximo passo: instalar Docker Desktop OU validar direto no VPS.
+- [x] 0.5 Migração do Netlify para este repo
+  - Evidência: `updateSite` via API — repo_path=matheusvllz/blademidia, dir=site;
+    deploy `6a4c2eed...` state=ready publicado do commit f653286.
 
 ## 1. Infra externa (fora do código — Vítor faz em paralelo)
 

@@ -1,45 +1,58 @@
-# Blade Mídia — SaaS de Retenção para Barbearias
+# Blade Mídia — Agência + SaaS de Retenção para Barbearias
 
-Plataforma de gestão operacional para barbearias: CRM, atendimento inteligente via WhatsApp
-com IA, confirmação automática de agendamentos, reativação de clientes inativos e relatórios.
+Este repositório é a **base única de trabalho da Blade Mídia** e serve a três frentes:
 
-> **Estado atual:** fundação do projeto (Spec-Driven Development + arquitetura proposta).
-> Nenhuma funcionalidade implementada ainda — por decisão: nada é implementado sem spec aprovada.
+1. **O site da agência** (`site/`) — a landing de vendas publicada em
+   [blademidia.netlify.app](https://blademidia.netlify.app) (Netlify conectado a este repo).
+2. **A operação da agência** (`automation/` + `infra/`) — presets de atendimento
+   automático no WhatsApp, provisionamento de cliente novo, controle dos dados e das
+   instâncias de cada cliente. É o que permite entregar um cliente novo com agilidade:
+   copiar o preset, preencher, provisionar, escanear QR.
+3. **O produto SaaS** (`openspec/` + `docs/` + futuro `apps/`/`packages/`) — CRM,
+   agendamento, confirmação automática e reativação, desenvolvido via
+   Spec-Driven Development.
+
+Filosofia de entrega: **SLC** (Simple, Lovable, Complete) — escopo enxuto, acabamento
+bom, nada entregue pela metade.
+
+## Operadores
+
+| Sócio | Papel |
+|---|---|
+| **Vítor Machado** | Técnico — constrói e opera o sistema, monitora a saúde das conexões |
+| **Matheus Vellozo** | Comercial — prospecção, fechamento, relação com cada barbearia |
 
 ## Comece por aqui
 
-| Quero... | Leia |
+| Quero... | Leia / rode |
 |---|---|
+| Testar a automação de atendimento agora (sem instalar nada) | [automation/README.md](automation/README.md) — `node automation/webhook-server.mjs` + `node automation/simulate.mjs` |
+| Provisionar um cliente novo (runbook) | [automation/README.md](automation/README.md) § Onboarding |
+| Subir o gateway WhatsApp (Evolution API) | [infra/evolution/](infra/evolution/) — compose local e de produção |
+| Mexer no site da agência | `site/` (estático puro; publica via Netlify ao dar push na `main`) |
 | Entender o negócio e as decisões estruturais | [openspec/project.md](openspec/project.md) |
-| Entender o fluxo de desenvolvimento (obrigatório) | [openspec/workflow.md](openspec/workflow.md) |
-| Escrever specs/artefatos do jeito certo | [openspec/conventions.md](openspec/conventions.md) |
-| Criar uma nova funcionalidade | [openspec/changes/README.md](openspec/changes/README.md) |
+| Entender o fluxo de desenvolvimento do produto | [openspec/workflow.md](openspec/workflow.md) |
 | Ver a arquitetura proposta e por quê | [docs/architecture/overview.md](docs/architecture/overview.md) |
-| Consultar o método SDD completo | [docs/sdd/](docs/sdd/) |
 | Contexto de negócio (ICP, tom de voz, design system) | [docs/business/contexto-negocio.md](docs/business/contexto-negocio.md) |
 
 ## Estrutura do repositório
 
 ```text
-openspec/
-  project.md            # contexto oficial do projeto (fonte da verdade)
-  workflow.md           # fluxo SDD, DoD, branches, versionamento
-  conventions.md        # convenções de escrita, docs e código
-  templates/            # exploration, proposal, spec-delta, design, tasks
-  specs/                # specs permanentes por capability (comportamento do sistema)
-  changes/              # mudanças em andamento + archive/
-docs/
-  sdd/                  # método Spec-Driven Development (prompts, checklist)
-  business/             # contexto de negócio consolidado
-  architecture/         # overview + ADRs (decisões com justificativa)
-apps/, packages/        # (futuro) código — criado pela change init-project-skeleton
+site/                  # landing de vendas da agência (estático, publica no Netlify)
+automation/            # motor de atendimento + presets por cliente + provisionamento
+  presets/             # barbearia-default.json (base) + clientes/<slug>.json (reais)
+infra/
+  evolution/           # Docker Compose do gateway WhatsApp (local e produção)
+openspec/              # specs, changes e convenções do produto (SDD)
+docs/                  # método SDD, contexto de negócio, arquitetura e ADRs
+apps/, packages/       # (futuro) código do produto — change init-project-skeleton
 ```
 
-## O fluxo, em uma linha
+## Regras rápidas (as completas estão em [CLAUDE.md](CLAUDE.md) e [openspec/](openspec/))
 
-```text
-Ideia → Refinamento → Discussão → Spec → Validação → Arquitetura
-      → Plano técnico → Implementação → Testes → Revisão → Conclusão
-```
-
-**Nenhuma implementação antes da aprovação da especificação.**
+- Produto: **nenhuma implementação sem spec aprovada** (fluxo SDD).
+- Nunca logar conteúdo de mensagem de cliente final nem telefone completo.
+- Vocabulário do barbeiro em toda UI/copy: "cliente", "horário", "zap" —
+  nunca "lead", "funil", "CRM".
+- O número de WhatsApp é o ativo mais valioso do barbeiro — warm-up e rate limit
+  não são opcionais.
