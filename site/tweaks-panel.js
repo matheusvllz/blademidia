@@ -1,4 +1,4 @@
-const __TWEAKS_STYLE=`
+const __TWEAKS_STYLE = `
   .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
     max-height:calc(100vh - 32px);display:flex;flex-direction:column;
     transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
@@ -106,4 +106,445 @@ const __TWEAKS_STYLE=`
   .twk-chip>span>i:first-child{box-shadow:none}
   .twk-chip svg{position:absolute;top:6px;left:6px;width:13px;height:13px;
     filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
-`;function useTweaks(i){const[t,r]=React.useState(i),a=React.useCallback((n,d)=>{const o=typeof n=="object"&&n!==null?n:{[n]:d};r(c=>({...c,...o})),window.parent.postMessage({type:"__edit_mode_set_keys",edits:o},"*"),window.dispatchEvent(new CustomEvent("tweakchange",{detail:o}))},[]);return[t,a]}function TweaksPanel({title:i="Tweaks",noDeckControls:t=!1,children:r}){const[a,n]=React.useState(!1),d=React.useRef(null),o=React.useMemo(()=>typeof document<"u"&&!!document.querySelector("deck-stage"),[]),[c,h]=React.useState(()=>o&&!!document.querySelector("deck-stage")?._railEnabled);React.useEffect(()=>{if(!o||c)return;const e=l=>{l.data&&l.data.type==="__omelette_rail_enabled"&&h(!0)};return window.addEventListener("message",e),()=>window.removeEventListener("message",e)},[o,c]);const[k,b]=React.useState(()=>{try{return localStorage.getItem("deck-stage.railVisible")!=="0"}catch{return!0}}),x=e=>{b(e),window.postMessage({type:"__deck_rail_visible",on:e},"*")},p=React.useRef({x:16,y:16}),u=16,g=React.useCallback(()=>{const e=d.current;if(!e)return;const l=e.offsetWidth,w=e.offsetHeight,m=Math.max(u,window.innerWidth-l-u),f=Math.max(u,window.innerHeight-w-u);p.current={x:Math.min(m,Math.max(u,p.current.x)),y:Math.min(f,Math.max(u,p.current.y))},e.style.right=p.current.x+"px",e.style.bottom=p.current.y+"px"},[]);React.useEffect(()=>{if(!a)return;if(g(),typeof ResizeObserver>"u")return window.addEventListener("resize",g),()=>window.removeEventListener("resize",g);const e=new ResizeObserver(g);return e.observe(document.documentElement),()=>e.disconnect()},[a,g]),React.useEffect(()=>{const e=l=>{const w=l?.data?.type;w==="__activate_edit_mode"?n(!0):w==="__deactivate_edit_mode"&&n(!1)};return window.addEventListener("message",e),window.parent.postMessage({type:"__edit_mode_available"},"*"),()=>window.removeEventListener("message",e)},[]);const v=()=>{n(!1),window.parent.postMessage({type:"__edit_mode_dismissed"},"*")},s=e=>{const l=d.current;if(!l)return;const w=l.getBoundingClientRect(),m=e.clientX,f=e.clientY,N=window.innerWidth-w.right,S=window.innerHeight-w.bottom,y=_=>{p.current={x:N-(_.clientX-m),y:S-(_.clientY-f)},g()},R=()=>{window.removeEventListener("mousemove",y),window.removeEventListener("mouseup",R)};window.addEventListener("mousemove",y),window.addEventListener("mouseup",R)};return a?React.createElement(React.Fragment,null,React.createElement("style",null,__TWEAKS_STYLE),React.createElement("div",{ref:d,className:"twk-panel","data-noncommentable":"",style:{right:p.current.x,bottom:p.current.y}},React.createElement("div",{className:"twk-hd",onMouseDown:s},React.createElement("b",null,i),React.createElement("button",{className:"twk-x","aria-label":"Close tweaks",onMouseDown:e=>e.stopPropagation(),onClick:v},"✕")),React.createElement("div",{className:"twk-body"},r,o&&c&&!t&&React.createElement(TweakSection,{label:"Deck"},React.createElement(TweakToggle,{label:"Thumbnail rail",value:k,onChange:x}))))):null}function TweakSection({label:i,children:t}){return React.createElement(React.Fragment,null,React.createElement("div",{className:"twk-sect"},i),t)}function TweakRow({label:i,value:t,children:r,inline:a=!1}){return React.createElement("div",{className:a?"twk-row twk-row-h":"twk-row"},React.createElement("div",{className:"twk-lbl"},React.createElement("span",null,i),t!=null&&React.createElement("span",{className:"twk-val"},t)),r)}function TweakSlider({label:i,value:t,min:r=0,max:a=100,step:n=1,unit:d="",onChange:o}){return React.createElement(TweakRow,{label:i,value:`${t}${d}`},React.createElement("input",{type:"range",className:"twk-slider",min:r,max:a,step:n,value:t,onChange:c=>o(Number(c.target.value))}))}function TweakToggle({label:i,value:t,onChange:r}){return React.createElement("div",{className:"twk-row twk-row-h"},React.createElement("div",{className:"twk-lbl"},React.createElement("span",null,i)),React.createElement("button",{type:"button",className:"twk-toggle","data-on":t?"1":"0",role:"switch","aria-checked":!!t,onClick:()=>r(!t)},React.createElement("i",null)))}function TweakRadio({label:i,value:t,options:r,onChange:a}){const n=React.useRef(null),[d,o]=React.useState(!1),c=React.useRef(t);c.current=t;const h=s=>String(typeof s=="object"?s.label:s).length;if(!(r.reduce((s,e)=>Math.max(s,h(e)),0)<=({2:16,3:10}[r.length]??0))){const s=e=>{const l=r.find(w=>String(typeof w=="object"?w.value:w)===e);return l===void 0?e:typeof l=="object"?l.value:l};return React.createElement(TweakSelect,{label:i,value:t,options:r,onChange:e=>a(s(e))})}const x=r.map(s=>typeof s=="object"?s:{value:s,label:s}),p=Math.max(0,x.findIndex(s=>s.value===t)),u=x.length,g=s=>{const e=n.current.getBoundingClientRect(),l=e.width-4,w=Math.floor((s-e.left-2)/l*u);return x[Math.max(0,Math.min(u-1,w))].value};return React.createElement(TweakRow,{label:i},React.createElement("div",{ref:n,role:"radiogroup",onPointerDown:s=>{o(!0);const e=g(s.clientX);e!==c.current&&a(e);const l=m=>{if(!n.current)return;const f=g(m.clientX);f!==c.current&&a(f)},w=()=>{o(!1),window.removeEventListener("pointermove",l),window.removeEventListener("pointerup",w)};window.addEventListener("pointermove",l),window.addEventListener("pointerup",w)},className:d?"twk-seg dragging":"twk-seg"},React.createElement("div",{className:"twk-seg-thumb",style:{left:`calc(2px + ${p} * (100% - 4px) / ${u})`,width:`calc((100% - 4px) / ${u})`}}),x.map(s=>React.createElement("button",{key:s.value,type:"button",role:"radio","aria-checked":s.value===t},s.label))))}function TweakSelect({label:i,value:t,options:r,onChange:a}){return React.createElement(TweakRow,{label:i},React.createElement("select",{className:"twk-field",value:t,onChange:n=>a(n.target.value)},r.map(n=>{const d=typeof n=="object"?n.value:n,o=typeof n=="object"?n.label:n;return React.createElement("option",{key:d,value:d},o)})))}function TweakText({label:i,value:t,placeholder:r,onChange:a}){return React.createElement(TweakRow,{label:i},React.createElement("input",{className:"twk-field",type:"text",value:t,placeholder:r,onChange:n=>a(n.target.value)}))}function TweakNumber({label:i,value:t,min:r,max:a,step:n=1,unit:d="",onChange:o}){const c=b=>r!=null&&b<r?r:a!=null&&b>a?a:b,h=React.useRef({x:0,val:0});return React.createElement("div",{className:"twk-num"},React.createElement("span",{className:"twk-num-lbl",onPointerDown:b=>{b.preventDefault(),h.current={x:b.clientX,val:t};const x=(String(n).split(".")[1]||"").length,p=g=>{const v=g.clientX-h.current.x,s=h.current.val+v*n,e=Math.round(s/n)*n;o(c(Number(e.toFixed(x))))},u=()=>{window.removeEventListener("pointermove",p),window.removeEventListener("pointerup",u)};window.addEventListener("pointermove",p),window.addEventListener("pointerup",u)}},i),React.createElement("input",{type:"number",value:t,min:r,max:a,step:n,onChange:b=>o(c(Number(b.target.value)))}),d&&React.createElement("span",{className:"twk-num-unit"},d))}function __twkIsLight(i){const t=String(i).replace("#",""),r=t.length===3?t.replace(/./g,c=>c+c):t.padEnd(6,"0"),a=parseInt(r.slice(0,6),16);if(Number.isNaN(a))return!0;const n=a>>16&255,d=a>>8&255,o=a&255;return n*299+d*587+o*114>148e3}const __TwkCheck=({light:i})=>React.createElement("svg",{viewBox:"0 0 14 14","aria-hidden":"true"},React.createElement("path",{d:"M3 7.2 5.8 10 11 4.2",fill:"none",strokeWidth:"2.2",strokeLinecap:"round",strokeLinejoin:"round",stroke:i?"rgba(0,0,0,.78)":"#fff"}));function TweakColor({label:i,value:t,options:r,onChange:a}){if(!r||!r.length)return React.createElement("div",{className:"twk-row twk-row-h"},React.createElement("div",{className:"twk-lbl"},React.createElement("span",null,i)),React.createElement("input",{type:"color",className:"twk-swatch",value:t,onChange:o=>a(o.target.value)}));const n=o=>String(JSON.stringify(o)).toLowerCase(),d=n(t);return React.createElement(TweakRow,{label:i},React.createElement("div",{className:"twk-chips",role:"radiogroup"},r.map((o,c)=>{const h=Array.isArray(o)?o:[o],[k,...b]=h,x=b.slice(0,4),p=n(o)===d;return React.createElement("button",{key:c,type:"button",className:"twk-chip",role:"radio","aria-checked":p,"data-on":p?"1":"0","aria-label":h.join(", "),title:h.join(" · "),style:{background:k},onClick:()=>a(o)},x.length>0&&React.createElement("span",null,x.map((u,g)=>React.createElement("i",{key:g,style:{background:u}}))),p&&React.createElement(__TwkCheck,{light:__twkIsLight(k)}))})))}function TweakButton({label:i,onClick:t,secondary:r=!1}){return React.createElement("button",{type:"button",className:r?"twk-btn secondary":"twk-btn",onClick:t},i)}Object.assign(window,{useTweaks,TweaksPanel,TweakSection,TweakRow,TweakSlider,TweakToggle,TweakRadio,TweakSelect,TweakText,TweakNumber,TweakColor,TweakButton});
+`;
+function useTweaks(i) {
+  const [t, r] = React.useState(i),
+    a = React.useCallback((n, d) => {
+      const o = typeof n == "object" && n !== null ? n : { [n]: d };
+      (r((c) => ({ ...c, ...o })),
+        window.parent.postMessage({ type: "__edit_mode_set_keys", edits: o }, "*"),
+        window.dispatchEvent(new CustomEvent("tweakchange", { detail: o })));
+    }, []);
+  return [t, a];
+}
+function TweaksPanel({ title: i = "Tweaks", noDeckControls: t = !1, children: r }) {
+  const [a, n] = React.useState(!1),
+    d = React.useRef(null),
+    o = React.useMemo(() => typeof document < "u" && !!document.querySelector("deck-stage"), []),
+    [c, h] = React.useState(() => o && !!document.querySelector("deck-stage")?._railEnabled);
+  React.useEffect(() => {
+    if (!o || c) return;
+    const e = (l) => {
+      l.data && l.data.type === "__omelette_rail_enabled" && h(!0);
+    };
+    return (window.addEventListener("message", e), () => window.removeEventListener("message", e));
+  }, [o, c]);
+  const [k, b] = React.useState(() => {
+      try {
+        return localStorage.getItem("deck-stage.railVisible") !== "0";
+      } catch {
+        return !0;
+      }
+    }),
+    x = (e) => {
+      (b(e), window.postMessage({ type: "__deck_rail_visible", on: e }, "*"));
+    },
+    p = React.useRef({ x: 16, y: 16 }),
+    u = 16,
+    g = React.useCallback(() => {
+      const e = d.current;
+      if (!e) return;
+      const l = e.offsetWidth,
+        w = e.offsetHeight,
+        m = Math.max(u, window.innerWidth - l - u),
+        f = Math.max(u, window.innerHeight - w - u);
+      ((p.current = {
+        x: Math.min(m, Math.max(u, p.current.x)),
+        y: Math.min(f, Math.max(u, p.current.y)),
+      }),
+        (e.style.right = p.current.x + "px"),
+        (e.style.bottom = p.current.y + "px"));
+    }, []);
+  (React.useEffect(() => {
+    if (!a) return;
+    if ((g(), typeof ResizeObserver > "u"))
+      return (window.addEventListener("resize", g), () => window.removeEventListener("resize", g));
+    const e = new ResizeObserver(g);
+    return (e.observe(document.documentElement), () => e.disconnect());
+  }, [a, g]),
+    React.useEffect(() => {
+      const e = (l) => {
+        const w = l?.data?.type;
+        w === "__activate_edit_mode" ? n(!0) : w === "__deactivate_edit_mode" && n(!1);
+      };
+      return (
+        window.addEventListener("message", e),
+        window.parent.postMessage({ type: "__edit_mode_available" }, "*"),
+        () => window.removeEventListener("message", e)
+      );
+    }, []));
+  const v = () => {
+      (n(!1), window.parent.postMessage({ type: "__edit_mode_dismissed" }, "*"));
+    },
+    s = (e) => {
+      const l = d.current;
+      if (!l) return;
+      const w = l.getBoundingClientRect(),
+        m = e.clientX,
+        f = e.clientY,
+        N = window.innerWidth - w.right,
+        S = window.innerHeight - w.bottom,
+        y = (_) => {
+          ((p.current = { x: N - (_.clientX - m), y: S - (_.clientY - f) }), g());
+        },
+        R = () => {
+          (window.removeEventListener("mousemove", y), window.removeEventListener("mouseup", R));
+        };
+      (window.addEventListener("mousemove", y), window.addEventListener("mouseup", R));
+    };
+  return a
+    ? React.createElement(
+        React.Fragment,
+        null,
+        React.createElement("style", null, __TWEAKS_STYLE),
+        React.createElement(
+          "div",
+          {
+            ref: d,
+            className: "twk-panel",
+            "data-noncommentable": "",
+            style: { right: p.current.x, bottom: p.current.y },
+          },
+          React.createElement(
+            "div",
+            { className: "twk-hd", onMouseDown: s },
+            React.createElement("b", null, i),
+            React.createElement(
+              "button",
+              {
+                className: "twk-x",
+                "aria-label": "Close tweaks",
+                onMouseDown: (e) => e.stopPropagation(),
+                onClick: v,
+              },
+              "✕",
+            ),
+          ),
+          React.createElement(
+            "div",
+            { className: "twk-body" },
+            r,
+            o &&
+              c &&
+              !t &&
+              React.createElement(
+                TweakSection,
+                { label: "Deck" },
+                React.createElement(TweakToggle, {
+                  label: "Thumbnail rail",
+                  value: k,
+                  onChange: x,
+                }),
+              ),
+          ),
+        ),
+      )
+    : null;
+}
+function TweakSection({ label: i, children: t }) {
+  return React.createElement(
+    React.Fragment,
+    null,
+    React.createElement("div", { className: "twk-sect" }, i),
+    t,
+  );
+}
+function TweakRow({ label: i, value: t, children: r, inline: a = !1 }) {
+  return React.createElement(
+    "div",
+    { className: a ? "twk-row twk-row-h" : "twk-row" },
+    React.createElement(
+      "div",
+      { className: "twk-lbl" },
+      React.createElement("span", null, i),
+      t != null && React.createElement("span", { className: "twk-val" }, t),
+    ),
+    r,
+  );
+}
+function TweakSlider({
+  label: i,
+  value: t,
+  min: r = 0,
+  max: a = 100,
+  step: n = 1,
+  unit: d = "",
+  onChange: o,
+}) {
+  return React.createElement(
+    TweakRow,
+    { label: i, value: `${t}${d}` },
+    React.createElement("input", {
+      type: "range",
+      className: "twk-slider",
+      min: r,
+      max: a,
+      step: n,
+      value: t,
+      onChange: (c) => o(Number(c.target.value)),
+    }),
+  );
+}
+function TweakToggle({ label: i, value: t, onChange: r }) {
+  return React.createElement(
+    "div",
+    { className: "twk-row twk-row-h" },
+    React.createElement("div", { className: "twk-lbl" }, React.createElement("span", null, i)),
+    React.createElement(
+      "button",
+      {
+        type: "button",
+        className: "twk-toggle",
+        "data-on": t ? "1" : "0",
+        role: "switch",
+        "aria-checked": !!t,
+        onClick: () => r(!t),
+      },
+      React.createElement("i", null),
+    ),
+  );
+}
+function TweakRadio({ label: i, value: t, options: r, onChange: a }) {
+  const n = React.useRef(null),
+    [d, o] = React.useState(!1),
+    c = React.useRef(t);
+  c.current = t;
+  const h = (s) => String(typeof s == "object" ? s.label : s).length;
+  if (!(r.reduce((s, e) => Math.max(s, h(e)), 0) <= ({ 2: 16, 3: 10 }[r.length] ?? 0))) {
+    const s = (e) => {
+      const l = r.find((w) => String(typeof w == "object" ? w.value : w) === e);
+      return l === void 0 ? e : typeof l == "object" ? l.value : l;
+    };
+    return React.createElement(TweakSelect, {
+      label: i,
+      value: t,
+      options: r,
+      onChange: (e) => a(s(e)),
+    });
+  }
+  const x = r.map((s) => (typeof s == "object" ? s : { value: s, label: s })),
+    p = Math.max(
+      0,
+      x.findIndex((s) => s.value === t),
+    ),
+    u = x.length,
+    g = (s) => {
+      const e = n.current.getBoundingClientRect(),
+        l = e.width - 4,
+        w = Math.floor(((s - e.left - 2) / l) * u);
+      return x[Math.max(0, Math.min(u - 1, w))].value;
+    };
+  return React.createElement(
+    TweakRow,
+    { label: i },
+    React.createElement(
+      "div",
+      {
+        ref: n,
+        role: "radiogroup",
+        onPointerDown: (s) => {
+          o(!0);
+          const e = g(s.clientX);
+          e !== c.current && a(e);
+          const l = (m) => {
+              if (!n.current) return;
+              const f = g(m.clientX);
+              f !== c.current && a(f);
+            },
+            w = () => {
+              (o(!1),
+                window.removeEventListener("pointermove", l),
+                window.removeEventListener("pointerup", w));
+            };
+          (window.addEventListener("pointermove", l), window.addEventListener("pointerup", w));
+        },
+        className: d ? "twk-seg dragging" : "twk-seg",
+      },
+      React.createElement("div", {
+        className: "twk-seg-thumb",
+        style: {
+          left: `calc(2px + ${p} * (100% - 4px) / ${u})`,
+          width: `calc((100% - 4px) / ${u})`,
+        },
+      }),
+      x.map((s) =>
+        React.createElement(
+          "button",
+          { key: s.value, type: "button", role: "radio", "aria-checked": s.value === t },
+          s.label,
+        ),
+      ),
+    ),
+  );
+}
+function TweakSelect({ label: i, value: t, options: r, onChange: a }) {
+  return React.createElement(
+    TweakRow,
+    { label: i },
+    React.createElement(
+      "select",
+      { className: "twk-field", value: t, onChange: (n) => a(n.target.value) },
+      r.map((n) => {
+        const d = typeof n == "object" ? n.value : n,
+          o = typeof n == "object" ? n.label : n;
+        return React.createElement("option", { key: d, value: d }, o);
+      }),
+    ),
+  );
+}
+function TweakText({ label: i, value: t, placeholder: r, onChange: a }) {
+  return React.createElement(
+    TweakRow,
+    { label: i },
+    React.createElement("input", {
+      className: "twk-field",
+      type: "text",
+      value: t,
+      placeholder: r,
+      onChange: (n) => a(n.target.value),
+    }),
+  );
+}
+function TweakNumber({
+  label: i,
+  value: t,
+  min: r,
+  max: a,
+  step: n = 1,
+  unit: d = "",
+  onChange: o,
+}) {
+  const c = (b) => (r != null && b < r ? r : a != null && b > a ? a : b),
+    h = React.useRef({ x: 0, val: 0 });
+  return React.createElement(
+    "div",
+    { className: "twk-num" },
+    React.createElement(
+      "span",
+      {
+        className: "twk-num-lbl",
+        onPointerDown: (b) => {
+          (b.preventDefault(), (h.current = { x: b.clientX, val: t }));
+          const x = (String(n).split(".")[1] || "").length,
+            p = (g) => {
+              const v = g.clientX - h.current.x,
+                s = h.current.val + v * n,
+                e = Math.round(s / n) * n;
+              o(c(Number(e.toFixed(x))));
+            },
+            u = () => {
+              (window.removeEventListener("pointermove", p),
+                window.removeEventListener("pointerup", u));
+            };
+          (window.addEventListener("pointermove", p), window.addEventListener("pointerup", u));
+        },
+      },
+      i,
+    ),
+    React.createElement("input", {
+      type: "number",
+      value: t,
+      min: r,
+      max: a,
+      step: n,
+      onChange: (b) => o(c(Number(b.target.value))),
+    }),
+    d && React.createElement("span", { className: "twk-num-unit" }, d),
+  );
+}
+function __twkIsLight(i) {
+  const t = String(i).replace("#", ""),
+    r = t.length === 3 ? t.replace(/./g, (c) => c + c) : t.padEnd(6, "0"),
+    a = parseInt(r.slice(0, 6), 16);
+  if (Number.isNaN(a)) return !0;
+  const n = (a >> 16) & 255,
+    d = (a >> 8) & 255,
+    o = a & 255;
+  return n * 299 + d * 587 + o * 114 > 148e3;
+}
+const __TwkCheck = ({ light: i }) =>
+  React.createElement(
+    "svg",
+    { viewBox: "0 0 14 14", "aria-hidden": "true" },
+    React.createElement("path", {
+      d: "M3 7.2 5.8 10 11 4.2",
+      fill: "none",
+      strokeWidth: "2.2",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      stroke: i ? "rgba(0,0,0,.78)" : "#fff",
+    }),
+  );
+function TweakColor({ label: i, value: t, options: r, onChange: a }) {
+  if (!r || !r.length)
+    return React.createElement(
+      "div",
+      { className: "twk-row twk-row-h" },
+      React.createElement("div", { className: "twk-lbl" }, React.createElement("span", null, i)),
+      React.createElement("input", {
+        type: "color",
+        className: "twk-swatch",
+        value: t,
+        onChange: (o) => a(o.target.value),
+      }),
+    );
+  const n = (o) => String(JSON.stringify(o)).toLowerCase(),
+    d = n(t);
+  return React.createElement(
+    TweakRow,
+    { label: i },
+    React.createElement(
+      "div",
+      { className: "twk-chips", role: "radiogroup" },
+      r.map((o, c) => {
+        const h = Array.isArray(o) ? o : [o],
+          [k, ...b] = h,
+          x = b.slice(0, 4),
+          p = n(o) === d;
+        return React.createElement(
+          "button",
+          {
+            key: c,
+            type: "button",
+            className: "twk-chip",
+            role: "radio",
+            "aria-checked": p,
+            "data-on": p ? "1" : "0",
+            "aria-label": h.join(", "),
+            title: h.join(" · "),
+            style: { background: k },
+            onClick: () => a(o),
+          },
+          x.length > 0 &&
+            React.createElement(
+              "span",
+              null,
+              x.map((u, g) => React.createElement("i", { key: g, style: { background: u } })),
+            ),
+          p && React.createElement(__TwkCheck, { light: __twkIsLight(k) }),
+        );
+      }),
+    ),
+  );
+}
+function TweakButton({ label: i, onClick: t, secondary: r = !1 }) {
+  return React.createElement(
+    "button",
+    { type: "button", className: r ? "twk-btn secondary" : "twk-btn", onClick: t },
+    i,
+  );
+}
+Object.assign(window, {
+  useTweaks,
+  TweaksPanel,
+  TweakSection,
+  TweakRow,
+  TweakSlider,
+  TweakToggle,
+  TweakRadio,
+  TweakSelect,
+  TweakText,
+  TweakNumber,
+  TweakColor,
+  TweakButton,
+});

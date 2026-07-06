@@ -1,1 +1,383 @@
-function useReveal(){React.useEffect(()=>{const a=document.querySelectorAll(".reveal:not(.in)"),e=new IntersectionObserver(i=>{i.forEach(t=>{t.isIntersecting&&(t.target.classList.add("in"),e.unobserve(t.target))})},{threshold:.12,rootMargin:"0px 0px -40px 0px"});return a.forEach(i=>e.observe(i)),()=>e.disconnect()})}function Nav(){const[a,e]=React.useState(!1);return React.useEffect(()=>{const i=()=>e(window.scrollY>32);return window.addEventListener("scroll",i,{passive:!0}),()=>window.removeEventListener("scroll",i)},[]),React.createElement("nav",{className:"nav"+(a?" scrolled":"")},React.createElement("a",{href:"#top",className:"nav-logo"},"BLADE",React.createElement("span",{className:"dot"},"."),"MÍDIA"),React.createElement("div",{className:"nav-links"},React.createElement("a",{href:"#problema"},"Diagnóstico"),React.createElement("a",{href:"#sistema"},"Sistema"),React.createElement("a",{href:"#casos"},"Resultados"),React.createElement("a",{href:"#faq"},"FAQ"),React.createElement("a",{href:"#contato",className:"nav-cta"},"Fale com a Blade")))}function Hero({accent:a}){return React.createElement("header",{className:"hero",id:"top"},React.createElement("div",{className:"hero-grid-bg"}),React.createElement("div",{className:"hero-noise"}),React.createElement("div",{className:"hero-inner"},React.createElement("div",null,React.createElement("div",{className:"eyebrow hero-eyebrow"},"Sistema de aquisição e retenção · Est. 2025"),React.createElement("h1",{className:"reveal in"},"AGENDA",React.createElement("br",null),"CHEIA",React.createElement("span",{className:"gold"},"."),React.createElement("br",null),React.createElement("span",{className:"stroke"},"TODO")," DIA",React.createElement("span",{className:"gold"},"."))),React.createElement("div",{className:"hero-side reveal in d2"},React.createElement("div",{className:"hero-tag"},"A Blade Mídia implementa o sistema que responde no zap, confirma horário e traz o cliente de volta — exclusivo pra barbearias."),React.createElement("div",{className:"hero-meta"},React.createElement("div",null,React.createElement("strong",null,"NICHO"),"Só barbearias"),React.createElement("div",null,React.createElement("strong",null,"FOCO"),"Brasília / DF"),React.createElement("div",null,React.createElement("strong",null,"SETUP"),"72 horas"),React.createElement("div",null,React.createElement("strong",null,"GARANTIA"),"Primeiro mês")))),React.createElement("div",{className:"hero-bottom"},React.createElement("div",{className:"hero-scroll"},React.createElement("span",{className:"line"}),"SCROLL · O DIAGNÓSTICO"),React.createElement("div",{className:"hero-cta-row"},React.createElement("a",{href:"#contato",className:"btn btn-gold"},"Quero ver na minha barbearia →"),React.createElement("a",{href:"#sistema",className:"btn btn-ghost"},"Como funciona"))))}function Marquee(){const a=["Sua barbearia perde cliente todo dia no WhatsApp","Agenda cheia não é sorte — é processo","Bot que responde em 8 segundos","Cliente que some volta sozinho","Só barbearias · Brasília · Est. 2025","Sem você operar nada"],e=[...a,...a];return React.createElement("div",{className:"marquee","aria-hidden":"true"},React.createElement("div",{className:"marquee-track"},e.map((i,t)=>React.createElement("span",{key:t,className:"marquee-item"},i))))}function Problem(){return useReveal(),React.createElement("section",{className:"sec",id:"problema","data-screen-label":"Problema"},React.createElement("div",{className:"container"},React.createElement("div",{className:"sec-head"},React.createElement("div",{className:"eyebrow reveal"},"01 — Diagnóstico"),React.createElement("h2",{className:"reveal d1"},"A agenda não está vazia.",React.createElement("br",null),"Está ",React.createElement("span",null,"vazando"),"."),React.createElement("p",{className:"sub reveal d2"},"Barbearia boa não fecha por falta de cliente. Fecha porque o cliente foi embora e ninguém percebeu. Três sangrias que aparecem em toda barbearia que a gente diagnostica.")),React.createElement("div",{className:"problem-grid"},window.PROBLEMS.map((a,e)=>React.createElement("div",{className:"prob reveal",style:{transitionDelay:`${e*.08}s`},key:a.num},React.createElement("div",{className:"prob-num"},"▍ ",a.num),React.createElement("div",{className:"prob-title"},a.title),React.createElement("div",{className:"prob-body"},a.body),React.createElement("div",{className:"prob-meta"},React.createElement("span",null,"Custo médio"),React.createElement("strong",null,a.metric)),React.createElement("div",{className:"prob-meta",style:{marginTop:-16,borderTop:"none",paddingTop:0}},React.createElement("span",{style:{opacity:0}},"."),React.createElement("span",{style:{fontSize:9}},a.metricLabel)))))))}function WhatsAppDemo(){const[a,e]=React.useState(0),[i,t]=React.useState(!1),[v,m]=React.useState(0),r=React.useRef(null),c=window.WA_SCRIPT;return React.useEffect(()=>{let s=!1;e(0),t(!1);async function d(){for(let o=0;o<c.length;o++){if(s)return;const n=c[o];if(n.type==="msg"&&n.side==="out"){if(t(!0),await l(900),s)return;t(!1)}e(o+1),await l(n.type==="badge"?600:1200)}}function l(o){return new Promise(n=>setTimeout(n,o))}return d(),()=>{s=!0}},[v]),React.useEffect(()=>{r.current&&(r.current.scrollTop=r.current.scrollHeight)},[a,i]),React.createElement("section",{className:"sec sec-dk",id:"sistema","data-screen-label":"Demo WhatsApp"},React.createElement("div",{className:"container"},React.createElement("div",{className:"demo-wrap"},React.createElement("div",{className:"demo-copy"},React.createElement("div",{className:"eyebrow"},"02 — Atendimento"),React.createElement("h3",null,"O bot que responde",React.createElement("br",null),"como ",React.createElement("span",null,"você"),".",React.createElement("br",null),"Em 8 segundos."),React.createElement("p",null,"Treinado com sua linguagem, seu cardápio, seus horários. Funciona enquanto você está na cadeira, no almoço, fora de hora — o cliente sempre tem resposta."),React.createElement("p",null,"Quando sai do script, te passa o controle. Cliente nunca percebe que falou com bot. Só percebe que foi atendido rápido."),React.createElement("div",{className:"stat-row"},React.createElement("div",null,React.createElement("div",{className:"num"},"00:08"),React.createElement("div",{className:"lbl"},"Tempo de resposta")),React.createElement("div",null,React.createElement("div",{className:"num"},"24/7"),React.createElement("div",{className:"lbl"},"Cobertura")),React.createElement("div",null,React.createElement("div",{className:"num"},"100%"),React.createElement("div",{className:"lbl"},"Em tom da casa")))),React.createElement("div",{className:"wa","aria-label":"Simulação WhatsApp"},React.createElement("div",{className:"wa-bar"},React.createElement("div",{className:"wa-avatar"},"B"),React.createElement("div",{style:{flex:1}},React.createElement("div",{className:"wa-name"},"Barbearia · Atendimento"),React.createElement("div",{className:"wa-status"},"online · Blade Mídia")),React.createElement("div",{style:{display:"flex",gap:14,color:"#8696A0",fontSize:18}},React.createElement("span",null,"📞"),React.createElement("span",null,"⋮"))),React.createElement("div",{className:"wa-body",ref:r},c.slice(0,a).map((s,d)=>s.type==="badge"?React.createElement("div",{key:d,className:"wa-badge"},s.text):React.createElement("div",{key:d,className:"wa-msg "+s.side},s.text,React.createElement("div",{className:"t"},s.t," ",s.side==="out"&&React.createElement("span",{className:"wa-tick"},"✓✓")))),i&&React.createElement("div",{className:"wa-typing"},React.createElement("span",null),React.createElement("span",null),React.createElement("span",null))),React.createElement("div",{className:"wa-foot"},React.createElement("span",null,"😊"),React.createElement("div",{className:"field"},"Mensagem"),React.createElement("span",null,"🎤")),React.createElement("button",{className:"wa-replay",onClick:()=>m(s=>s+1),title:"Replay"},"↻"))),React.createElement("div",{className:"demo-bar",style:{maxWidth:760,margin:"48px auto 0"}},React.createElement("div",{className:"dot"}),"SIMULAÇÃO · BOT BLADE NO ZAP · RESPOSTA EM < 30s")))}Object.assign(window,{Nav,Hero,Marquee,Problem,WhatsAppDemo,useReveal});
+function useReveal() {
+  React.useEffect(() => {
+    const a = document.querySelectorAll(".reveal:not(.in)"),
+      e = new IntersectionObserver(
+        (i) => {
+          i.forEach((t) => {
+            t.isIntersecting && (t.target.classList.add("in"), e.unobserve(t.target));
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      );
+    return (a.forEach((i) => e.observe(i)), () => e.disconnect());
+  });
+}
+function Nav() {
+  const [a, e] = React.useState(!1);
+  return (
+    React.useEffect(() => {
+      const i = () => e(window.scrollY > 32);
+      return (
+        window.addEventListener("scroll", i, { passive: !0 }),
+        () => window.removeEventListener("scroll", i)
+      );
+    }, []),
+    React.createElement(
+      "nav",
+      { className: "nav" + (a ? " scrolled" : "") },
+      React.createElement(
+        "a",
+        { href: "#top", className: "nav-logo" },
+        "BLADE",
+        React.createElement("span", { className: "dot" }, "."),
+        "MÍDIA",
+      ),
+      React.createElement(
+        "div",
+        { className: "nav-links" },
+        React.createElement("a", { href: "#problema" }, "Diagnóstico"),
+        React.createElement("a", { href: "#sistema" }, "Sistema"),
+        React.createElement("a", { href: "#casos" }, "Resultados"),
+        React.createElement("a", { href: "#faq" }, "FAQ"),
+        React.createElement("a", { href: "#contato", className: "nav-cta" }, "Fale com a Blade"),
+      ),
+    )
+  );
+}
+function Hero({ accent: a }) {
+  return React.createElement(
+    "header",
+    { className: "hero", id: "top" },
+    React.createElement("div", { className: "hero-grid-bg" }),
+    React.createElement("div", { className: "hero-noise" }),
+    React.createElement(
+      "div",
+      { className: "hero-inner" },
+      React.createElement(
+        "div",
+        null,
+        React.createElement(
+          "div",
+          { className: "eyebrow hero-eyebrow" },
+          "Sistema de aquisição e retenção · Est. 2025",
+        ),
+        React.createElement(
+          "h1",
+          { className: "reveal in" },
+          "AGENDA",
+          React.createElement("br", null),
+          "CHEIA",
+          React.createElement("span", { className: "gold" }, "."),
+          React.createElement("br", null),
+          React.createElement("span", { className: "stroke" }, "TODO"),
+          " DIA",
+          React.createElement("span", { className: "gold" }, "."),
+        ),
+      ),
+      React.createElement(
+        "div",
+        { className: "hero-side reveal in d2" },
+        React.createElement(
+          "div",
+          { className: "hero-tag" },
+          "A Blade Mídia implementa o sistema que responde no zap, confirma horário e traz o cliente de volta — exclusivo pra barbearias.",
+        ),
+        React.createElement(
+          "div",
+          { className: "hero-meta" },
+          React.createElement(
+            "div",
+            null,
+            React.createElement("strong", null, "NICHO"),
+            "Só barbearias",
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement("strong", null, "FOCO"),
+            "Brasília / DF",
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement("strong", null, "SETUP"),
+            "72 horas",
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement("strong", null, "GARANTIA"),
+            "Primeiro mês",
+          ),
+        ),
+      ),
+    ),
+    React.createElement(
+      "div",
+      { className: "hero-bottom" },
+      React.createElement(
+        "div",
+        { className: "hero-scroll" },
+        React.createElement("span", { className: "line" }),
+        "SCROLL · O DIAGNÓSTICO",
+      ),
+      React.createElement(
+        "div",
+        { className: "hero-cta-row" },
+        React.createElement(
+          "a",
+          { href: "#contato", className: "btn btn-gold" },
+          "Quero ver na minha barbearia →",
+        ),
+        React.createElement("a", { href: "#sistema", className: "btn btn-ghost" }, "Como funciona"),
+      ),
+    ),
+  );
+}
+function Marquee() {
+  const a = [
+      "Sua barbearia perde cliente todo dia no WhatsApp",
+      "Agenda cheia não é sorte — é processo",
+      "Bot que responde em 8 segundos",
+      "Cliente que some volta sozinho",
+      "Só barbearias · Brasília · Est. 2025",
+      "Sem você operar nada",
+    ],
+    e = [...a, ...a];
+  return React.createElement(
+    "div",
+    { className: "marquee", "aria-hidden": "true" },
+    React.createElement(
+      "div",
+      { className: "marquee-track" },
+      e.map((i, t) => React.createElement("span", { key: t, className: "marquee-item" }, i)),
+    ),
+  );
+}
+function Problem() {
+  return (
+    useReveal(),
+    React.createElement(
+      "section",
+      { className: "sec", id: "problema", "data-screen-label": "Problema" },
+      React.createElement(
+        "div",
+        { className: "container" },
+        React.createElement(
+          "div",
+          { className: "sec-head" },
+          React.createElement("div", { className: "eyebrow reveal" }, "01 — Diagnóstico"),
+          React.createElement(
+            "h2",
+            { className: "reveal d1" },
+            "A agenda não está vazia.",
+            React.createElement("br", null),
+            "Está ",
+            React.createElement("span", null, "vazando"),
+            ".",
+          ),
+          React.createElement(
+            "p",
+            { className: "sub reveal d2" },
+            "Barbearia boa não fecha por falta de cliente. Fecha porque o cliente foi embora e ninguém percebeu. Três sangrias que aparecem em toda barbearia que a gente diagnostica.",
+          ),
+        ),
+        React.createElement(
+          "div",
+          { className: "problem-grid" },
+          window.PROBLEMS.map((a, e) =>
+            React.createElement(
+              "div",
+              { className: "prob reveal", style: { transitionDelay: `${e * 0.08}s` }, key: a.num },
+              React.createElement("div", { className: "prob-num" }, "▍ ", a.num),
+              React.createElement("div", { className: "prob-title" }, a.title),
+              React.createElement("div", { className: "prob-body" }, a.body),
+              React.createElement(
+                "div",
+                { className: "prob-meta" },
+                React.createElement("span", null, "Custo médio"),
+                React.createElement("strong", null, a.metric),
+              ),
+              React.createElement(
+                "div",
+                {
+                  className: "prob-meta",
+                  style: { marginTop: -16, borderTop: "none", paddingTop: 0 },
+                },
+                React.createElement("span", { style: { opacity: 0 } }, "."),
+                React.createElement("span", { style: { fontSize: 9 } }, a.metricLabel),
+              ),
+            ),
+          ),
+        ),
+      ),
+    )
+  );
+}
+function WhatsAppDemo() {
+  const [a, e] = React.useState(0),
+    [i, t] = React.useState(!1),
+    [v, m] = React.useState(0),
+    r = React.useRef(null),
+    c = window.WA_SCRIPT;
+  return (
+    React.useEffect(() => {
+      let s = !1;
+      (e(0), t(!1));
+      async function d() {
+        for (let o = 0; o < c.length; o++) {
+          if (s) return;
+          const n = c[o];
+          if (n.type === "msg" && n.side === "out") {
+            if ((t(!0), await l(900), s)) return;
+            t(!1);
+          }
+          (e(o + 1), await l(n.type === "badge" ? 600 : 1200));
+        }
+      }
+      function l(o) {
+        return new Promise((n) => setTimeout(n, o));
+      }
+      return (
+        d(),
+        () => {
+          s = !0;
+        }
+      );
+    }, [v]),
+    React.useEffect(() => {
+      r.current && (r.current.scrollTop = r.current.scrollHeight);
+    }, [a, i]),
+    React.createElement(
+      "section",
+      { className: "sec sec-dk", id: "sistema", "data-screen-label": "Demo WhatsApp" },
+      React.createElement(
+        "div",
+        { className: "container" },
+        React.createElement(
+          "div",
+          { className: "demo-wrap" },
+          React.createElement(
+            "div",
+            { className: "demo-copy" },
+            React.createElement("div", { className: "eyebrow" }, "02 — Atendimento"),
+            React.createElement(
+              "h3",
+              null,
+              "O bot que responde",
+              React.createElement("br", null),
+              "como ",
+              React.createElement("span", null, "você"),
+              ".",
+              React.createElement("br", null),
+              "Em 8 segundos.",
+            ),
+            React.createElement(
+              "p",
+              null,
+              "Treinado com sua linguagem, seu cardápio, seus horários. Funciona enquanto você está na cadeira, no almoço, fora de hora — o cliente sempre tem resposta.",
+            ),
+            React.createElement(
+              "p",
+              null,
+              "Quando sai do script, te passa o controle. Cliente nunca percebe que falou com bot. Só percebe que foi atendido rápido.",
+            ),
+            React.createElement(
+              "div",
+              { className: "stat-row" },
+              React.createElement(
+                "div",
+                null,
+                React.createElement("div", { className: "num" }, "00:08"),
+                React.createElement("div", { className: "lbl" }, "Tempo de resposta"),
+              ),
+              React.createElement(
+                "div",
+                null,
+                React.createElement("div", { className: "num" }, "24/7"),
+                React.createElement("div", { className: "lbl" }, "Cobertura"),
+              ),
+              React.createElement(
+                "div",
+                null,
+                React.createElement("div", { className: "num" }, "100%"),
+                React.createElement("div", { className: "lbl" }, "Em tom da casa"),
+              ),
+            ),
+          ),
+          React.createElement(
+            "div",
+            { className: "wa", "aria-label": "Simulação WhatsApp" },
+            React.createElement(
+              "div",
+              { className: "wa-bar" },
+              React.createElement("div", { className: "wa-avatar" }, "B"),
+              React.createElement(
+                "div",
+                { style: { flex: 1 } },
+                React.createElement("div", { className: "wa-name" }, "Barbearia · Atendimento"),
+                React.createElement("div", { className: "wa-status" }, "online · Blade Mídia"),
+              ),
+              React.createElement(
+                "div",
+                { style: { display: "flex", gap: 14, color: "#8696A0", fontSize: 18 } },
+                React.createElement("span", null, "📞"),
+                React.createElement("span", null, "⋮"),
+              ),
+            ),
+            React.createElement(
+              "div",
+              { className: "wa-body", ref: r },
+              c
+                .slice(0, a)
+                .map((s, d) =>
+                  s.type === "badge"
+                    ? React.createElement("div", { key: d, className: "wa-badge" }, s.text)
+                    : React.createElement(
+                        "div",
+                        { key: d, className: "wa-msg " + s.side },
+                        s.text,
+                        React.createElement(
+                          "div",
+                          { className: "t" },
+                          s.t,
+                          " ",
+                          s.side === "out" &&
+                            React.createElement("span", { className: "wa-tick" }, "✓✓"),
+                        ),
+                      ),
+                ),
+              i &&
+                React.createElement(
+                  "div",
+                  { className: "wa-typing" },
+                  React.createElement("span", null),
+                  React.createElement("span", null),
+                  React.createElement("span", null),
+                ),
+            ),
+            React.createElement(
+              "div",
+              { className: "wa-foot" },
+              React.createElement("span", null, "😊"),
+              React.createElement("div", { className: "field" }, "Mensagem"),
+              React.createElement("span", null, "🎤"),
+            ),
+            React.createElement(
+              "button",
+              { className: "wa-replay", onClick: () => m((s) => s + 1), title: "Replay" },
+              "↻",
+            ),
+          ),
+        ),
+        React.createElement(
+          "div",
+          { className: "demo-bar", style: { maxWidth: 760, margin: "48px auto 0" } },
+          React.createElement("div", { className: "dot" }),
+          "SIMULAÇÃO · BOT BLADE NO ZAP · RESPOSTA EM < 30s",
+        ),
+      ),
+    )
+  );
+}
+Object.assign(window, { Nav, Hero, Marquee, Problem, WhatsAppDemo, useReveal });
