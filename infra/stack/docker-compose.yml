@@ -1,0 +1,84 @@
+# PRESET DOCKER — stack completo da Blade Mídia para o VPS.
+# Sobe tudo que uma barbearia precisa: gateway WhatsApp (Evolution) + painel da
+# agência + motor de atendimento. Um comando, um cliente no ar.
+#
+# Uso no VPS:
+#   cp .env.example .env   # preencher os segredos
+#   docker compose up -d
+#
+# Imagens multi-arquitetura: roda igual em ARM64 (Oracle Free) ou AMD64 (Hetzner).
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: evolution
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: evolution
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+  evolution:
+    image: evoapicloud/evolution-api:latest
+    restart: unless-stopped
+    depends_on: [postgres, redis]
+    environment:
+      AUTHENTICATION_API_KEY: ${EVOLUTION_GLOBAL_API_KEY}
+      DATABASE_ENABLED: "true"
+      DATABASE_PROVIDER: postgresql
+      DATABASE_CONNECTION_URI: postgresql://evolution:${DB_PASSWORD}@postgres:5432/evolution
+      CACHE_REDIS_ENABLED: "true"
+      CACHE_REDIS_URI: redis://redis:6379
+      WEBHOOK_GLOBAL_URL: http://motor:3333/webhooks/evolution
+      WEBHOOK_GLOBAL_ENABLED: "true"
+    volumes:
+      - evolution_instances:/evolution/instances
+
+  # Motor de atendimento (webhook-server.mjs) — responde as mensagens.
+  motor:
+    image: node:22-alpine
+    restart: unless-stopped
+    working_dir: /app
+    depends_on: [evolution]
+    environment:
+      EVOLUTION_URL: http://evolution:8080
+      EVOLUTION_API_KEY: ${EVOLUTION_GLOBAL_API_KEY}
+      WEBHOOK_PORT: "3333"
+    volumes:
+      - ../../automation:/app:ro
+    command: node webhook-server.mjs
+
+  # Painel da agência (CRM/organização).
+  painel:
+    image: node:22-alpine
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      PANEL_PORT: "4545"
+    volumes:
+      - ../../automation:/app
+    command: node panel-server.mjs
+
+  # TLS + roteamento público. Ajuste os domínios no Caddyfile.
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on: [evolution, painel]
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pg_data:
+  redis_data:
+  evolution_instances:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu Painel — Blade Mídia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      /* Painel do CLIENTE (barbeiro): claro, simples, mobile-first.
+         Deliberadamente FORA do design system escuro do site da agência —
+         é uma ferramenta de trabalho, tem que ser leve e óbvia. */
+      :root {
+        --bg: #f4f5f7;
+        --card: #ffffff;
+        --ink: #1a1d21;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --brand: #16a34a; /* verde "ok/ativo", tom neutro amigável */
+        --warn: #d97706; /* âmbar "sumido/reativar" */
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Inter", system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 20px 16px 60px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .shop {
+        font-size: 20px;
+        font-weight: 700;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .tile {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+      .tile .n {
+        font-size: 34px;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .tile .l {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 6px;
+      }
+      .tile.warn {
+        background: #fffbeb;
+      }
+      .tile.warn .n {
+        color: var(--warn);
+      }
+      h2 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin: 24px 0 10px;
+      }
+      .list {
+        background: var(--card);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      .item:last-child {
+        border-bottom: none;
+      }
+      .item .nome {
+        font-weight: 600;
+      }
+      .item .meta {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 2px;
+      }
+      .pill {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 100px;
+      }
+      .pill.ok {
+        background: #ecfdf5;
+        color: var(--brand);
+      }
+      .pill.warn {
+        background: #fef3c7;
+        color: var(--warn);
+      }
+      .empty,
+      .loading,
+      .error {
+        text-align: center;
+        color: var(--muted);
+        padding: 40px 20px;
+        font-size: 15px;
+      }
+      .error {
+        color: #b91c1c;
+      }
+      .foot {
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap" id="app">
+      <div class="loading">Carregando seu painel…</div>
+    </div>
+    <script src="/cliente/app.js"></script>
+  </body>
+</html>

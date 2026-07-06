@@ -2,5 +2,6 @@ node_modules/
 .env
 .env.local
 
-# Artefatos locais da automação (QR codes, logs)
+# Artefatos e dados locais da automação (QR codes, logs, base de clientes)
 automation/out/
+automation/data/

@@ -1,0 +1,10 @@
+# Troque os domínios pelos reais. Caddy emite/renova TLS automaticamente.
+# Aponte o DNS de cada subdomínio para o IP do VPS antes de subir.
+
+evolution.SEU_DOMINIO.com.br {
+    reverse_proxy evolution:8080
+}
+
+painel.SEU_DOMINIO.com.br {
+    reverse_proxy painel:4545
+}

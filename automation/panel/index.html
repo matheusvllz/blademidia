@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blade.Mídia — Painel da Agência</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;900&family=Barlow:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0d0d0d;
+        --ink-2: #141414;
+        --chalk: #f5f2ec;
+        --steel: #2b2b2b;
+        --steel-2: #383838;
+        --wire: #8c8c8c;
+        --gold: #c9a84c;
+        --gold-light: #e8c97a;
+        --red: #c0392b;
+        --green: #2d7a4f;
+        --border: #262626;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--ink);
+        color: var(--chalk);
+        font-family: "Barlow", sans-serif;
+        font-size: 15px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      .mono {
+        font-family: "Space Mono", monospace;
+      }
+      header {
+        border-bottom: 1px solid var(--border);
+        padding: 20px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        background: var(--ink);
+        z-index: 10;
+      }
+      .brand {
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 900;
+        font-size: 22px;
+        letter-spacing: 0.02em;
+      }
+      .brand .dot {
+        color: var(--gold);
+      }
+      .tag {
+        font-family: "Space Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--wire);
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px;
+      }
+      h2 {
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 900;
+        font-size: 30px;
+        text-transform: uppercase;
+        letter-spacing: 0.01em;
+        margin-bottom: 4px;
+      }
+      .eyebrow {
+        font-family: "Space Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 16px;
+      }
+      .row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .card {
+        background: var(--ink-2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 20px;
+        transition:
+          border-color 0.18s ease,
+          transform 0.18s ease;
+      }
+      .card.click {
+        cursor: pointer;
+      }
+      .card.click:hover {
+        border-color: var(--gold);
+        transform: translateY(-2px);
+      }
+      .shop-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 14px;
+        margin-top: 8px;
+      }
+      .shop-name {
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 700;
+        font-size: 21px;
+        text-transform: uppercase;
+      }
+      .badge {
+        display: inline-block;
+        font-family: "Space Mono", monospace;
+        font-size: 9.5px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 3px 9px;
+        border-radius: 100px;
+        border: 1px solid var(--border);
+        color: var(--wire);
+      }
+      .badge.ok {
+        color: var(--green);
+        border-color: rgba(45, 122, 79, 0.5);
+      }
+      .badge.warn {
+        color: var(--gold);
+        border-color: rgba(201, 168, 76, 0.5);
+      }
+      .badge.off {
+        color: var(--red);
+        border-color: rgba(192, 57, 43, 0.5);
+      }
+      .stat-row {
+        display: flex;
+        gap: 28px;
+        margin: 20px 0;
+      }
+      .stat .n {
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 900;
+        font-size: 40px;
+        line-height: 1;
+      }
+      .stat .l {
+        font-family: "Space Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--wire);
+        margin-top: 4px;
+      }
+      .stat.warn .n {
+        color: var(--gold);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 11px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      th {
+        font-family: "Space Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--wire);
+        font-weight: 400;
+      }
+      td .mono {
+        color: var(--wire);
+        font-size: 13px;
+      }
+      tr.inativo td:first-child {
+        border-left: 2px solid var(--gold);
+      }
+      button,
+      input,
+      select {
+        font-family: "Barlow", sans-serif;
+        font-size: 14px;
+      }
+      .btn {
+        background: var(--gold);
+        color: var(--ink);
+        border: none;
+        border-radius: 4px;
+        padding: 10px 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.18s ease;
+      }
+      .btn:hover {
+        background: var(--gold-light);
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--chalk);
+        border: 1px solid var(--border);
+      }
+      .btn.ghost:hover {
+        border-color: var(--gold);
+        background: transparent;
+      }
+      input,
+      select {
+        background: var(--ink);
+        border: 1px solid var(--border);
+        color: var(--chalk);
+        border-radius: 4px;
+        padding: 9px 12px;
+        outline: none;
+      }
+      input:focus,
+      select:focus {
+        border-color: var(--gold);
+      }
+      .form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 16px;
+      }
+      .muted {
+        color: var(--wire);
+      }
+      .empty,
+      .loading,
+      .error {
+        padding: 40px;
+        text-align: center;
+        color: var(--wire);
+        font-family: "Space Mono", monospace;
+        font-size: 13px;
+      }
+      .error {
+        color: var(--red);
+      }
+      .back {
+        background: none;
+        border: none;
+        color: var(--gold);
+        cursor: pointer;
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+      }
+      section {
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">BLADE<span class="dot">.</span>MÍDIA</div>
+      <div class="tag">Painel da Agência · Operação</div>
+    </header>
+    <main id="app">
+      <div class="loading">Carregando…</div>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

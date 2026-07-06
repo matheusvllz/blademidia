@@ -12,9 +12,28 @@ Node puro (18+), **zero dependências** — nada de `npm install`.
 | `webhook-server.mjs` | Recebe eventos do Evolution e responde via motor de intenções |
 | `provision.mjs` | Cria a instance de um cliente novo + webhook + salva QR em `out/` |
 | `status.mjs` | Estado de conexão de todas as instances |
-| `simulate.mjs` | Testa o fluxo inteiro localmente, sem WhatsApp/Docker |
+| `simulate.mjs` | Testa o fluxo de atendimento localmente, sem WhatsApp/Docker |
+| `panel-server.mjs` | Servidor dos **dois painéis** (agência + cliente) + API do CRM |
+| `panel/` | UI do painel da **agência** (estilo do site, Ink/Gold) |
+| `client-panel/` | UI do painel do **cliente** (simples/claro, mobile — não segue o site) |
 | `lib/engine.mjs` | Motor de decisão (intenções por palavra-chave, horário de funcionamento, escalação) |
 | `lib/evolution.mjs` | Client REST do Evolution (dry-run automático sem credenciais) |
+| `lib/store.mjs` | Camada de dados do CRM (JSON em `data/`, escopo por barbearia) |
+| `lib/presets.mjs` | Carrega preset e renderiza os templates de resposta |
+
+## Painéis (organização + CRM)
+
+```bash
+node automation/panel-server.mjs        # http://localhost:4545
+```
+
+- **Agência** — `http://localhost:4545/` : cadastro de barbearias, CRM de clientes finais,
+  quem está inativo (21+ dias) para reativar, status de conexão. Estilo do site (Ink/Gold).
+- **Cliente (barbeiro)** — `http://localhost:4545/cliente?barbershop=<slug>` : painel simples
+  e claro (mobile), fora do estilo do site — o barbeiro vê seus clientes e quem sumiu. É
+  read-mostly (a promessa é "sem você operar nada").
+
+Dados em `automation/data/db.json` (fora do git). Telefones sempre mascarados (`***1234`).
 
 ## Testar agora, sem nada instalado além do Node
 
