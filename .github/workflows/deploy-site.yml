@@ -1,0 +1,27 @@
+name: Deploy site (Netlify)
+
+# Dispara o deploy do site no Netlify a cada push na main que toque o site
+# ou o netlify.toml. Usa um build hook (secret NETLIFY_BUILD_HOOK) — não depende
+# do GitHub App do Netlify estar instalado neste repositório.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "netlify.toml"
+      - ".github/workflows/deploy-site.yml"
+  workflow_dispatch: {}
+
+jobs:
+  trigger-netlify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disparar build no Netlify
+        run: |
+          if [ -z "${{ secrets.NETLIFY_BUILD_HOOK }}" ]; then
+            echo "Secret NETLIFY_BUILD_HOOK ausente — configure em Settings › Secrets." >&2
+            exit 1
+          fi
+          curl -fsSL -X POST -d '{}' "${{ secrets.NETLIFY_BUILD_HOOK }}"
+          echo "Build do Netlify disparado."
