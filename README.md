@@ -8,9 +8,10 @@ Este repositório é a **base única de trabalho da Blade Mídia** e serve a tr�
    automático no WhatsApp, provisionamento de cliente novo, controle dos dados e das
    instâncias de cada cliente. É o que permite entregar um cliente novo com agilidade:
    copiar o preset, preencher, provisionar, escanear QR.
-3. **O produto SaaS** (`openspec/` + `docs/` + futuro `apps/`/`packages/`) — CRM,
+3. **O produto SaaS** (`openspec/` + `docs/` + `apps/`/`packages/`) — CRM,
    agendamento, confirmação automática e reativação, desenvolvido via
-   Spec-Driven Development.
+   Spec-Driven Development. O CRM de clientes (Fase 1, change `add-crm-clientes`)
+   é a primeira capability implementada — ver [apps/web/README.md](apps/web/README.md).
 
 Filosofia de entrega: **SLC** (Simple, Lovable, Complete) — escopo enxuto, acabamento
 bom, nada entregue pela metade.
@@ -26,6 +27,7 @@ bom, nada entregue pela metade.
 
 | Quero... | Leia / rode |
 |---|---|
+| Rodar o CRM de clientes do produto (painel do barbeiro) | [apps/web/README.md](apps/web/README.md) |
 | Testar a automação de atendimento agora (sem instalar nada) | [automation/README.md](automation/README.md) — `node automation/webhook-server.mjs` + `node automation/simulate.mjs` |
 | Provisionar um cliente novo (runbook) | [automation/README.md](automation/README.md) § Onboarding |
 | Subir o gateway WhatsApp (Evolution API) | [infra/evolution/](infra/evolution/) — compose local e de produção |
@@ -45,7 +47,8 @@ infra/
   evolution/           # Docker Compose do gateway WhatsApp (local e produção)
 openspec/              # specs, changes e convenções do produto (SDD)
 docs/                  # método SDD, contexto de negócio, arquitetura e ADRs
-apps/, packages/       # (futuro) código do produto — change init-project-skeleton
+apps/web/              # painel do produto (Next.js) — CRM de clientes (Fase 1)
+packages/db/           # schema Drizzle + repositórios + migração (produto)
 ```
 
 ## Regras rápidas (as completas estão em [CLAUDE.md](CLAUDE.md) e [openspec/](openspec/))

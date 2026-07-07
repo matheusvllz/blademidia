@@ -1,0 +1,23 @@
+# Docker Compose local do produto — só Postgres (Fase 0 técnica, task 0.4).
+# Não confundir com infra/evolution/ ou infra/stack/ (operação da agência,
+# infraestrutura separada). Uso: dev local do apps/web + packages/db.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: blademidia
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-blademidia_dev}
+      POSTGRES_DB: blademidia
+    ports:
+      - "5432:5432"
+    volumes:
+      - blademidia_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U blademidia"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  blademidia_postgres_data:

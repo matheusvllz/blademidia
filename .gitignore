@@ -5,3 +5,9 @@ node_modules/
 # Artefatos e dados locais da automação (QR codes, logs, base de clientes)
 automation/out/
 automation/data/
+
+# Produto (apps/web, packages/db)
+apps/*/.next/
+apps/*/dist/
+packages/*/dist/
+*.tsbuildinfo
