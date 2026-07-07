@@ -46,6 +46,9 @@ barbearia; o número de WhatsApp é o ativo do barbeiro (warm-up/rate-limit não
 
 ## Estado atual e próximos passos (atualizado 2026-07-06 — manter este bloco em dia)
 
+**Garantia rápida**: `node automation/check.mjs` — 17 checks que provam a estrutura
+íntegra em segundos. Rode antes de demo, onboarding ou depois de qualquer mudança.
+
 **O que JÁ funciona (validado):**
 - Site no ar (blademidia.netlify.app) com auto-deploy a cada push em `site/`.
 - Formulário de diagnóstico do site capturando leads no Netlify Forms (ver painel

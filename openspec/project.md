@@ -63,10 +63,29 @@ Plataforma completa de gestão operacional para barbearias:
 - **Idioma**: toda a interface e comunicação com clientes em PT-BR. Linguagem do painel segue o vocabulário do barbeiro (ver briefing de copy — nunca "lead", "CRM", "conversão").
 - **Design System**: paleta Ink `#0D0D0D` / Gold `#C9A84C` / Chalk `#F5F2EC` / Steel `#2B2B2B` / Wire `#8C8C8C`; tipografia Barlow Condensed (display), Barlow (corpo), Space Mono (labels). Detalhes em [docs/business/contexto-negocio.md](../docs/business/contexto-negocio.md).
 
+## Operação da agência (camada que já roda, paralela ao produto)
+
+> Adicionado em 2026-07-06 com aprovação de Vítor. O produto SaaS descrito acima está em
+> fase de spec; enquanto isso, a agência JÁ OPERA com uma camada de tooling própria —
+> qualquer IA/dev que pegar este repo precisa saber que ela existe e onde está:
+
+- **`automation/`** — motor de atendimento WhatsApp com presets por cliente, painel da
+  agência (CRM de barbearias), painel do cliente (barbeiro) e provisionamento. Runbook:
+  [automation/README.md](../automation/README.md).
+- **`infra/`** — Docker do gateway Evolution (local e VPS) e preset full-stack.
+- **Verificação pré-venda**: `node automation/check.mjs` prova em um comando que a
+  estrutura está íntegra (motor, presets, painéis, site, form de leads).
+- **Regime**: esta camada é operacional — evolui direto, sem o fluxo SDD completo (o
+  produto, não). Regras que valem nas duas: escopo por barbearia, nunca logar
+  conteúdo/telefone completo, warm-up anti-ban. Detalhes no [CLAUDE.md](../CLAUDE.md)
+  (seção "Estado atual e próximos passos" — **manter atualizada a cada mudança relevante**,
+  é o ponto de sincronização entre as IAs dos dois sócios).
+
 ## Documentos de referência
 
 | Documento | Onde |
 |---|---|
+| Operação da agência (motor, presets, painéis) | [automation/README.md](../automation/README.md) |
 | Método SDD (prompts, templates, checklist) | [docs/sdd/](../docs/sdd/) |
 | Contexto de negócio (briefing, plano, design system — extrato) | [docs/business/contexto-negocio.md](../docs/business/contexto-negocio.md) |
 | Arquitetura proposta | [docs/architecture/overview.md](../docs/architecture/overview.md) |
