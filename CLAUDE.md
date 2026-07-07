@@ -44,6 +44,36 @@ Tudo roda em **Node puro (18+), sem `npm install`**. Ver `automation/README.md` 
 de cliente final nem telefone completo (mascarar `***1234`); todo acesso a dado é escopado por
 barbearia; o número de WhatsApp é o ativo do barbeiro (warm-up/rate-limit não são opcionais).
 
+## Estado atual e próximos passos (atualizado 2026-07-06 — manter este bloco em dia)
+
+**O que JÁ funciona (validado):**
+- Site no ar (blademidia.netlify.app) com auto-deploy a cada push em `site/`.
+- Formulário de diagnóstico do site capturando leads no Netlify Forms (ver painel
+  Netlify → Forms) com notificação por e-mail ao Vítor a cada envio.
+- Stack Evolution local em Docker (`infra/evolution/docker-compose.local.yml`) — testado:
+  instância criada via `provision.mjs`, QR gerado, eventos reais chegando no
+  `webhook-server.mjs`. Auth local: API key `local-dev-key` (só dev; produção usa `.env`).
+- Painéis da agência (`/`) e do cliente (`/cliente?barbershop=<slug>`) via
+  `node automation/panel-server.mjs`.
+
+**Próximos passos, em ordem (o que falta para vender/operar):**
+1. **Parear um número real de teste**: escanear `automation/out/qr-blade-<slug>.png` com um
+   WhatsApp de teste e validar conversa real (motor respondendo). Respeitar warm-up.
+2. **VPS de produção**: subir `infra/stack/docker-compose.yml` (Evolution + painel + motor +
+   Caddy) num VPS (Hetzner ~R$30-60/mês ou Oracle Free ARM), apontar DNS, preencher `.env`.
+3. **Primeiro cliente real**: copiar preset (`presets/clientes/<slug>.json`), preencher
+   dados do negócio, provisionar, barbeiro escaneia QR — runbook em `automation/README.md`.
+4. **Pendências comerciais (Matheus)**: preço da taxa de gestão, texto de contrato
+   (cancelamento/limites de responsabilidade), regra de carência de inadimplência — ver
+   perguntas bloqueantes em `openspec/changes/add-agency-ops-panel/exploration.md`.
+5. **Produto SaaS**: iniciar `init-project-skeleton` (proposal já escrito, aguarda
+   confirmação das ADRs) e depois `auth-tenancy` → `crm-clientes` → `agendamento`.
+
+**Convenções de infraestrutura (não quebrar):** Netlify site_id
+`ef53f93d-117f-420f-935b-0348612c17dc` (conta vodetmor/Intellecta) publica deste repo,
+dir `site/`; secret `NETLIFY_BUILD_HOOK` no GitHub aciona o deploy; push direto na `main`
+é aceito para `site/` e `automation/` (operacional), produto exige branch+PR.
+
 ## Antes de qualquer tarefa
 
 1. Leia [openspec/project.md](openspec/project.md) — contexto e decisões estruturais (D1-D6).
