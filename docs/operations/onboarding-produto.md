@@ -2,7 +2,7 @@
 
 > Runbook operacional — Vítor/Matheus rodam isso ao levar uma barbearia da operação
 > manual (`automation/`) para o produto (`apps/web`). Ver
-> [design.md, Decision 4](../../openspec/changes/add-crm-clientes/design.md) para o
+> [design.md, Decision 4](../../openspec/changes/archive/add-crm-clientes/design.md) para o
 > racional: a migração é um **ponto de corte** — depois dela, o produto é a fonte de
 > verdade daquele tenant, não o `automation/data/db.json`.
 

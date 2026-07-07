@@ -18,8 +18,11 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
   [docs/operations/onboarding-produto.md](docs/operations/onboarding-produto.md) para o
   runbook de onboarding. Planejamento completo das 5 fases (núcleo, agenda,
   financeiro/relatórios, fidelização, campanhas/IA/WhatsApp) e pesquisa de mercado
-  (Fresha/Booksy/Zenoti) em `openspec/changes/add-crm-clientes/exploration.md`.
-  [add-crm-clientes]
+  (Fresha/Booksy/Zenoti) em `openspec/changes/archive/add-crm-clientes/exploration.md`.
+  Change **concluída (Done)** e fechada formalmente: spec permanente em
+  [openspec/specs/crm-clientes/spec.md](openspec/specs/crm-clientes/spec.md), change
+  arquivada em `openspec/changes/archive/add-crm-clientes/`, `crm-clientes` promovida a
+  capability especificada no registro. [add-crm-clientes]
 - Painel da agência e painel do cliente (`automation/panel-server.mjs` + `panel/` + `client-panel/`): CRM de barbearias e clientes finais, detecção de inativos para reativação, escopo por barbearia, telefones mascarados. Painel do cliente é simples/claro e não segue o estilo do site (ferramenta do barbeiro). [add-agency-ops-panel]
 - Preset Docker full-stack em `infra/stack/` (Evolution + painel + motor + Caddy) para pôr um cliente no ar no VPS com um comando. [add-agency-ops-panel]
 - Auto-deploy do site no Netlify via GitHub Actions + build hook (`.github/workflows/deploy-site.yml`), independente do GitHub App do Netlify.

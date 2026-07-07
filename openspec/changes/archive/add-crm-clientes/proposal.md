@@ -4,11 +4,13 @@
 `add-crm-clientes`
 
 ## Status
-In Progress <!-- Draft | Proposed | Approved | In Progress | In Review | Done | Rejected | Superseded -->
+Done <!-- Draft | Proposed | Approved | In Progress | In Review | Done | Rejected | Superseded -->
 
 > Aprovado por Vítor em 2026-07-07 ("Aprovo a fase 0 e a fase 1, pode fazê-la
-> completamente"). Implementação em andamento na branch `feature/add-crm-clientes` — ver
-> `tasks.md` para o progresso tarefa a tarefa.
+> completamente"). Implementado, verificado ponta a ponta (11/11 testes, fluxo no
+> navegador) e publicado na `main` (commit `4eba067`). Delta de spec aplicado à spec
+> permanente `openspec/specs/crm-clientes/spec.md` e change arquivada — fechamento formal
+> da etapa 11 do workflow.
 
 ## Context
 Ver [exploration.md](exploration.md) para a visão completa do módulo (25 seções, pesquisa

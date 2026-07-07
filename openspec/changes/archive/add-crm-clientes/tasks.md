@@ -106,10 +106,11 @@
     (via `next.config.ts`) e pelos scripts (via `load-env.ts`) — ambos apontam para a raiz.
 - [x] 6.2 `CHANGELOG.md`
   - Evidência: entrada `[Unreleased]` descreve a implementação real.
-- [ ] 6.3 Aplicar deltas em `openspec/specs/crm-clientes/spec.md`
-  - Pendente do fechamento formal da change (revisão + merge). O delta já está pronto em
-    `specs/crm-clientes/spec.md` desta change; mover para a spec permanente é a última etapa
-    do DoD (`workflow.md`), após a revisão do Vítor.
+- [x] 6.3 Aplicar deltas em `openspec/specs/crm-clientes/spec.md`
+  - Evidência: spec permanente criada em `openspec/specs/crm-clientes/spec.md`;
+    `openspec/specs/README.md` atualizado (crm-clientes deixou de ser candidata, virou
+    especificada; candidatas novas `financeiro-clientes`/`fidelizacao-clientes`
+    registradas); esta change arquivada em `openspec/changes/archive/add-crm-clientes/`.
 
 ## Como rodar (resumido — detalhes em apps/web/README.md)
 

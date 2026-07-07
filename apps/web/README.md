@@ -2,7 +2,7 @@
 
 Painel do barbeiro-dono: cadastro de clientes, histórico de atendimentos, financeiro
 (registro, não processamento), dashboard e configuração de inatividade. Ver
-[openspec/changes/add-crm-clientes/](../../openspec/changes/add-crm-clientes/) para a
+[openspec/changes/archive/add-crm-clientes/](../../openspec/changes/archive/add-crm-clientes/) para a
 spec, o design e o roadmap completo (5 fases — esta é a Fase 1).
 
 ## Rodar localmente
