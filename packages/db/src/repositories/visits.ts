@@ -33,6 +33,8 @@ export async function lastVisitForClient(
 export interface RegisterVisitInput {
   serviceLabel: string;
   staffLabel?: string;
+  serviceId?: string | null;
+  staffId?: string | null;
   occurredAt?: Date;
   amountCents?: number;
   method?: "dinheiro" | "cartao" | "pix" | "outro";
@@ -50,6 +52,8 @@ export async function registerVisit(
       clientId,
       serviceLabel: input.serviceLabel,
       staffLabel: input.staffLabel,
+      serviceId: input.serviceId ?? null,
+      staffId: input.staffId ?? null,
       occurredAt: input.occurredAt ?? new Date(),
     })
     .returning();

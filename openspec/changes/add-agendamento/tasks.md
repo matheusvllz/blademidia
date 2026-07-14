@@ -57,7 +57,8 @@
 
 ## 1. Schema de dados e repositórios
 
-- [ ] 1.1 Tabelas da agenda (schema Drizzle)
+- [x] 1.1 Tabelas da agenda (schema Drizzle)
+  - Evidência: 7 tabelas + FKs em `visits` (`service_id`/`staff_id`) + `barbershops.timezone`; `pnpm db:generate` → `0001_magenta_skaar.sql` (13 tabelas no snapshot); typecheck limpo.
   - Objective: `services`, `barbers`, `barber_services`, `work_schedules`,
     `schedule_exceptions`, `appointments`, `agenda_settings`; +FKs em `visits`
     (`service_id`, `barber_id`); +`barbershops.timezone`. Enums `appointment_status`,
@@ -67,7 +68,8 @@
   - Validation: manual — `pnpm db:generate` gera migração coerente.
   - Completion criteria: schema compila; snapshot gerado.
 
-- [ ] 1.2 Migração + `btree_gist` + restrição de exclusão
+- [x] 1.2 Migração + `btree_gist` + restrição de exclusão
+  - Evidência: `pnpm db:migrate` aplicou tudo; teste SQL real provou que 2 agendamentos ativos sobrepostos do mesmo barbeiro → `ERROR 23P01 appointments_no_overlap`, e adjacente (fim=início) passa (range `[)`).
   - Objective: aplicar as tabelas e anexar SQL bruto: `CREATE EXTENSION IF NOT EXISTS btree_gist`
     e a restrição de exclusão anti-sobreposição em `appointments` (Decision 5 do design).
   - Likely files: `packages/db/migrations/000X_*.sql`.
@@ -76,7 +78,8 @@
     ativos sobrepostos do mesmo barbeiro é rejeitado pelo banco (erro 23P01).
   - Completion criteria: migração idempotente aplicada em Postgres real.
 
-- [ ] 1.3 Repositórios tenant-scoped (serviços, barbeiros, associações)
+- [x] 1.3 Repositórios tenant-scoped (serviços, barbeiros, associações)
+  - Evidência: `services.ts`, `barbers.ts` (+`barber_services`, `listBarbersForService`); `barbershopId` sempre 1º arg; typecheck limpo.
   - Objective: `services.ts`, `barbers.ts`, `barber-services.ts` — CRUD com `barbershopId`
     obrigatório como 1º argumento (ADR-0007).
   - Likely files: `packages/db/src/repositories/*.ts`, `index.ts`.
@@ -84,14 +87,16 @@
   - Validation: integration — CRUD real contra Postgres.
   - Completion criteria: typecheck limpo; funções exportadas por `@blademidia/db`.
 
-- [ ] 1.4 Repositórios de grade e exceções
+- [x] 1.4 Repositórios de grade e exceções
+  - Evidência: `work-schedules.ts` (grade recorrente com janelas por dia) e `schedule-exceptions.ts` (folga/bloqueio/extra; barberId NULL = barbearia); typecheck limpo.
   - Objective: `work-schedules.ts`, `schedule-exceptions.ts` (listar/definir por barbeiro).
   - Likely files: `packages/db/src/repositories/*.ts`.
   - Depends on: 1.2
   - Validation: integration — leitura/escrita real.
   - Completion criteria: idem 1.3.
 
-- [ ] 1.5 Repositório de agendamentos
+- [x] 1.5 Repositório de agendamentos
+  - Evidência: `appointments.ts` — criar (traduz 23P01→`conflict`), listar por período, ativos para disponibilidade, transições, remarcar, conclusão transacional idempotente (`completeAppointmentWithVisit`), próximos do cliente, cancelamento LGPD, candidatos a no-show, contagem por status; typecheck limpo.
   - Objective: `appointments.ts` — criar, listar por período/barbeiro, obter, atualizar status,
     remarcar, vincular `visit_id`; traduzir violação 23P01 em erro `conflict`.
   - Likely files: `packages/db/src/repositories/appointments.ts`.
@@ -99,7 +104,8 @@
   - Validation: integration — criação, listagem por dia, conflito → `conflict`.
   - Completion criteria: erros de domínio (`conflict`/`not_found`) padronizados.
 
-- [ ] 1.6 Repositório de regras da agenda + ajuste em `visits`/`dashboard`
+- [x] 1.6 Repositório de regras da agenda + ajuste em `visits`/`dashboard`
+  - Evidência: `agenda-settings.ts` (get com defaults / upsert); `registerVisit` aceita `serviceId`/`staffId`; agregação da agenda no dashboard entra no Grupo 3.4/6.3 (rota). typecheck limpo.
   - Objective: `agenda-settings.ts` (get/patch com defaults); `visits.registerVisit` aceita
     `serviceId`/`barberId`; `dashboard` inclui agenda de hoje e faltas recentes.
   - Likely files: `packages/db/src/repositories/agenda-settings.ts`, `visits.ts`, `dashboard.ts`.
@@ -107,7 +113,8 @@
   - Validation: integration — defaults corretos; dashboard novo campo calculado.
   - Completion criteria: compatível com dados da Fase 1 (FKs nulas).
 
-- [ ] 1.7 Testes de isolamento de tenant (todas as tabelas novas)
+- [x] 1.7 Testes de isolamento de tenant (todas as tabelas novas)
+  - Evidência: `agenda.isolation.test.ts` — 5 testes contra Postgres real (serviço, barbeiro, grade, agendamento, listBarbersForService) provando que B não vê/acessa dado de A. Suíte db: 16/16 verdes.
   - Objective: provar que barbearia A não lê/altera serviços, barbeiros, grades, exceções e
     agendamentos de B (molde `clients.isolation.test.ts`).
   - Likely files: `packages/db/src/repositories/*.isolation.test.ts`.

@@ -8,3 +8,10 @@ export * from "./repositories/visits";
 export * from "./repositories/settings";
 export * from "./repositories/dashboard";
 export * from "./repositories/users";
+// Fase 2 — agendamento
+export * from "./repositories/services";
+export * from "./repositories/barbers";
+export * from "./repositories/work-schedules";
+export * from "./repositories/schedule-exceptions";
+export * from "./repositories/appointments";
+export * from "./repositories/agenda-settings";

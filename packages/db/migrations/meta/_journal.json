@@ -8,6 +8,13 @@
       "when": 1783454387258,
       "tag": "0000_abandoned_ronan",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784063220337,
+      "tag": "0001_magenta_skaar",
+      "breakpoints": true
     }
   ]
 }
