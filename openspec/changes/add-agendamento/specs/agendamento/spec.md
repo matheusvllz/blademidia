@@ -102,11 +102,13 @@ ativos, respeitando a duração do serviço e o passo de horário configurado, n
 barbearia.
 
 #### Scenario: Horários livres de um serviço num dia
-- GIVEN um barbeiro com expediente 09:00–12:00, passo de 30 min, serviço de 30 min e nenhum
+- GIVEN um barbeiro com expediente 09:00–12:00, passo de 30 min, serviço de 60 min e nenhum
   agendamento
 - WHEN o sistema consulta a disponibilidade daquele dia
-- THEN SHALL oferecer 09:00, 09:30, 10:00, 10:30 e 11:00 (último bloco que cabe antes das 12:00)
-- AND SHALL NOT oferecer 11:30 (o serviço ultrapassaria o fim do expediente)
+- THEN SHALL oferecer 09:00, 09:30, 10:00, 10:30 e 11:00 (último bloco que cabe até as 12:00)
+- AND SHALL NOT oferecer 11:30 (um serviço de 60 min ultrapassaria o fim do expediente)
+- AND um serviço que termine exatamente no fim do expediente (ex.: 30 min às 11:30) SHALL ser
+  oferecido
 
 #### Scenario: Horário já ocupado não é oferecido
 - GIVEN um agendamento ativo das 10:00 às 10:40 para o barbeiro

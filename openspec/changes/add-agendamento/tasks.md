@@ -124,7 +124,8 @@
 
 ## 2. Domínio — `AgendaService` (packages/core)
 
-- [ ] 2.1 Motor de disponibilidade (`getAvailability`)
+- [x] 2.1 Motor de disponibilidade (`getAvailability`)
+  - Evidência: `availability.ts` (puro) + `availability.test.ts` **10/10 verdes** — grade, almoço, folga, bloqueio, extra, sobreposição, antecedência, passo 15, encaixe exato, união "qualquer barbeiro". Fuso via `timezone.ts` (Intl, sem lib). Corrigido erro aritmético no cenário da spec no caminho.
   - Objective: computar horários livres (grade − exceções − agendamentos ativos), por barbeiro
     e "qualquer barbeiro", respeitando duração, passo e fuso (America/Sao_Paulo).
   - Likely files: `packages/core/src/agenda/availability.ts`, `types.ts`.
@@ -133,7 +134,8 @@
     passo 15/30, união "qualquer barbeiro", fuso. (cenários da spec de `agendamento`.)
   - Completion criteria: todos os cenários de disponibilidade da spec cobertos e verdes.
 
-- [ ] 2.2 Operações de escrita (`bookAppointment`, `reschedule`, `cancel`, `confirm`)
+- [~] 2.2 Operações de escrita (`bookAppointment`, `reschedule`, `cancel`, `confirm`)
+  - PARCIAL: `agenda-service.ts` escrito e com typecheck limpo (todas as operações). FALTA `agenda-service.test.ts` de integração (feliz/conflito/concorrência/transição inválida/cross-tenant).
   - Objective: validar grade/passado/escopo/conflito; aplicar transições; registrar `source`.
   - Likely files: `packages/core/src/agenda/agenda-service.ts`.
   - Depends on: 2.1, 1.5
@@ -141,7 +143,8 @@
     transição inválida, referência cruzada de tenant.
   - Completion criteria: cenários de "Criação" e "Ciclo de vida" da spec verdes.
 
-- [ ] 2.3 Conclusão transacional idempotente (`completeAppointment`)
+- [~] 2.3 Conclusão transacional idempotente (`completeAppointment`)
+  - PARCIAL: `completeAppointment` (core) + `completeAppointmentWithVisit` (repo, transação) escritos e com typecheck limpo. FALTA teste de integração (cria visita+pagamento; 2×não duplica; sem valor).
   - Objective: em transação, criar `visit` (+`payments_log` se houver valor), gravar `visit_id`,
     status → "concluído"; no-op se já concluído.
   - Likely files: `packages/core/src/agenda/agenda-service.ts`, usa `visits` repo.
@@ -150,7 +153,8 @@
     não quebra ticket médio.
   - Completion criteria: cenários de "Conclusão gera atendimento" verdes.
 
-- [ ] 2.4 No-show (`markNoShow`) + seleção da varredura
+- [~] 2.4 No-show (`markNoShow`) + seleção da varredura
+  - PARCIAL: `markNoShow` (core) + `listNoShowCandidates` (repo) escritos/typecheck limpo. FALTA teste; FALTA helper repo `markNoShowIfActive` p/ o sweep idempotente (Grupo 7).
   - Objective: marcar falta manual e expor a query "agendamentos ativos vencidos além do limite"
     para o worker; nunca afeta concluído/cancelado; idempotente.
   - Likely files: `packages/core/src/agenda/no-show.ts`.

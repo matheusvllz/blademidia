@@ -2,8 +2,15 @@ import { eq } from "drizzle-orm";
 import { db } from "../client";
 import { barbershops } from "../schema/barbershops";
 
+export type BarbershopRecord = typeof barbershops.$inferSelect;
+
 export async function findBarbershopBySlug(slug: string) {
   const rows = await db.select().from(barbershops).where(eq(barbershops.slug, slug));
+  return rows[0] ?? null;
+}
+
+export async function getBarbershop(barbershopId: string): Promise<BarbershopRecord | null> {
+  const rows = await db.select().from(barbershops).where(eq(barbershops.id, barbershopId));
   return rows[0] ?? null;
 }
 
