@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "pnpm --filter @blademidia/web dev",
+    "worker": "pnpm --filter @blademidia/worker dev",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
@@ -14,6 +15,7 @@
     "db:generate": "pnpm --filter @blademidia/db generate",
     "db:migrate": "pnpm --filter @blademidia/db migrate",
     "db:migrate-automation": "pnpm --filter @blademidia/db migrate-automation",
+    "db:migrate-automation-agenda": "pnpm --filter @blademidia/db migrate-automation-agenda",
     "db:create-barbershop": "pnpm --filter @blademidia/db create-barbershop"
   },
   "devDependencies": {

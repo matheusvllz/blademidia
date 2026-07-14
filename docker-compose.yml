@@ -1,6 +1,11 @@
-# Docker Compose local do produto — só Postgres (Fase 0 técnica, task 0.4).
+# Docker Compose local do produto — só Postgres.
 # Não confundir com infra/evolution/ ou infra/stack/ (operação da agência,
-# infraestrutura separada). Uso: dev local do apps/web + packages/db.
+# infraestrutura separada). Uso: dev local do apps/web + apps/worker + packages/db.
+#
+# apps/web e apps/worker rodam no HOST em dev (pnpm dev / pnpm worker), como a
+# Fase 1 já faz com o web — só o Postgres vive no Docker. pg-boss (do worker) cria
+# seu próprio schema neste mesmo Postgres (Fase 2, ADR-0009). A containerização de
+# produção do produto é assunto de deploy, fora desta change.
 services:
   postgres:
     image: postgres:16-alpine
