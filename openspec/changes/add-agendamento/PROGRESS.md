@@ -16,7 +16,7 @@
 | 5 | Telas da Agenda | ✅ **completo e commitado** (validado via HTTP real ponta a ponta) |
 | 6 | Integração CRM | ✅ **completo e commitado** (validado via HTTP real) |
 | 7 | Worker jobs | ✅ **completo e commitado** (boot real + filas/cron confirmados no Postgres) |
-| 8 | IA — tools em packages/ai | ⬜ pendente |
+| 8 | IA — tools em packages/ai | ✅ **completo e commitado** (6/6 testes) |
 | 9 | Migração do preset da automação | ⬜ pendente |
 | 10 | Fechamento (docs, specs, índices) | ⬜ pendente |
 

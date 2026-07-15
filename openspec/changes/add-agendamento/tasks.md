@@ -337,7 +337,8 @@
 
 ## 8. IA — contrato pronto (packages/ai, sem canal)
 
-- [ ] 8.1 Registrar as tools da agenda no `packages/ai`
+- [x] 8.1 Registrar as tools da agenda no `packages/ai`
+  - Evidência: `getClaudeToolDefinitions()` (JSON Schema espelhando o Zod do core, 4 tools) + `executeTool()` (valida e delega ao `AgendaService`). Testes 3/3 (schemas válidos; tool desconhecida rejeitada; entrada inválida rejeitada antes de qualquer handler). Sem SDK Anthropic nem chamada de rede — "estrutura pronta para o bot" verificável e testada; Fase 5 só conecta o loop de conversa.
   - Objective: importar o contrato de tools de `packages/core` (2.5) e expor no formato de
     tool-use do cliente Claude (ADR-0005); documentar que não há loop de conversa nesta fase.
   - Likely files: `packages/ai/src/tools/index.ts`, `README.md`.
