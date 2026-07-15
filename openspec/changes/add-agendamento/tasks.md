@@ -248,7 +248,8 @@
 
 ## 5. Telas da Agenda (apps/web)
 
-- [ ] 5.1 Visão da agenda (dia/semana por barbeiro)
+- [x] 5.1 Visão da agenda (dia/semana por barbeiro)
+  - Evidência: `/agenda` (colunas por barbeiro, navegação de dia, badges por status via `AppointmentStatusBadge`). Testado via HTTP real: estado vazio sem barbeiro, estado vazio com barbeiro sem agendamento, agendamento aparece com cliente/serviço/barbeiro corretos.
   - Objective: `/agenda` com dia (colunas por barbeiro) e semana; blocos coloridos por estado
     (agendado=steel, confirmado=green, concluído=gold, faltou=red, cancelado=wire riscado);
     navegação de data; estado vazio; responsivo (celular = lista por barbeiro).
@@ -258,7 +259,8 @@
   - Validation: e2e + manual — dia com agendamentos e dia vazio; screenshots Blade.
   - Completion criteria: agenda legível no desktop e no celular.
 
-- [ ] 5.2 Criar/editar agendamento (com seletor de horários livres)
+- [x] 5.2 Criar/editar agendamento (com seletor de horários livres)
+  - Evidência: `AppointmentForm` (busca de cliente inline, seleção de serviço/barbeiro, botão "Ver horários livres" → `/api/availability` → botões de horário → `POST /api/appointments`; erro de conflito recarrega disponibilidade). Fluxo criado via API equivalente validado ponta a ponta.
   - Objective: `AppointmentForm` — `ClientPicker` (busca/cadastro inline reusando `/api/clients`),
     serviço, barbeiro (ou "qualquer"), data → `AvailabilitySlotPicker` (só horários livres) →
     confirmar.
@@ -268,7 +270,8 @@
     de corrida → mensagem e recarrega.
   - Completion criteria: fluxo de criação completo conferido.
 
-- [ ] 5.3 Detalhe e ações do agendamento
+- [x] 5.3 Detalhe e ações do agendamento
+  - Evidência: `AppointmentDetailPanel` — Confirmar, Concluir (valor+forma), Remarcar (seletor de horários inline reaproveitando `/api/availability`), Cancelar, Marcar falta; ações condicionadas ao estado atual. Concluir testado via HTTP real: status muda para "Concluído" na tela e gera visita no histórico do cliente com `serviceId`/`staffId` do catálogo.
   - Objective: `AppointmentDetailPanel` — Confirmar, Concluir (valor+forma → registra
     atendimento; oferece rebooking), Remarcar, Cancelar, Marcar falta; transições inválidas
     desabilitadas/explicadas.
