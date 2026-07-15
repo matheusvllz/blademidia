@@ -1,72 +1,42 @@
-"use client";
+import Link from "next/link";
 
-import { useEffect, useState } from "react";
+const SECOES = [
+  {
+    href: "/configuracoes/servicos",
+    title: "Serviços",
+    description: "Cadastro dos serviços da barbearia (nome, duração, preço de tabela).",
+  },
+  {
+    href: "/configuracoes/barbeiros",
+    title: "Barbeiros & Horários",
+    description: "Barbeiros, grade semanal de trabalho e folgas/bloqueios.",
+  },
+  {
+    href: "/configuracoes/agenda",
+    title: "Agenda",
+    description: "Passo de horário, antecedência mínima, falta e confirmação.",
+  },
+  {
+    href: "/configuracoes/inatividade",
+    title: "Inatividade",
+    description: "Dias sem visita para considerar o cliente inativo.",
+  },
+];
 
-export default function ConfiguracoesPage() {
-  const [days, setDays] = useState<number | null>(null);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/settings")
-      .then((res) => res.json())
-      .then((data) => {
-        setDays(data.inactivityDaysThreshold);
-        setLoading(false);
-      });
-  }, []);
-
-  async function handleSave(event: React.FormEvent) {
-    event.preventDefault();
-    setError(null);
-    setSaved(false);
-
-    const response = await fetch("/api/settings", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ inactivityDaysThreshold: days }),
-    });
-
-    if (!response.ok) {
-      const data = await response.json().catch(() => ({}));
-      setError(data.error ?? "não foi possível salvar");
-      return;
-    }
-
-    setSaved(true);
-  }
-
+export default function ConfiguracoesHubPage() {
   return (
     <div>
       <h1 className="mb-6 font-display text-3xl font-black uppercase text-ink">Configurações</h1>
-
-      {loading ? (
-        <p className="text-steel">Carregando...</p>
-      ) : (
-        <form onSubmit={handleSave} className="card-blade max-w-md space-y-3">
-          <label className="label-blade mb-1 block" htmlFor="days">
-            Dias sem visita para considerar o cliente inativo
-          </label>
-          <input
-            id="days"
-            type="number"
-            min={1}
-            className="input-blade"
-            value={days ?? ""}
-            onChange={(e) => setDays(Number(e.target.value))}
-          />
-          <p className="text-xs text-wire">
-            Hoje o cliente aparece em &quot;para reativar&quot; no dashboard quando passa desse
-            número de dias sem nenhum atendimento registrado.
-          </p>
-          {error && <p className="text-sm text-alert-red">{error}</p>}
-          {saved && <p className="text-sm text-alert-green">Salvo.</p>}
-          <button type="submit" className="btn-gold">
-            Salvar
-          </button>
-        </form>
-      )}
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {SECOES.map((secao) => (
+          <li key={secao.href}>
+            <Link href={secao.href} className="card-blade block hover:border-gold">
+              <p className="font-display text-lg font-bold uppercase text-ink">{secao.title}</p>
+              <p className="mt-1 text-sm text-steel">{secao.description}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

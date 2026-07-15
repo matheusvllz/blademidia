@@ -210,7 +210,8 @@
 
 ## 4. Telas de configuração (apps/web) — identidade Blade
 
-- [ ] 4.1 NavBar + hub de Configurações
+- [x] 4.1 NavBar + hub de Configurações
+  - Evidência: `nav-bar.tsx` +item "Agenda"; `/configuracoes` virou hub com 4 cards (Serviços, Barbeiros & Horários, Agenda, Inatividade — movida para `/configuracoes/inatividade`). Testado via HTTP real: todas as rotas 200.
   - Objective: adicionar item "Agenda" à `nav-bar`; `/configuracoes` vira hub com seções
     (Inatividade — existente; Serviços; Barbeiros & Horários; Agenda — regras).
   - Likely files: `apps/web/components/nav-bar.tsx`, `app/configuracoes/**`.
@@ -218,7 +219,8 @@
   - Validation: manual — navegação; tokens Blade; sem "CRM"/"booking"/"slot".
   - Completion criteria: screenshot conferido.
 
-- [ ] 4.2 Tela de Serviços (CRUD)
+- [x] 4.2 Tela de Serviços (CRUD)
+  - Evidência: `ServicesBoard` (criar/listar/desativar); testado via HTTP real (build + rota 200). Ação "Desativar" usa DELETE (soft-delete), sem "reativar" morto (spec só exige criar/editar/desativar).
   - Objective: listar/criar/editar/desativar serviço (nome, duração, preço de tabela).
   - Likely files: `app/configuracoes/servicos/page.tsx`, `components/ServiceForm.tsx`,
     `ServicesList.tsx`.
@@ -226,7 +228,8 @@
   - Validation: e2e — cria serviço → aparece ao agendar.
   - Completion criteria: screenshot; erro de duração inválida exibido.
 
-- [ ] 4.3 Tela de Barbeiros & Horários
+- [x] 4.3 Tela de Barbeiros & Horários
+  - Evidência: `BarbersBoard` (lista+criar) + `/configuracoes/barbeiros/[id]` com `BarberDetail` (grade semanal por janelas, serviços habilitados, folgas/bloqueios/extra). Testado via HTTP real ponta a ponta: grade salva (09-12,13-18) e reflete na tela; exceção folga criada e aparece; bloqueio sem horário → 400.
   - Objective: CRUD de barbeiro + editor de grade semanal (`WeeklyScheduleEditor`) + folgas/
     bloqueios (`ScheduleExceptionsEditor`) + serviços do barbeiro.
   - Likely files: `app/configuracoes/barbeiros/**`, `components/BarberForm.tsx`,
@@ -235,7 +238,8 @@
   - Validation: e2e — grade com almoço reflete na disponibilidade; folga zera o dia.
   - Completion criteria: screenshots; comportamento conferido.
 
-- [ ] 4.4 Tela de regras da Agenda
+- [x] 4.4 Tela de regras da Agenda
+  - Evidência: `/configuracoes/agenda` — form com defaults carregados da API, 4 campos com texto de ajuda. Testado via HTTP real (rota 200; PATCH já validado no Grupo 3).
   - Objective: editar passo, antecedência mínima, no-show, confirmação (com ajuda/defaults).
   - Likely files: `app/configuracoes/agenda/page.tsx`, `components/AgendaSettingsForm.tsx`.
   - Depends on: 3.4, 4.1
