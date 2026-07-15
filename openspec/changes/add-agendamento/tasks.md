@@ -134,8 +134,8 @@
     passo 15/30, união "qualquer barbeiro", fuso. (cenários da spec de `agendamento`.)
   - Completion criteria: todos os cenários de disponibilidade da spec cobertos e verdes.
 
-- [~] 2.2 Operações de escrita (`bookAppointment`, `reschedule`, `cancel`, `confirm`)
-  - PARCIAL: `agenda-service.ts` escrito e com typecheck limpo (todas as operações). FALTA `agenda-service.test.ts` de integração (feliz/conflito/concorrência/transição inválida/cross-tenant).
+- [x] 2.2 Operações de escrita (`bookAppointment`, `reschedule`, `cancel`, `confirm`)
+  - Evidência: `agenda-service.test.ts` (integração, Postgres real) — feliz, conflito, **concorrência (2 writes→1 grava, 1 conflito)**, passado, fora da grade, cross-tenant (`not_found`), transição inválida. 12 testes verdes.
   - Objective: validar grade/passado/escopo/conflito; aplicar transições; registrar `source`.
   - Likely files: `packages/core/src/agenda/agenda-service.ts`.
   - Depends on: 2.1, 1.5
@@ -143,8 +143,8 @@
     transição inválida, referência cruzada de tenant.
   - Completion criteria: cenários de "Criação" e "Ciclo de vida" da spec verdes.
 
-- [~] 2.3 Conclusão transacional idempotente (`completeAppointment`)
-  - PARCIAL: `completeAppointment` (core) + `completeAppointmentWithVisit` (repo, transação) escritos e com typecheck limpo. FALTA teste de integração (cria visita+pagamento; 2×não duplica; sem valor).
+- [x] 2.3 Conclusão transacional idempotente (`completeAppointment`)
+  - Evidência: teste — concluir cria 1 visita com `serviceId`/`staffId` + pagamento; concluir 2× → `alreadyCompleted`, segue 1 visita; concluir sem valor cria visita sem pagamento.
   - Objective: em transação, criar `visit` (+`payments_log` se houver valor), gravar `visit_id`,
     status → "concluído"; no-op se já concluído.
   - Likely files: `packages/core/src/agenda/agenda-service.ts`, usa `visits` repo.
@@ -153,8 +153,8 @@
     não quebra ticket médio.
   - Completion criteria: cenários de "Conclusão gera atendimento" verdes.
 
-- [~] 2.4 No-show (`markNoShow`) + seleção da varredura
-  - PARCIAL: `markNoShow` (core) + `listNoShowCandidates` (repo) escritos/typecheck limpo. FALTA teste; FALTA helper repo `markNoShowIfActive` p/ o sweep idempotente (Grupo 7).
+- [x] 2.4 No-show (`markNoShow`) + seleção da varredura
+  - Evidência: teste — falta manual → `faltou`; idempotente (2×→faltou); concluído → `invalid_transition`. `listNoShowCandidates` pronto. (helper `markNoShowIfActive` p/ o sweep será criado no Grupo 7.)
   - Objective: marcar falta manual e expor a query "agendamentos ativos vencidos além do limite"
     para o worker; nunca afeta concluído/cancelado; idempotente.
   - Likely files: `packages/core/src/agenda/no-show.ts`.
@@ -162,7 +162,8 @@
   - Validation: unit + integration — seleção correta; idempotência.
   - Completion criteria: cenários de "Registro de falta" verdes.
 
-- [ ] 2.5 Contrato de tools do bot (especificação)
+- [x] 2.5 Contrato de tools do bot (especificação)
+  - Evidência: `agenda/tools.ts` — 4 tools (`consultar_disponibilidade`, `criar_agendamento`, `remarcar_agendamento`, `cancelar_agendamento`) com Zod `inputSchema` + handler que chama o `AgendaService` (escritas com `source='bot'`). `tools.test.ts` 2/2 verdes. Exportado por `@blademidia/core`.
   - Objective: definir as tools (`consultar_disponibilidade`, `criar_agendamento`,
     `remarcar_agendamento`, `cancelar_agendamento`) — nome, descrição PT-BR, `input_schema`
     (Zod) e handler que chama o `AgendaService` com `source='bot'`. Exportar para `packages/ai`.
