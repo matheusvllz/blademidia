@@ -174,7 +174,8 @@
 
 ## 3. API interna (apps/web)
 
-- [ ] 3.1 Rotas de serviços e barbeiros (+ associação)
+- [x] 3.1 Rotas de serviços e barbeiros (+ associação)
+  - Evidência: `api/services`, `api/services/[id]`, `api/barbers`, `api/barbers/[id]`, `api/barbers/[id]/services`. Testado via HTTP real: criar serviço 201, duração inválida 400, criar barbeiro 201.
   - Objective: `GET/POST /api/services`, `/:id`; `GET/POST /api/barbers`, `/:id`;
     `PUT /api/barbers/:id/services`. Zod na entrada; sessão → tenant.
   - Likely files: `apps/web/app/api/services/**`, `api/barbers/**`.
@@ -182,14 +183,16 @@
   - Validation: contract — 201/200/400/404; escopo por sessão.
   - Completion criteria: CRUD acessível só ao tenant da sessão.
 
-- [ ] 3.2 Rotas de grade e exceções
+- [x] 3.2 Rotas de grade e exceções
+  - Evidência: `api/barbers/[id]/schedule` (PUT valida start&lt;end via Zod refine), `api/barbers/[id]/exceptions` (+`[exId]` DELETE). Grade testada via HTTP real (PUT 200, disponibilidade refletiu a grade).
   - Objective: `GET/PUT /api/barbers/:id/schedule`; `GET/POST/DELETE /api/barbers/:id/exceptions`.
   - Likely files: `apps/web/app/api/barbers/[id]/schedule/**`, `exceptions/**`.
   - Depends on: 1.4
   - Validation: contract — validação de janelas (start<end), 400 em inválido.
   - Completion criteria: grade e exceções editáveis via API.
 
-- [ ] 3.3 Disponibilidade e agendamentos
+- [x] 3.3 Disponibilidade e agendamentos
+  - Evidência: `api/availability`, `api/appointments` (+`[id]`, `/complete`, `/no-show`). Testado via HTTP real de ponta a ponta: disponibilidade (18 slots 09-18 passo 30) → criar 201 → conflito 409 → confirmar 200 → concluir 200 (cria visita) → concluir 2× idempotente → cancelar concluído 409 invalid_transition → no-show 200 idempotente.
   - Objective: `GET /api/availability`; `GET/POST /api/appointments`; `GET/PATCH/DELETE
     /api/appointments/:id`; `POST /api/appointments/:id/complete`; `.../no-show`.
   - Likely files: `apps/web/app/api/availability/route.ts`, `api/appointments/**`.
@@ -197,7 +200,8 @@
   - Validation: contract — 201/409 (conflito)/409 (transição)/404 (cross-tenant)/400.
   - Completion criteria: fluxos de criação/conclusão/no-show acessíveis; erros corretos.
 
-- [ ] 3.4 Regras da agenda + dashboard ajustado
+- [x] 3.4 Regras da agenda + dashboard ajustado
+  - Evidência: `api/agenda-settings` (GET defaults, PATCH); `api/dashboard` +`agenda.today` (por status) +`agenda.recentNoShows`, usando fuso da barbearia. Testado via HTTP real: GET defaults, PATCH slotStepMin, dashboard com estado vazio explícito (`agenda.today` zerado, `recentNoShows:[]`) para barbearia sem agenda. `pnpm --filter @blademidia/web build` limpo (todas as 12 rotas novas registradas).
   - Objective: `GET/PATCH /api/agenda-settings`; `GET /api/dashboard` inclui agenda de hoje/faltas.
   - Likely files: `apps/web/app/api/agenda-settings/route.ts`, `api/dashboard/route.ts`.
   - Depends on: 1.6

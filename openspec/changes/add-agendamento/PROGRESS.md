@@ -10,8 +10,8 @@
 |---|---|---|
 | 0 | Fundação (core, worker, ai, infra, ADRs) | ✅ **completo e commitado** |
 | 1 | Schema + repositórios + isolamento | ✅ **completo e commitado** |
-| 2 | Domínio `AgendaService` | 🟡 **em andamento** (código escrito; falta teste + tools) |
-| 3 | API interna (rotas) | ⬜ pendente |
+| 2 | Domínio `AgendaService` | ✅ **completo e commitado** (24/24 testes) |
+| 3 | API interna (rotas) | ✅ **completo e commitado** (validado via HTTP real ponta a ponta) |
 | 4 | Telas de configuração | ⬜ pendente |
 | 5 | Telas da Agenda | ⬜ pendente |
 | 6 | Integração CRM | ⬜ pendente |
@@ -23,7 +23,9 @@
 **Commits na branch (ordem):**
 1. `feat(agendamento): fundação da Fase 2 …` (Grupo 0 + SDD Approved)
 2. `feat(agendamento): schema, migração anti-double-booking e repositórios …` (Grupo 1)
-3. (pendente) commit do WIP do Grupo 2 — ver "Como retomar".
+3. `feat(agendamento): AgendaService — motor de disponibilidade + operações (WIP Grupo 2) …`
+4. `feat(agendamento): completa domínio — testes de integração + contrato de tools …` (fecha Grupo 2)
+5. (pendente) commit do Grupo 3 — ver "Como retomar".
 
 ## Pré-requisitos do ambiente (para rodar)
 
@@ -112,22 +114,21 @@ manual do fim do 0001 **não** é recriado — preservar.
 na `specs/agendamento/spec.md` tinha erro aritmético (dizia que serviço de 30 min não oferece
 11:30, mas 11:30–12:00 encaixa). Corrigido para serviço de 60 min + cláusula de "encaixe exato".
 
-**FALTA no Grupo 2 (retomar aqui):**
-1. **`agenda-service.test.ts`** (integração, Postgres real) — cobrir: book feliz, conflito,
-   concorrência (2 writes → 1), transição inválida, cross-tenant (`not_found`), conclusão
-   cria visita+pagamento, conclusão idempotente (2×), sem valor não quebra ticket, no-show
-   manual + idempotente. (tasks 2.2/2.3/2.4 pedem essa validação.)
-2. **`agenda/tools.ts`** (task 2.5): contrato de tools do bot — `consultar_disponibilidade`,
-   `criar_agendamento`, `remarcar_agendamento`, `cancelar_agendamento`. Cada tool = nome,
-   descrição PT-BR, `input_schema` (Zod), handler que chama o `AgendaService` com
-   `source='bot'`. Descomentar o export em `agenda/index.ts`. Teste unitário do mapeamento.
+**Grupo 2 concluído** (motor + service + tools, 24/24 testes). **Grupo 3 concluído** — todas
+as rotas de API criadas em `apps/web/app/api/` e **validadas via HTTP real** (servidor
+`pnpm start` + `curl`, não só typecheck): services, barbers (+services/schedule/exceptions),
+availability, appointments (CRUD + complete + no-show), agenda-settings, dashboard ajustado
+(+`agenda.today`/`recentNoShows`, usa `getBarbershop`+`zonedDayBounds` de `@blademidia/core`
+para o "hoje" no fuso certo). `pnpm --filter @blademidia/web build` limpo (26 rotas).
+
+⚠️ **Gotcha operacional descoberto**: em dev/smoke-test no Windows, `pkill -f "next start"`
+via Git Bash **não mata o processo** de forma confiável (fica em `LISTENING` na porta 3000).
+Usar `netstat -ano | grep :3000` para achar o PID e `taskkill //F //PID <pid>` para matar de
+verdade antes de subir de novo — senão o `curl` conversa com o servidor ANTIGO (já aconteceu:
+testei o dashboard e o processo velho, sem o campo `agenda`, respondeu primeiro).
 
 ## Próximos grupos (resumo do que falta — detalhe completo em `tasks.md`)
 
-- **Grupo 3 — API** (`apps/web/app/api/`): rotas para services, barbers (+services/schedule/
-  exceptions), `availability`, appointments (CRUD + `/complete` + `/no-show`), `agenda-settings`,
-  e ajuste no `dashboard`. Padrão: `requireSessionApi` → tenant da sessão → chama `@blademidia/core`
-  ou repo. Validar entrada (Zod). Códigos: 400/401/404/409(conflito|transição).
 - **Grupo 4 — Telas config** (`apps/web/app/configuracoes/`): NavBar +item "Agenda"; hub de
   Configurações com seções Serviços, Barbeiros&Horários (grade+folgas+serviços do barbeiro),
   regras da Agenda. Usar classes Blade existentes (`card-blade`, `btn-gold`, `input-blade`,
@@ -167,11 +168,12 @@ git checkout feature/add-agendamento
 pnpm install
 
 # 2. sanity check do que já existe
-pnpm --filter @blademidia/core test   # 10/10 (motor)
+pnpm --filter @blademidia/core test   # 24/24 (motor + service + tools)
 pnpm --filter @blademidia/db test      # 16/16 (repos + isolamento)
+pnpm --filter @blademidia/web build    # 26 rotas, build limpo
 
-# 3. retomar no Grupo 2: escrever agenda-service.test.ts e agenda/tools.ts
-#    depois seguir Grupos 3→10 na ordem do tasks.md
+# 3. retomar no Grupo 4 (telas de configuração)
+#    depois seguir Grupos 5→10 na ordem do tasks.md
 ```
 
 ## Gotchas / decisões que não podem se perder

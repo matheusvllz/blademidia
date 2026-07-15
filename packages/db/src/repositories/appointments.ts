@@ -280,6 +280,19 @@ export async function listNoShowCandidates(
     );
 }
 
+/** Faltas mais recentes (dashboard: "clientes que sumiram do agendamento"). */
+export async function listRecentNoShows(
+  barbershopId: string,
+  limit: number,
+): Promise<AppointmentRecord[]> {
+  return db
+    .select()
+    .from(appointments)
+    .where(and(eq(appointments.barbershopId, barbershopId), eq(appointments.status, "faltou")))
+    .orderBy(sql`${appointments.startsAt} desc`)
+    .limit(limit);
+}
+
 /** Contagem de agendamentos por status num intervalo (dashboard). */
 export async function countAppointmentsByStatus(
   barbershopId: string,

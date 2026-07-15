@@ -17,6 +17,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@blademidia/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@blademidia/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -32,6 +35,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.2.7(react@19.2.7)
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.2.0
