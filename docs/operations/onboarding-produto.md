@@ -1,4 +1,4 @@
-# Onboarding de uma barbearia no produto (CRM, Fase 1)
+# Onboarding de uma barbearia no produto (CRM + Agenda)
 
 > Runbook operacional — Vítor/Matheus rodam isso ao levar uma barbearia da operação
 > manual (`automation/`) para o produto (`apps/web`). Ver
@@ -43,6 +43,42 @@
   existe em lugar nenhum, não é perda da migração.
 - **Valor pago** — a automação não registra valor nenhum; nenhuma transação financeira é
   criada pela migração. O financeiro do cliente começa zerado no produto.
+
+## Passo a passo — módulo de Agenda (Fase 2, opcional)
+
+> Depois do onboarding do CRM acima. A migração da agenda é **opcional e independente** —
+> sem ela, o barbeiro cadastra serviços/barbeiros/grade manualmente em
+> Configurações → Serviços / Barbeiros & Horários.
+
+1. **Confirmar que existe um preset da barbearia** em
+   `automation/presets/clientes/<slug>.json` (ou usar `--json-path` para apontar para outro
+   arquivo, ex.: o `barbearia-default.json` preenchido).
+
+2. **Rodar em dry-run primeiro:**
+   ```bash
+   pnpm db:migrate-automation-agenda -- --barbershop-slug=<slug>
+   ```
+   Confira serviços/barbeiros que seriam criados e a lista de divergências (ex.: preço não
+   preenchido no preset) e de registros pulados (nome ausente, placeholder "PREENCHER" não
+   preenchido, duração inválida).
+
+3. **Rodar de verdade:**
+   ```bash
+   pnpm db:migrate-automation-agenda -- --barbershop-slug=<slug> --apply
+   ```
+   Idempotente — rodar de novo não duplica serviço/barbeiro já migrado.
+
+4. **Revisar e ajustar na tela.** A migração aplica a MESMA grade de horário do preset
+   (`horario_funcionamento`, que é do negócio) a **todos** os barbeiros importados —
+   ajuste grades individuais, folgas e quais serviços cada barbeiro faz em
+   Configurações → Barbeiros & Horários.
+
+### O que a migração da agenda NÃO traz
+
+- **Agendamentos futuros já marcados na operação manual** — a automação não tem agenda
+  estruturada; não há o que migrar além de serviços/barbeiros/horário de funcionamento.
+- **Preço de serviço não preenchido no preset** (`"PREENCHER"` ou não numérico) — o serviço
+  é criado sem preço de tabela; preencher manualmente em Configurações → Serviços.
 
 ## Nuance de privacidade encontrada (reportar, não é bug desta migração)
 

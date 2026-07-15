@@ -4,11 +4,14 @@
 `add-agendamento`
 
 ## Status
-Approved <!-- Draft | Proposed | Approved | In Progress | In Review | Done | Rejected | Superseded -->
+Done <!-- Draft | Proposed | Approved | In Progress | In Review | Done | Rejected | Superseded -->
 
 > Aprovada por Vítor em 2026-07-14 (portão humano da etapa 5 do
-> [workflow](../../workflow.md)). `design.md` e `tasks.md` acompanham a change. Implementação
-> autorizada na branch `feature/add-agendamento`, na ordem de `tasks.md`.
+> [workflow](../../workflow.md)). Implementada por completo na branch `feature/add-agendamento`
+> (10 grupos do `tasks.md`, todos com evidência — código, testes automatizados e verificação
+> via HTTP real/CLI real/boot real contra Postgres). Deltas aplicados às specs permanentes em
+> 2026-07-15 (`openspec/specs/agendamento/spec.md` novo,
+> `openspec/specs/crm-clientes/spec.md` estendido); change arquivada.
 
 ## Context
 

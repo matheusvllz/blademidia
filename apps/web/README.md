@@ -1,9 +1,11 @@
-# Painel do Produto — CRM de Clientes (Fase 1)
+# Painel do Produto — CRM + Agenda (Fases 1-2)
 
 Painel do barbeiro-dono: cadastro de clientes, histórico de atendimentos, financeiro
-(registro, não processamento), dashboard e configuração de inatividade. Ver
-[openspec/changes/archive/add-crm-clientes/](../../openspec/changes/archive/add-crm-clientes/) para a
-spec, o design e o roadmap completo (5 fases — esta é a Fase 1).
+(registro, não processamento), dashboard, agenda completa (serviços, barbeiros, grade de
+horário, agendamentos) e configurações. Ver
+[openspec/changes/archive/add-crm-clientes/](../../openspec/changes/archive/add-crm-clientes/)
+(Fase 1) e [openspec/changes/archive/add-agendamento/](../../openspec/changes/archive/add-agendamento/)
+(Fase 2) para spec, design e roadmap completo.
 
 ## Rodar localmente
 
@@ -25,16 +27,17 @@ pnpm db:migrate
 
 # 5. Criar a barbearia + usuário de teste (ver "Criar o primeiro login" abaixo)
 
-# 6. Subir o painel
+# 6. Subir o painel (e, se for testar a agenda, o worker também)
 pnpm dev
+pnpm worker   # opcional nesta fase: só a varredura de falta (no-show) depende dele
 ```
 
 Acesse `http://localhost:3000` — redireciona para `/login`.
 
 ## Criar o primeiro login (barbearia + usuário)
 
-Não existe tela de "criar conta" na Fase 1 (onboarding é feito por Vítor/Matheus, não
-self-service — ver `project.md`, fora de escopo v1):
+Não existe tela de "criar conta" (onboarding é feito por Vítor/Matheus, não self-service —
+ver `project.md`, fora de escopo v1):
 
 ```bash
 pnpm db:create-barbershop -- --slug=barbearia-teste --name="Barbearia Teste" \
@@ -43,27 +46,34 @@ pnpm db:create-barbershop -- --slug=barbearia-teste --name="Barbearia Teste" \
 
 ## Migrar dados de um cliente já operado pela agência
 
-Ver [docs/operations/onboarding-produto.md](../../docs/operations/onboarding-produto.md).
+Ver [docs/operations/onboarding-produto.md](../../docs/operations/onboarding-produto.md)
+(migração de clientes — Fase 1 — e, opcionalmente, de serviços/barbeiros/grade — Fase 2).
 
 ## Estrutura
 
 ```text
 app/
-  page.tsx                 # Dashboard
+  page.tsx                 # Dashboard (clientes + agenda de hoje)
   clientes/                # Lista + cadastro
-  clientes/[id]/           # Perfil, histórico, registrar atendimento, excluir (LGPD)
-  configuracoes/           # Limite de dias de inatividade
+  clientes/[id]/           # Perfil, histórico, próximo agendamento, excluir (LGPD)
+  agenda/                  # Visão do dia por barbeiro, criar/confirmar/concluir/remarcar/cancelar
+  configuracoes/           # Hub: Serviços, Barbeiros & Horários, Agenda, Inatividade
   login/                   # Auth mínima
-  api/                     # Rotas internas (clients, dashboard, settings, auth)
+  api/                     # Rotas internas (clients, dashboard, settings, auth,
+                            #   services, barbers, availability, appointments, agenda-settings)
 lib/
   session.ts               # Sessão assinada (Web Crypto — funciona em Edge e Node)
   auth.ts                  # requireSession() para Server Components/Route Handlers
+  api.ts                   # Validação Zod + mapeamento de erros de domínio para HTTP
 middleware.ts              # Protege todas as rotas exceto /login
 ```
+
+Lógica de negócio da agenda vive em `@blademidia/core` (fronteira única — ADR-0008), não
+neste app; `apps/web` só resolve a sessão e delega.
 
 ## Identidade visual
 
 Tokens Blade (Ink/Gold/Chalk/Steel/Wire, Barlow/Barlow Condensed/Space Mono) em
 `tailwind.config.ts` e `app/globals.css` — mesmos do `site/` e do `automation/panel/`,
-nenhuma identidade nova. Vocabulário: sempre "Clientes", nunca "CRM" na UI
-(`openspec/conventions.md`).
+nenhuma identidade nova. Vocabulário: sempre "Clientes"/"Agenda"/"horário", nunca
+"CRM"/"booking"/"slot" na UI (`openspec/conventions.md`).

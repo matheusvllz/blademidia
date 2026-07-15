@@ -5,6 +5,36 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 ## [Unreleased]
 
 ### Added
+- **Agenda integrada (Fase 2)**, aprovada e implementada (`add-agendamento`). Evolui o CRM
+  (Fase 1) para uma plataforma operacional completa: catálogo de serviços (nome, duração,
+  preço de tabela) e barbeiros (recurso da agenda, sem login), grade semanal por barbeiro
+  com múltiplas janelas/dia (intervalo de almoço), exceções (folga/bloqueio/disponibilidade
+  extra), motor de disponibilidade puro (grade − exceções − agendamentos ativos, fuso
+  America/Sao_Paulo), ciclo de vida completo do agendamento (agendado → confirmado →
+  concluído/cancelado/faltou) com **ausência de double booking garantida no Postgres**
+  (restrição de exclusão `btree_gist`), conclusão transacional idempotente que gera o
+  atendimento e o pagamento da Fase 1, varredura automática de falta (worker + pg-boss,
+  `apps/worker` novo). Telas: `/agenda` (visão do dia por barbeiro, criar/confirmar/
+  concluir/remarcar/cancelar/marcar falta) e hub de Configurações (Serviços, Barbeiros &
+  Horários, Regras da Agenda). Integração com o CRM: próximo agendamento no perfil do
+  cliente, exclusão LGPD cancela agendamentos futuros, dashboard com agenda de hoje.
+  **Estrutura pronta para o bot de IA** (Fase 5, ainda não conectado): camada de domínio
+  única `packages/core` (`AgendaService`, ADR-0008) consumida por painel, worker e o
+  contrato de 4 tools (`packages/core/agenda/tools.ts`, re-exposto em `packages/ai` no
+  formato tool-use da Claude API, ADR-0005) — nenhuma chamada externa nesta fase. Migração
+  opcional e idempotente de serviços/barbeiros/horário do preset da automação. ADR-0008
+  (camada de domínio) e ADR-0009 (worker + pg-boss). Verificado de verdade: suíte com 49
+  testes automatizados no total (`packages/db` 17, `packages/core` 24, `packages/ai` 6,
+  `apps/worker` 2 — cobrindo motor de disponibilidade, `AgendaService`, isolamento de
+  tenant, contrato de tools, migração e job de no-show) + fluxo completo exercido via HTTP
+  real (curl) em cada grupo de tasks + boot real do worker com filas/cron confirmados no
+  Postgres. Ver
+  [apps/web/README.md](apps/web/README.md) e
+  [docs/operations/onboarding-produto.md](docs/operations/onboarding-produto.md). Change
+  **concluída (Done)**: specs permanentes atualizadas
+  ([openspec/specs/agendamento/spec.md](openspec/specs/agendamento/spec.md) nova,
+  [openspec/specs/crm-clientes/spec.md](openspec/specs/crm-clientes/spec.md) evoluída),
+  change arquivada em `openspec/changes/archive/add-agendamento/`. [add-agendamento]
 - **Primeiro código de produto do repositório**: CRM de Clientes (Fase 1), aprovado e
   implementado (`add-crm-clientes`). Monorepo pnpm com `apps/web` (Next.js, painel do
   barbeiro) e `packages/db` (Drizzle + Postgres): cadastro/edição/exclusão (LGPD) de
