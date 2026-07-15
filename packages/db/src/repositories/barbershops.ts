@@ -14,6 +14,11 @@ export async function getBarbershop(barbershopId: string): Promise<BarbershopRec
   return rows[0] ?? null;
 }
 
+/** Todas as barbearias — uso restrito a varreduras de sistema do worker (cross-tenant). */
+export async function listBarbershops(): Promise<BarbershopRecord[]> {
+  return db.select().from(barbershops);
+}
+
 export async function createBarbershop(slug: string, name: string) {
   const [row] = await db.insert(barbershops).values({ slug, name }).returning();
   if (!row) throw new Error("Falha inesperada ao criar barbearia");

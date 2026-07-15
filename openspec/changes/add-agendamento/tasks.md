@@ -314,7 +314,8 @@
 
 ## 7. Worker — jobs
 
-- [ ] 7.1 Job real `agenda.no-show-sweep`
+- [x] 7.1 Job real `agenda.no-show-sweep`
+  - Evidência: `runNoShowSweep` (usa `AgendaService.markNoShow`, seguro contra corrida/estado inválido) + `registerNoShowSweep` (createQueue+work+schedule). Teste de integração (2/2): marca falta no vencido, ignora o futuro, idempotente. Boot real: fila e cron `*/5 * * * *` confirmados em `pgboss.queue`/`pgboss.schedule`. Bug real corrigido no caminho: `${now}` sem cast em template SQL causava "operator does not exist: timestamptz <= interval" — corrigido com `${now}::timestamptz`.
   - Objective: pg-boss agenda a varredura a cada `NO_SHOW_SWEEP_INTERVAL_MIN`; marca falta nos
     agendamentos ativos vencidos além de `no_show_after_min` (por tenant); idempotente; loga
     quantidade sem PII.
@@ -324,7 +325,8 @@
     cancelado inalterados; rodar 2× não muda nada.
   - Completion criteria: cenários "Varredura automática de falta" verdes.
 
-- [ ] 7.2 Esqueletos honestos de confirmação e reativação
+- [x] 7.2 Esqueletos honestos de confirmação e reativação
+  - Evidência: `send-confirmation.ts` (seleção via `listAppointmentsNeedingConfirmation`, cron `0 * * * *`) e `reactivation-sweep.ts` (reaproveita `getDashboard`/`isClientInactive` da Fase 1, cron `0 8 * * *`) — ambos só logam ("envio real pendente da Fase 5"), sem chamada externa; log sem PII (nome/telefone de cliente nunca aparece, só slug da barbearia e contagens). Registrados e confirmados em `pgboss.queue`/`pgboss.schedule` no boot real.
   - Objective: `agenda.send-confirmation` (seleciona agendamentos a `confirmation_lead_hours`)
     e `crm.reactivation-sweep` (seleciona inativos, regra da Fase 1) — executam a **seleção** e
     **registram (log) o que enviariam**, sem canal de envio (Fase 5).

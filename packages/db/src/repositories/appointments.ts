@@ -1,6 +1,10 @@
 import { and, asc, eq, gt, gte, inArray, lt, lte, ne, sql } from "drizzle-orm";
 import { db } from "../client";
-import { agendaSettings, DEFAULT_NO_SHOW_AFTER_MIN } from "../schema/agenda-settings";
+import {
+  agendaSettings,
+  DEFAULT_CONFIRMATION_LEAD_HOURS,
+  DEFAULT_NO_SHOW_AFTER_MIN,
+} from "../schema/agenda-settings";
 import { appointments } from "../schema/appointments";
 import { paymentsLog } from "../schema/payments-log";
 import { visits } from "../schema/visits";
@@ -275,7 +279,30 @@ export async function listNoShowCandidates(
     .where(
       and(
         inArray(appointments.status, ACTIVE_STATUSES),
-        lte(appointments.endsAt, sql`${now} - (${thresholdMin} * interval '1 minute')`),
+        lte(appointments.endsAt, sql`${now}::timestamptz - (${thresholdMin} * interval '1 minute')`),
+      ),
+    );
+}
+
+/**
+ * Agendamentos "agendado" (ainda não confirmados) cujo início cai dentro da
+ * janela de confirmação da barbearia (`confirmation_lead_hours`), em TODOS os
+ * tenants — esqueleto do worker (Fase 2): seleciona quem SERIA notificado; o
+ * envio real é da Fase 5 (`whatsapp-canal`).
+ */
+export async function listAppointmentsNeedingConfirmation(
+  now: Date,
+): Promise<{ id: string; barbershopId: string; startsAt: Date }[]> {
+  const leadHours = sql`coalesce(${agendaSettings.confirmationLeadHours}, ${DEFAULT_CONFIRMATION_LEAD_HOURS})`;
+  return db
+    .select({ id: appointments.id, barbershopId: appointments.barbershopId, startsAt: appointments.startsAt })
+    .from(appointments)
+    .leftJoin(agendaSettings, eq(agendaSettings.barbershopId, appointments.barbershopId))
+    .where(
+      and(
+        eq(appointments.status, "agendado"),
+        gte(appointments.startsAt, now),
+        lte(appointments.startsAt, sql`${now}::timestamptz + (${leadHours} * interval '1 hour')`),
       ),
     );
 }
