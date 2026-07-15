@@ -9,6 +9,7 @@
     "generate": "drizzle-kit generate",
     "migrate": "tsx src/migrate.ts",
     "migrate-automation": "tsx src/scripts/migrate-automation-data.ts",
+    "migrate-automation-agenda": "tsx src/scripts/migrate-automation-agenda.ts",
     "create-barbershop": "tsx src/scripts/create-barbershop.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

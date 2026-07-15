@@ -348,7 +348,8 @@
 
 ## 9. Migração opcional do preset da automação
 
-- [ ] 9.1 Import idempotente de serviços/barbeiros/horário
+- [x] 9.1 Import idempotente de serviços/barbeiros/horário
+  - Evidência: `migrate-automation-agenda.ts` (irmão de `migrate-automation-data.ts`, mesmo padrão dry-run/--apply). Teste dry-run (1/1, sem banco): conta válidos, pula malformados (nome ausente, duração inválida, placeholder "PREENCHER"), reporta divergência de preço não numérico. Validado via CLI real contra Postgres: dry-run → `--apply` (2 serviços + 1 barbeiro + 6 janelas de grade criados, "Barba" sem preço por preço não numérico) → `--apply` de novo (0 criados, 4 pulados por idempotência, sem duplicar). Premissa documentada no código: grade do preset é do negócio, aplicada igualmente a todo barbeiro importado (ajustável depois nas telas).
   - Objective: script irmão do `migrate-automation-data.ts` que lê `servicos`/`barbeiros`/
     `horario_funcionamento` do preset da barbearia e cria serviços, barbeiros e grade; dry-run
     + relatório de divergências; idempotente.
