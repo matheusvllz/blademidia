@@ -1,4 +1,4 @@
-import { deleteClient, getClient, updateClient } from "@blademidia/db";
+import { cancelFutureAppointmentsForClient, deleteClient, getClient, updateClient } from "@blademidia/db";
 import { NextResponse } from "next/server";
 import { requireSessionApi } from "@/lib/auth";
 
@@ -42,6 +42,11 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
+
+  // LGPD (Fase 2): cancela os agendamentos futuros do cliente ANTES de anonimizar,
+  // liberando os horários; os agregados de histórico seguem preservados (Fase 1).
+  await cancelFutureAppointmentsForClient(auth.barbershopId, id, new Date(), "cliente excluído (LGPD)");
+
   const deleted = await deleteClient(auth.barbershopId, id);
   if (!deleted) {
     return NextResponse.json({ error: "cliente não encontrado" }, { status: 404 });

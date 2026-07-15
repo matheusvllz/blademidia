@@ -1,7 +1,16 @@
-import { getClient, getInactivityThreshold, isClientInactive, listVisitsForClient } from "@blademidia/db";
+import {
+  getBarber,
+  getClient,
+  getInactivityThreshold,
+  getService,
+  isClientInactive,
+  listUpcomingForClient,
+  listVisitsForClient,
+} from "@blademidia/db";
 import { notFound } from "next/navigation";
 import { requireSessionPage } from "@/lib/auth";
 import { ClientProfileActions } from "@/components/client-profile-actions";
+import { NextAppointmentCard, type NextAppointmentInfo } from "@/components/next-appointment-card";
 
 function formatDate(date: Date): string {
   return new Date(date).toLocaleDateString("pt-BR");
@@ -26,13 +35,28 @@ export default async function ClientProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  const [visits, threshold] = await Promise.all([
+  const [visits, threshold, upcoming] = await Promise.all([
     listVisitsForClient(session.barbershopId, id),
     getInactivityThreshold(session.barbershopId),
+    listUpcomingForClient(session.barbershopId, id, new Date()),
   ]);
 
   const lastVisit = visits[0] ?? null;
   const inactive = isClientInactive(lastVisit?.occurredAt ?? null, threshold);
+
+  const nextAppointmentRow = upcoming[0] ?? null;
+  let nextAppointment: NextAppointmentInfo | null = null;
+  if (nextAppointmentRow) {
+    const [service, barber] = await Promise.all([
+      getService(session.barbershopId, nextAppointmentRow.serviceId),
+      getBarber(session.barbershopId, nextAppointmentRow.barberId),
+    ]);
+    nextAppointment = {
+      serviceName: service?.name ?? "(serviço removido)",
+      barberName: barber?.name ?? "(barbeiro removido)",
+      startsAt: nextAppointmentRow.startsAt,
+    };
+  }
 
   // "Evolução do cliente" (premissa do design — validar layout com Vítor):
   // frequência média entre visitas, a partir do histórico existente.
@@ -62,7 +86,7 @@ export default async function ClientProfilePage({ params }: PageProps) {
         <p className="card-blade mb-6 text-sm text-steel">{client.notes}</p>
       )}
 
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="card-blade">
           <p className="label-blade mb-1">Total de atendimentos</p>
           <p className="font-display text-3xl font-black text-ink">{visits.length}</p>
@@ -79,6 +103,7 @@ export default async function ClientProfilePage({ params }: PageProps) {
             {averageIntervalDays != null ? `a cada ${averageIntervalDays} dias` : "—"}
           </p>
         </div>
+        <NextAppointmentCard appointment={nextAppointment} />
       </div>
 
       <ClientProfileActions clientId={client.id} />

@@ -1,4 +1,10 @@
-import { getDashboard } from "@blademidia/db";
+import { instantToZonedDateISO, zonedDayBounds } from "@blademidia/core";
+import {
+  countAppointmentsByStatus,
+  getBarbershop,
+  getDashboard,
+  listRecentNoShows,
+} from "@blademidia/db";
 import Link from "next/link";
 import { requireSessionPage } from "@/lib/auth";
 
@@ -14,13 +20,56 @@ function formatDate(date: Date | null): string {
 
 export default async function DashboardPage() {
   const session = await requireSessionPage();
-  const dashboard = await getDashboard(session.barbershopId);
+  const [dashboard, shop] = await Promise.all([
+    getDashboard(session.barbershopId),
+    getBarbershop(session.barbershopId),
+  ]);
+
+  const timezone = shop?.timezone ?? "America/Sao_Paulo";
+  const todayISO = instantToZonedDateISO(new Date(), timezone);
+  const { start, end } = zonedDayBounds(todayISO, timezone);
+  const [todayByStatus, recentNoShows] = await Promise.all([
+    countAppointmentsByStatus(session.barbershopId, start, end),
+    listRecentNoShows(session.barbershopId, 5),
+  ]);
+  const todayTotal =
+    (todayByStatus.agendado ?? 0) + (todayByStatus.confirmado ?? 0) + (todayByStatus.concluido ?? 0);
 
   const isEmpty = dashboard.totalClients === 0;
 
   return (
     <div>
       <h1 className="mb-6 font-display text-3xl font-black uppercase text-ink">Dashboard</h1>
+
+      <section className="mb-8">
+        <h2 className="mb-3 font-display text-xl font-bold uppercase text-ink">Agenda de hoje</h2>
+        {todayTotal === 0 && recentNoShows.length === 0 ? (
+          <p className="card-blade text-steel">Nenhum agendamento para hoje.</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="card-blade">
+              <p className="label-blade mb-1">Agendados</p>
+              <p className="font-display text-3xl font-black text-steel">{todayByStatus.agendado ?? 0}</p>
+            </div>
+            <div className="card-blade">
+              <p className="label-blade mb-1">Confirmados</p>
+              <p className="font-display text-3xl font-black text-alert-green">
+                {todayByStatus.confirmado ?? 0}
+              </p>
+            </div>
+            <div className="card-blade">
+              <p className="label-blade mb-1">Concluídos</p>
+              <p className="font-display text-3xl font-black text-gold-dark">
+                {todayByStatus.concluido ?? 0}
+              </p>
+            </div>
+            <div className="card-blade">
+              <p className="label-blade mb-1">Faltas recentes</p>
+              <p className="font-display text-3xl font-black text-alert-red">{recentNoShows.length}</p>
+            </div>
+          </div>
+        )}
+      </section>
 
       {isEmpty ? (
         <div className="card-blade text-center">

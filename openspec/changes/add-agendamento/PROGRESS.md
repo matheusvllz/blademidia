@@ -14,7 +14,7 @@
 | 3 | API interna (rotas) | ✅ **completo e commitado** (validado via HTTP real ponta a ponta) |
 | 4 | Telas de configuração | ✅ **completo e commitado** (validado via HTTP real) |
 | 5 | Telas da Agenda | ✅ **completo e commitado** (validado via HTTP real ponta a ponta) |
-| 6 | Integração CRM | ⬜ pendente |
+| 6 | Integração CRM | ✅ **completo e commitado** (validado via HTTP real) |
 | 7 | Worker jobs | ⬜ pendente |
 | 8 | IA — tools em packages/ai | ⬜ pendente |
 | 9 | Migração do preset da automação | ⬜ pendente |

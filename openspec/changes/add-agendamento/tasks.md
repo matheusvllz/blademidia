@@ -283,7 +283,8 @@
 
 ## 6. Integração com o CRM (apps/web)
 
-- [ ] 6.1 Próximo agendamento + agendar no perfil do cliente
+- [x] 6.1 Próximo agendamento + agendar no perfil do cliente
+  - Evidência: `NextAppointmentCard` no perfil (`/clientes/[id]`, 4ª coluna do grid). Testado via HTTP real: sem agendamento → estado vazio + link "Agendar"; com agendamento futuro → mostra serviço e barbeiro corretos.
   - Objective: `/clientes/[id]` ganha card "Próximo agendamento" (`NextAppointmentCard`) e botão
     "Agendar"; histórico mostra serviço/barbeiro do catálogo quando houver.
   - Likely files: `app/clientes/[id]/page.tsx`, `components/NextAppointmentCard.tsx`.
@@ -291,7 +292,8 @@
   - Validation: e2e — perfil com e sem agendamento futuro (estado vazio + ação).
   - Completion criteria: cenários "Próximo agendamento no perfil" verdes.
 
-- [ ] 6.2 Exclusão LGPD abrange agendamentos futuros
+- [x] 6.2 Exclusão LGPD abrange agendamentos futuros
+  - Evidência: `DELETE /api/clients/[id]` chama `cancelFutureAppointmentsForClient` antes de anonimizar. Testado via HTTP real: cliente com agendamento futuro → excluído → agendamento vira `status:"cancelado"`, `cancelReason:"cliente excluído (LGPD)"`, horário liberado.
   - Objective: `deleteClient` cancela/anonimiza agendamentos futuros do cliente; agenda e
     agregados não quebram.
   - Likely files: `packages/db/src/repositories/clients.ts` (ou via `packages/core`),
@@ -301,7 +303,8 @@
     horário liberado, identidade removida.
   - Completion criteria: cenário "Exclusão de cliente com agendamento futuro" verde.
 
-- [ ] 6.3 Dashboard com agenda de hoje
+- [x] 6.3 Dashboard com agenda de hoje
+  - Evidência: `/` (page.tsx, chama repositórios direto como a Fase 1 já fazia) +seção "Agenda de hoje" (agendados/confirmados/concluídos/faltas recentes), fuso da barbearia via `zonedDayBounds`. Testado via HTTP real: estado vazio explícito sem agenda configurada.
   - Objective: `/` mostra resumo dos agendamentos de hoje e faltas recentes; estado vazio quando
     não há agenda configurada.
   - Likely files: `app/page.tsx`, `components/*`.
