@@ -12,3 +12,8 @@ export * from "./work-schedules";
 export * from "./schedule-exceptions";
 export * from "./appointments";
 export * from "./agenda-settings";
+// Fase 3 — relatórios
+export * from "./report-snapshots";
+// Fase 4 — fidelização + papel de funcionário
+export * from "./loyalty-settings";
+export * from "./loyalty-redemptions";

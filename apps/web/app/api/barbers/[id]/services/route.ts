@@ -1,7 +1,7 @@
 import { getBarber, getBarberServiceIds, setBarberServices } from "@blademidia/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireSessionApi } from "@/lib/auth";
+import { requireOwnerSessionApi, requireSessionApi } from "@/lib/auth";
 import { parseBody } from "@/lib/api";
 
 interface RouteParams {
@@ -18,8 +18,9 @@ export async function GET(_request: Request, { params }: RouteParams) {
 
 const putSchema = z.object({ serviceIds: z.array(z.string()) });
 
+/** Dono-only (matriz de autorização do design.md). */
 export async function PUT(request: Request, { params }: RouteParams) {
-  const auth = await requireSessionApi();
+  const auth = await requireOwnerSessionApi();
   if (auth instanceof NextResponse) return auth;
   const { id } = await params;
 

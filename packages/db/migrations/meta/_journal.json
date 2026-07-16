@@ -15,6 +15,20 @@
       "when": 1784063220337,
       "tag": "0001_magenta_skaar",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784158316785,
+      "tag": "0002_faulty_warlock",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784164842630,
+      "tag": "0003_strong_spacker_dave",
+      "breakpoints": true
     }
   ]
 }

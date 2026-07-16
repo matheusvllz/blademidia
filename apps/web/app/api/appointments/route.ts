@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireSessionApi } from "@/lib/auth";
 import { agendaErrorResponse, parseBody } from "@/lib/api";
+import { assertWriteBarberId, scopeReadBarberId } from "@/lib/agenda-scope";
 
 export async function GET(request: Request) {
   const auth = await requireSessionApi();
@@ -15,7 +16,7 @@ export async function GET(request: Request) {
   if (!from || !to) {
     return NextResponse.json({ error: "from e to (ISO) são obrigatórios" }, { status: 400 });
   }
-  const barberId = url.searchParams.get("barberId") ?? undefined;
+  const barberId = scopeReadBarberId(auth, url.searchParams.get("barberId") ?? undefined);
   const appointments = await listAppointments(auth.barbershopId, {
     from: new Date(from),
     to: new Date(to),
@@ -38,6 +39,14 @@ export async function POST(request: Request) {
 
   const { data, response } = await parseBody(request, createSchema);
   if (response) return response;
+
+  const writeCheck = assertWriteBarberId(auth, data.barberId);
+  if (!writeCheck.ok) {
+    return NextResponse.json(
+      { error: "funcionário só pode criar agendamento para o próprio barbeiro" },
+      { status: 403 },
+    );
+  }
 
   const result = await bookAppointment(auth.barbershopId, {
     clientId: data.clientId,

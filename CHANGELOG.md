@@ -5,6 +5,85 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 ## [Unreleased]
 
 ### Added
+- **Fidelização de clientes + Papel de funcionário (Fase 4)**
+  (`add-fidelizacao-e-funcionarios`), aprovada e implementada. Duas capabilities novas,
+  deliberadamente combinadas numa change só (decisão registrada de Vítor, apesar do risco de
+  escopo maior sinalizado):
+  - **`fidelizacao-clientes`**: contagem simples de visitas por cliente (não pontos), sinalização
+    de "meta atingida" no perfil e no dashboard ("clientes prontos para resgate"), resgate
+    explícito que reinicia a contagem, limite configurável por barbearia (padrão 6). Puramente
+    informativa — nunca aplica desconto automático (o sistema não processa pagamento). Contagem
+    calculada ON-THE-FLY a partir de `visits` (nunca um contador mutável, para não divergir dos
+    dois pontos que criam visita), com `clients.loyalty_baseline_at` garantindo que histórico
+    anterior à ativação não conta.
+  - **`auth-tenancy`** (primeira vez especificada — antes só candidata): papel `dono`/
+    `funcionario` em `crm_users`, funcionário **vinculado a um barbeiro** do catálogo da agenda
+    (login opcional, criado/gerido pelo dono em Configurações → Barbeiros & Horários, sem
+    convite por e-mail). Funcionário só vê e opera a **própria agenda** (dia/semana/grade,
+    criar/confirmar/concluir/remarcar/cancelar/falta) e o CRM de clientes compartilhado; **sem
+    acesso** a relatórios financeiros, Configurações (serviços/preços/barbeiros/funcionários/
+    regras da agenda) nem exclusão de cliente (LGPD). Retrofit sistemático de autorização em
+    toda rota/página existente sensível (~25 rotas), guiado por uma matriz de autorização
+    explícita no `design.md`. Sessões emitidas antes desta capability continuam válidas, lidas
+    como `dono` — sem forçar logout no deploy. **Achado de segurança pego e corrigido durante a
+    implementação**: as rotas de gestão de login inicialmente devolviam o registro completo do
+    usuário (incluindo o hash da senha) no JSON de resposta e nas props do componente React —
+    corrigido antes de qualquer verificação externa, agora só `{id, emailOrPhone, active}` sai
+    da API. Verificado de verdade: 104 testes automatizados (`packages/db` 41, `packages/core`
+    44, `apps/web` 7 — primeiro teste unitário do app, adicionado propositalmente para a lógica
+    de autorização — `packages/ai` 6, `apps/worker` 6) + suíte extensa de HTTP real como
+    funcionário tentando cada ação restrita (403/404 confirmados) e como dono confirmando
+    ausência de regressão, incluindo teste explícito de sessão antiga pré-Fase-4 continuando
+    autenticada. `pnpm lint`/`typecheck`/`test`/`build` limpos. Change **concluída (Done)**:
+    specs permanentes novas em
+    [openspec/specs/fidelizacao-clientes/spec.md](openspec/specs/fidelizacao-clientes/spec.md) e
+    [openspec/specs/auth-tenancy/spec.md](openspec/specs/auth-tenancy/spec.md), delta aplicado em
+    [openspec/specs/agendamento/spec.md](openspec/specs/agendamento/spec.md), change arquivada em
+    `openspec/changes/archive/add-fidelizacao-e-funcionarios/`.
+    [add-fidelizacao-e-funcionarios]
+- **Agenda — visão semanal em grade** (`add-agenda-visao-semanal`), aprovada e implementada.
+  Adiciona à tela `/agenda` uma visão em grade (dias × horários, como um planner) como
+  alternativa às visões de dia e semana-por-barbeiro já existentes — não as substitui. Toggle
+  **todos os barbeiros** (célula consolidada, cards empilhados) ou **um barbeiro** (com
+  seletor); navegação entre semanas; indicador de **ocupação da semana** no rodapé
+  ("N/M · P% cheia"), usando a **mesma função** de capacidade/ocupação da capability
+  `relatorios` (`packages/core/agenda/capacity.ts`, ADR-0010) — as duas telas nunca divergem no
+  mesmo número. Grade **interativa**: clicar célula vazia abre a criação de agendamento com
+  dia/horário pré-preenchidos (reusando o `AppointmentForm` da Fase 2 sem nenhuma regra nova);
+  clicar um card abre o detalhe/ações já existentes. Dias e horas da grade derivam da grade de
+  trabalho real da barbearia (nunca fixo seg–sex). Nova rota fina `GET /api/agenda/occupancy`.
+  Verificado de verdade: `pnpm lint`/`typecheck`/`test`/`build` limpos; fluxo completo via HTTP
+  real (barbeiro com grade 09–18 seg–sex → agendamento criado e confirmado → ocupação 1/90
+  refletida corretamente na rota; página `/agenda?view=grade` renderiza sem erro). Change
+  **concluída (Done)**: delta aplicado a
+  [openspec/specs/agendamento/spec.md](openspec/specs/agendamento/spec.md), change arquivada em
+  `openspec/changes/archive/add-agenda-visao-semanal/`. [add-agenda-visao-semanal]
+- **Relatórios (Fase 3)**, aprovada e implementada (`add-relatorios`). Entrega os indicadores
+  operacionais que os dados de hoje sustentam — faturamento registrado, atendimentos, ticket
+  médio, clientes novos/atendidos, ocupação da agenda, faltas/cancelamentos, rankings de
+  serviço e de barbeiro, comparação com o período anterior — por período livre ou por preset
+  (mês atual, mês passado, últimos 7 dias, trimestre). **Achado de arquiteto registrado na
+  exploração**: as 4 métricas do relatório *comercial* prometido (reativados automáticos,
+  no-show evitado por confirmação, mensagens do bot, R$ recuperado) dependem estruturalmente
+  da Fase 5 (mensageria/IA, ainda não implementada) — por decisão de Vítor, esta change entrega
+  o que é medível hoje e deixa a fundação pronta, sem exibir as métricas causais como zero
+  enganoso. Tela `/relatorios` (seletor de período + indicadores) e exportação **PDF**
+  apresentável (`@react-pdf/renderer`, sem headless browser — orçamento D4). **Snapshot mensal
+  automático** no worker (`relatorios.monthly-snapshot`, cron `5 0 1 * *`, idempotente por
+  `(barbershop_id, ano, mês)`), com colunas reservadas e nulas para as métricas causais da
+  Fase 5. Nova capability compartilhada **capacidade/ocupação da agenda**
+  (`packages/core/agenda/capacity.ts`, ADR-0010) — mesma função usada pela change
+  `add-agenda-visao-semanal`, para as duas telas nunca divergirem no mesmo número. Envio
+  automático **não** faz parte desta fase (acoplado à Fase 5 por decisão explícita — ver
+  proposal). Verificado de verdade: suíte com 83 testes automatizados no total (`packages/db`
+  27, `packages/core` 44, `packages/ai` 6, `apps/worker` 6) + fluxo completo via HTTP real
+  (login → seed de cliente/atendimento → `/api/relatorios` → PDF real conferido visualmente) +
+  boot real do worker com fila/cron confirmados no Postgres (`pgboss.queue`/
+  `pgboss.schedule`) + regressão LGPD (exclusão de cliente preserva agregados de período
+  fechado). `pnpm lint`/`typecheck`/`test`/`build` limpos. Change **concluída (Done)**: spec
+  permanente nova em
+  [openspec/specs/relatorios/spec.md](openspec/specs/relatorios/spec.md), change arquivada em
+  `openspec/changes/archive/add-relatorios/`. [add-relatorios]
 - **Agenda integrada (Fase 2)**, aprovada e implementada (`add-agendamento`). Evolui o CRM
   (Fase 1) para uma plataforma operacional completa: catálogo de serviços (nome, duração,
   preço de tabela) e barbeiros (recurso da agenda, sem login), grade semanal por barbeiro

@@ -4,9 +4,19 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireSessionApi } from "@/lib/auth";
 import { agendaErrorResponse, parseBody } from "@/lib/api";
+import { isOwnAppointment } from "@/lib/agenda-scope";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
+}
+
+/**
+ * Funcionário (Fase 4) só age sobre o próprio agendamento — divergência é
+ * tratada como "não encontrado" (mesma fronteira do isolamento de tenant,
+ * Decision 4 do design.md), não 403.
+ */
+function notFoundResponse(): NextResponse {
+  return NextResponse.json({ error: "não encontrado" }, { status: 404 });
 }
 
 export async function GET(_request: Request, { params }: RouteParams) {
@@ -14,7 +24,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
   if (auth instanceof NextResponse) return auth;
   const { id } = await params;
   const appointment = await getAppointment(auth.barbershopId, id);
-  if (!appointment) return NextResponse.json({ error: "não encontrado" }, { status: 404 });
+  if (!appointment || !isOwnAppointment(auth, appointment)) return notFoundResponse();
   return NextResponse.json({ appointment });
 }
 
@@ -27,6 +37,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   const auth = await requireSessionApi();
   if (auth instanceof NextResponse) return auth;
   const { id } = await params;
+
+  const existing = await getAppointment(auth.barbershopId, id);
+  if (!existing || !isOwnAppointment(auth, existing)) return notFoundResponse();
 
   const { data, response } = await parseBody(request, patchSchema);
   if (response) return response;
@@ -44,6 +57,10 @@ export async function DELETE(request: Request, { params }: RouteParams) {
   const auth = await requireSessionApi();
   if (auth instanceof NextResponse) return auth;
   const { id } = await params;
+
+  const existing = await getAppointment(auth.barbershopId, id);
+  if (!existing || !isOwnAppointment(auth, existing)) return notFoundResponse();
+
   const reason = new URL(request.url).searchParams.get("reason");
   const result = await cancelAppointment(auth.barbershopId, id, reason);
   if (!result.ok) return agendaErrorResponse(result.reason);

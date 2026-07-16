@@ -307,36 +307,46 @@ export async function listAppointmentsNeedingConfirmation(
     );
 }
 
-/** Faltas mais recentes (dashboard: "clientes que sumiram do agendamento"). */
+/**
+ * Faltas mais recentes (dashboard: "clientes que sumiram do agendamento").
+ * `barberId` opcional (Fase 4): dashboard do funcionário mostra só as próprias.
+ */
 export async function listRecentNoShows(
   barbershopId: string,
   limit: number,
+  barberId?: string,
 ): Promise<AppointmentRecord[]> {
+  const conditions = [eq(appointments.barbershopId, barbershopId), eq(appointments.status, "faltou")];
+  if (barberId) conditions.push(eq(appointments.barberId, barberId));
   return db
     .select()
     .from(appointments)
-    .where(and(eq(appointments.barbershopId, barbershopId), eq(appointments.status, "faltou")))
+    .where(and(...conditions))
     .orderBy(sql`${appointments.startsAt} desc`)
     .limit(limit);
 }
 
-/** Contagem de agendamentos por status num intervalo (dashboard). */
+/**
+ * Contagem de agendamentos por status num intervalo (dashboard). `barberId`
+ * opcional (Fase 4): dashboard do funcionário mostra só a própria agenda.
+ */
 export async function countAppointmentsByStatus(
   barbershopId: string,
   from: Date,
   to: Date,
+  barberId?: string,
 ): Promise<Record<string, number>> {
+  const conditions = [
+    eq(appointments.barbershopId, barbershopId),
+    gte(appointments.startsAt, from),
+    lt(appointments.startsAt, to),
+    ne(appointments.status, "cancelado"),
+  ];
+  if (barberId) conditions.push(eq(appointments.barberId, barberId));
   const rows = await db
     .select({ status: appointments.status, count: sql<number>`count(*)::int` })
     .from(appointments)
-    .where(
-      and(
-        eq(appointments.barbershopId, barbershopId),
-        gte(appointments.startsAt, from),
-        lt(appointments.startsAt, to),
-        ne(appointments.status, "cancelado"),
-      ),
-    )
+    .where(and(...conditions))
     .groupBy(appointments.status);
   const result: Record<string, number> = {};
   for (const row of rows) result[row.status] = row.count;

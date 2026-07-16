@@ -1,9 +1,9 @@
 import { listBarbers } from "@blademidia/db";
-import { requireSessionPage } from "@/lib/auth";
+import { requireOwnerSessionPage } from "@/lib/auth";
 import { BarbersBoard } from "@/components/barbers-board";
 
 export default async function BarbeirosPage() {
-  const session = await requireSessionPage();
+  const session = await requireOwnerSessionPage();
   const barbers = await listBarbers(session.barbershopId);
 
   return (

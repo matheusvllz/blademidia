@@ -31,3 +31,27 @@ export async function requireSessionApi(): Promise<SessionData | NextResponse> {
   }
   return session;
 }
+
+/**
+ * Fase 4 (`auth-tenancy`, Decision 3 do design.md de
+ * `add-fidelizacao-e-funcionarios`): para rotas restritas ao papel `dono`
+ * (relatórios, configurações, gestão de funcionário, exclusão LGPD). 401 sem
+ * sessão, 403 se `role !== "dono"`.
+ */
+export async function requireOwnerSessionApi(): Promise<SessionData | NextResponse> {
+  const session = await requireSessionApi();
+  if (session instanceof NextResponse) return session;
+  if (session.role !== "dono") {
+    return NextResponse.json({ error: "acesso restrito ao dono da barbearia" }, { status: 403 });
+  }
+  return session;
+}
+
+/** Equivalente de `requireOwnerSessionApi` para Server Components (páginas). */
+export async function requireOwnerSessionPage(): Promise<SessionData> {
+  const session = await requireSessionPage();
+  if (session.role !== "dono") {
+    redirect("/");
+  }
+  return session;
+}

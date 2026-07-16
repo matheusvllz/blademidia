@@ -19,6 +19,8 @@ export async function POST(request: Request) {
   const cookieValue = await createSessionCookieValue({
     userId: user.id,
     barbershopId: user.barbershopId,
+    role: user.role,
+    barberId: user.barberId,
   });
   const response = NextResponse.json({ ok: true });
   response.cookies.set(SESSION_COOKIE_NAME, cookieValue, {

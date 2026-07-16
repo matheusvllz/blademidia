@@ -41,9 +41,18 @@ async function getSigningKey(): Promise<CryptoKey> {
   );
 }
 
+export type AppUserRole = "dono" | "funcionario";
+
 export interface SessionData {
   userId: string;
   barbershopId: string;
+  /** Fase 4 (`auth-tenancy`). Sessão emitida antes desta capability não tem
+   * este campo no payload decodificado — `parseSessionCookieValue` resolve
+   * como `"dono"` na leitura, sem forçar logout (Decision 2 do design.md de
+   * `add-fidelizacao-e-funcionarios`). */
+  role: AppUserRole;
+  /** Obrigatório quando `role === "funcionario"`; sempre `null` para `dono`. */
+  barberId: string | null;
   exp: number;
 }
 
@@ -53,6 +62,15 @@ export async function createSessionCookieValue(data: Omit<SessionData, "exp">): 
   const key = await getSigningKey();
   const signatureBuffer = await crypto.subtle.sign("HMAC", key, encoder.encode(payload));
   return `${payload}.${bufferToBase64Url(signatureBuffer)}`;
+}
+
+/** Formato do payload decodificado ANTES de `role`/`barberId` existirem (sessões pré-Fase 4). */
+interface LegacySessionPayload {
+  userId: string;
+  barbershopId: string;
+  role?: AppUserRole;
+  barberId?: string | null;
+  exp: number;
 }
 
 export async function parseSessionCookieValue(
@@ -72,9 +90,15 @@ export async function parseSessionCookieValue(
   if (!valid) return null;
 
   try {
-    const session = JSON.parse(decoder.decode(base64UrlToBuffer(payload))) as SessionData;
-    if (session.exp < Date.now()) return null;
-    return session;
+    const raw = JSON.parse(decoder.decode(base64UrlToBuffer(payload))) as LegacySessionPayload;
+    if (raw.exp < Date.now()) return null;
+    return {
+      userId: raw.userId,
+      barbershopId: raw.barbershopId,
+      role: raw.role ?? "dono",
+      barberId: raw.barberId ?? null,
+      exp: raw.exp,
+    };
   } catch {
     return null;
   }

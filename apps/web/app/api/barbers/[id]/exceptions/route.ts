@@ -1,7 +1,7 @@
 import { createException, getBarber, listExceptionsForBarber } from "@blademidia/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireSessionApi } from "@/lib/auth";
+import { requireOwnerSessionApi, requireSessionApi } from "@/lib/auth";
 import { parseBody } from "@/lib/api";
 
 interface RouteParams {
@@ -30,8 +30,9 @@ const postSchema = z.object({
   reason: z.string().nullish(),
 });
 
+/** Dono-only (matriz de autorização do design.md). */
 export async function POST(request: Request, { params }: RouteParams) {
-  const auth = await requireSessionApi();
+  const auth = await requireOwnerSessionApi();
   if (auth instanceof NextResponse) return auth;
   const { id } = await params;
 

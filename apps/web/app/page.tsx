@@ -3,6 +3,7 @@ import {
   countAppointmentsByStatus,
   getBarbershop,
   getDashboard,
+  listClientsReadyForRedemption,
   listRecentNoShows,
 } from "@blademidia/db";
 import Link from "next/link";
@@ -20,17 +21,60 @@ function formatDate(date: Date | null): string {
 
 export default async function DashboardPage() {
   const session = await requireSessionPage();
-  const [dashboard, shop] = await Promise.all([
-    getDashboard(session.barbershopId),
-    getBarbershop(session.barbershopId),
-  ]);
 
-  const timezone = shop?.timezone ?? "America/Sao_Paulo";
+  const timezone = (await getBarbershop(session.barbershopId))?.timezone ?? "America/Sao_Paulo";
   const todayISO = instantToZonedDateISO(new Date(), timezone);
   const { start, end } = zonedDayBounds(todayISO, timezone);
-  const [todayByStatus, recentNoShows] = await Promise.all([
+
+  // Funcionário (Fase 4, Decision 5 do design.md): só "agenda de hoje" e
+  // "faltas recentes", escopadas ao próprio barbeiro — sem indicadores de
+  // negócio (ativos/inativos/ticket médio/reativação/fidelização).
+  if (session.role === "funcionario") {
+    const [todayByStatus, recentNoShows] = await Promise.all([
+      countAppointmentsByStatus(session.barbershopId, start, end, session.barberId ?? undefined),
+      listRecentNoShows(session.barbershopId, 5, session.barberId ?? undefined),
+    ]);
+    const todayTotal =
+      (todayByStatus.agendado ?? 0) + (todayByStatus.confirmado ?? 0) + (todayByStatus.concluido ?? 0);
+
+    return (
+      <div>
+        <h1 className="mb-6 font-display text-3xl font-black uppercase text-ink">Minha agenda hoje</h1>
+        {todayTotal === 0 && recentNoShows.length === 0 ? (
+          <p className="card-blade text-steel">Nenhum agendamento para hoje.</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="card-blade">
+              <p className="label-blade mb-1">Agendados</p>
+              <p className="font-display text-3xl font-black text-steel">{todayByStatus.agendado ?? 0}</p>
+            </div>
+            <div className="card-blade">
+              <p className="label-blade mb-1">Confirmados</p>
+              <p className="font-display text-3xl font-black text-alert-green">
+                {todayByStatus.confirmado ?? 0}
+              </p>
+            </div>
+            <div className="card-blade">
+              <p className="label-blade mb-1">Concluídos</p>
+              <p className="font-display text-3xl font-black text-gold-dark">
+                {todayByStatus.concluido ?? 0}
+              </p>
+            </div>
+            <div className="card-blade">
+              <p className="label-blade mb-1">Faltas recentes</p>
+              <p className="font-display text-3xl font-black text-alert-red">{recentNoShows.length}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  const [dashboard, todayByStatus, recentNoShows, clientsReadyForRedemption] = await Promise.all([
+    getDashboard(session.barbershopId),
     countAppointmentsByStatus(session.barbershopId, start, end),
     listRecentNoShows(session.barbershopId, 5),
+    listClientsReadyForRedemption(session.barbershopId),
   ]);
   const todayTotal =
     (todayByStatus.agendado ?? 0) + (todayByStatus.confirmado ?? 0) + (todayByStatus.concluido ?? 0);
@@ -103,7 +147,7 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          <section>
+          <section className="mb-8">
             <h2 className="mb-3 font-display text-xl font-bold uppercase text-ink">
               Clientes para reativar
             </h2>
@@ -123,6 +167,31 @@ export default async function DashboardPage() {
                       <span className="font-mono text-xs text-wire">
                         última visita: {formatDate(client.lastVisitAt)}
                       </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section>
+            <h2 className="mb-3 font-display text-xl font-bold uppercase text-ink">
+              Clientes prontos para resgate
+            </h2>
+            {clientsReadyForRedemption.length === 0 ? (
+              <p className="text-steel">Nenhum cliente atingiu a meta de fidelização ainda.</p>
+            ) : (
+              <ul className="space-y-2">
+                {clientsReadyForRedemption.slice(0, 10).map((client) => (
+                  <li key={client.id}>
+                    <Link
+                      href={`/clientes/${client.id}`}
+                      className="card-blade flex items-center justify-between hover:border-gold"
+                    >
+                      <span className="font-body font-medium text-ink">
+                        {client.name ?? "(sem nome)"}
+                      </span>
+                      <span className="badge-ativo">{client.count} visita(s)</span>
                     </Link>
                   </li>
                 ))}

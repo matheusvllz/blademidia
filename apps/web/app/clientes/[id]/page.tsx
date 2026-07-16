@@ -2,6 +2,7 @@ import {
   getBarber,
   getClient,
   getInactivityThreshold,
+  getLoyaltyStatus,
   getService,
   isClientInactive,
   listUpcomingForClient,
@@ -10,6 +11,7 @@ import {
 import { notFound } from "next/navigation";
 import { requireSessionPage } from "@/lib/auth";
 import { ClientProfileActions } from "@/components/client-profile-actions";
+import { LoyaltyCard } from "@/components/loyalty-card";
 import { NextAppointmentCard, type NextAppointmentInfo } from "@/components/next-appointment-card";
 
 function formatDate(date: Date): string {
@@ -35,10 +37,11 @@ export default async function ClientProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  const [visits, threshold, upcoming] = await Promise.all([
+  const [visits, threshold, upcoming, loyaltyStatus] = await Promise.all([
     listVisitsForClient(session.barbershopId, id),
     getInactivityThreshold(session.barbershopId),
     listUpcomingForClient(session.barbershopId, id, new Date()),
+    getLoyaltyStatus(session.barbershopId, id),
   ]);
 
   const lastVisit = visits[0] ?? null;
@@ -86,7 +89,7 @@ export default async function ClientProfilePage({ params }: PageProps) {
         <p className="card-blade mb-6 text-sm text-steel">{client.notes}</p>
       )}
 
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <div className="card-blade">
           <p className="label-blade mb-1">Total de atendimentos</p>
           <p className="font-display text-3xl font-black text-ink">{visits.length}</p>
@@ -104,6 +107,7 @@ export default async function ClientProfilePage({ params }: PageProps) {
           </p>
         </div>
         <NextAppointmentCard appointment={nextAppointment} />
+        <LoyaltyCard clientId={client.id} status={loyaltyStatus} />
       </div>
 
       <ClientProfileActions clientId={client.id} />

@@ -15,3 +15,7 @@ export * from "./repositories/work-schedules";
 export * from "./repositories/schedule-exceptions";
 export * from "./repositories/appointments";
 export * from "./repositories/agenda-settings";
+// Fase 3 — relatórios
+export * from "./repositories/reports";
+// Fase 4 — fidelização + papel de funcionário
+export * from "./repositories/loyalty";

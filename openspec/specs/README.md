@@ -9,7 +9,10 @@ aplicados na etapa 11 do [workflow](../workflow.md)).
 | Capability | Spec | Estabelecida por |
 |---|---|---|
 | `crm-clientes` | [crm-clientes/spec.md](crm-clientes/spec.md) | change `add-crm-clientes` (Fase 1, 2026-07-07); estendida por `add-agendamento` (Fase 2, 2026-07-15) |
-| `agendamento` | [agendamento/spec.md](agendamento/spec.md) | change `add-agendamento` (Fase 2, 2026-07-15) |
+| `agendamento` | [agendamento/spec.md](agendamento/spec.md) | change `add-agendamento` (Fase 2, 2026-07-15); estendida por `add-agenda-visao-semanal` (2026-07-15) e `add-fidelizacao-e-funcionarios` (Fase 4, 2026-07-16) |
+| `relatorios` | [relatorios/spec.md](relatorios/spec.md) | change `add-relatorios` (Fase 3, 2026-07-15) |
+| `fidelizacao-clientes` | [fidelizacao-clientes/spec.md](fidelizacao-clientes/spec.md) | change `add-fidelizacao-e-funcionarios` (Fase 4, 2026-07-16) |
+| `auth-tenancy` | [auth-tenancy/spec.md](auth-tenancy/spec.md) | change `add-fidelizacao-e-funcionarios` (Fase 4, 2026-07-16) |
 
 ## Capabilities candidatas (ainda não especificadas)
 
@@ -18,15 +21,12 @@ confirmados quando cada capability receber sua primeira change.
 
 | Capability | Responsabilidade | Observações |
 |---|---|---|
-| `auth-tenancy` | Contas, usuários, papéis e isolamento por barbearia (tenant) | Base de tudo; a Fase 1 do CRM usou um subconjunto mínimo (login único por barbearia); a Fase 2 manteve o mesmo subconjunto (barbeiro é recurso da agenda, sem login); a capability completa (papéis, funcionário) ainda por especificar — Fase 4 |
 | `financeiro-clientes` | Registro de transações por cliente/visita (sem processar pagamento) | Candidata surgida em `add-crm-clientes`; o registro por visita já vive na spec de `crm-clientes` na Fase 1 |
-| `fidelizacao-clientes` | Regra simples de fidelidade (contagem, não pontos) | Candidata surgida em `add-crm-clientes`; Fase 4 do roadmap |
 | `whatsapp-canal` | Envio/recebimento de mensagens; abstração do provedor (D2/ADR-0004) | Risco crítico: ban do número; Fase 5 |
 | `atendimento-ia` | Conversação com IA, roteamento para fluxos, escalação para humano | D3/ADR-0005; Fase 2 (`add-agendamento`) já deixou o contrato de tools pronto (`packages/core/agenda/tools.ts`, re-exposto em `packages/ai`), sem loop de conversa nem chamada de rede — falta só a Fase 5 conectar |
 | `confirmacao-agendamento` | Confirmação automática 24h antes; tratamento da resposta | Fase 5; a seleção de quem confirmar já roda como esqueleto no worker (`agenda.send-confirmation`, só loga, não envia) |
 | `reativacao-clientes` | Detecção de inatividade (21+ dias) e mensagem de reativação | Fase 5; a detecção de inatividade (dado) já existe em `crm-clientes`, e a seleção já roda como esqueleto no worker (`crm.reactivation-sweep`, só loga, não envia) — falta o envio |
-| `painel-web` | Dashboard e visões operacionais para barbeiro e operador Blade | Telas do produto nasceram em `apps/web` com `add-crm-clientes`; `add-agendamento` acrescentou `/agenda` e o hub de Configurações |
-| `relatorios` | Relatório mensal de resultados (justifica a mensalidade) | Fase 3 do roadmap |
+| `painel-web` | Dashboard e visões operacionais para barbeiro e operador Blade | Telas do produto nasceram em `apps/web` com `add-crm-clientes`; `add-agendamento` acrescentou `/agenda` e o hub de Configurações; `add-relatorios` acrescentou `/relatorios`; `add-fidelizacao-e-funcionarios` recortou dashboard/agenda por papel e acrescentou gestão de login em Configurações → Barbeiros |
 
 Futuras (fora da v1): `billing`, `onboarding-self-service`.
 

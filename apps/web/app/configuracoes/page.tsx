@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireOwnerSessionPage } from "@/lib/auth";
 
 const SECOES = [
   {
@@ -23,7 +24,8 @@ const SECOES = [
   },
 ];
 
-export default function ConfiguracoesHubPage() {
+export default async function ConfiguracoesHubPage() {
+  await requireOwnerSessionPage();
   return (
     <div>
       <h1 className="mb-6 font-display text-3xl font-black uppercase text-ink">Configurações</h1>
