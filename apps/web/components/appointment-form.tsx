@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface ClientOption {
   id: string;
@@ -32,21 +32,42 @@ interface Props {
   barbers: BarberOption[];
   onCreated: () => void;
   onCancel: () => void;
+  /** Pré-preenchimento vindo da grade semanal (add-agenda-visao-semanal) — não altera nenhuma regra. */
+  initialBarberId?: string;
+  initialTime?: string; // "HH:MM" local
 }
 
 function formatHour(iso: string): string {
   return new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 
-export function AppointmentForm({ date, clients, services, barbers, onCreated, onCancel }: Props) {
+export function AppointmentForm({
+  date,
+  clients,
+  services,
+  barbers,
+  onCreated,
+  onCancel,
+  initialBarberId,
+  initialTime,
+}: Props) {
   const [clientQuery, setClientQuery] = useState("");
   const [clientId, setClientId] = useState("");
   const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
-  const [barberId, setBarberId] = useState(""); // vazio = qualquer barbeiro
+  const [barberId, setBarberId] = useState(initialBarberId ?? ""); // vazio = qualquer barbeiro
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+
+  // Vindo de um clique na grade semanal: já mostra os horários livres daquele
+  // dia/barbeiro, sem exigir o clique extra em "Ver horários livres".
+  useEffect(() => {
+    if (initialBarberId || initialTime) {
+      handleSearchSlots();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filteredClients = useMemo(() => {
     const q = clientQuery.trim().toLowerCase();
@@ -197,18 +218,21 @@ export function AppointmentForm({ date, clients, services, barbers, onCreated, o
             <p className="text-steel">Nenhum horário livre para esse dia.</p>
           ) : (
             <div className="flex flex-wrap gap-2">
-              {slots.map((slot, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  disabled={creating}
-                  className="btn-secondary text-sm"
-                  onClick={() => handlePickSlot(slot)}
-                >
-                  {formatHour(slot.startsAt)}
-                  {!barberId && ` · ${barberName(slot.barberId)}`}
-                </button>
-              ))}
+              {slots.map((slot, i) => {
+                const isInitial = initialTime && formatHour(slot.startsAt) === initialTime;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    disabled={creating}
+                    className={isInitial ? "btn-secondary text-sm ring-2 ring-gold" : "btn-secondary text-sm"}
+                    onClick={() => handlePickSlot(slot)}
+                  >
+                    {formatHour(slot.startsAt)}
+                    {!barberId && ` · ${barberName(slot.barberId)}`}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
