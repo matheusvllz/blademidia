@@ -1,13 +1,14 @@
 import { deleteService, getService, updateService } from "@blademidia/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireSessionApi } from "@/lib/auth";
+import { requireOwnerSessionApi, requireSessionApi } from "@/lib/auth";
 import { parseBody } from "@/lib/api";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
+/** Leitura: ambos os papéis. */
 export async function GET(_request: Request, { params }: RouteParams) {
   const auth = await requireSessionApi();
   if (auth instanceof NextResponse) return auth;
@@ -24,8 +25,9 @@ const patchSchema = z.object({
   active: z.boolean().optional(),
 });
 
+/** Mutações: dono-only (matriz de autorização do design.md). */
 export async function PATCH(request: Request, { params }: RouteParams) {
-  const auth = await requireSessionApi();
+  const auth = await requireOwnerSessionApi();
   if (auth instanceof NextResponse) return auth;
   const { id } = await params;
   const { data, response } = await parseBody(request, patchSchema);
@@ -36,7 +38,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 }
 
 export async function DELETE(_request: Request, { params }: RouteParams) {
-  const auth = await requireSessionApi();
+  const auth = await requireOwnerSessionApi();
   if (auth instanceof NextResponse) return auth;
   const { id } = await params;
   const deleted = await deleteService(auth.barbershopId, id);

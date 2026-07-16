@@ -1,11 +1,12 @@
 import { getAgendaSettings, updateAgendaSettings } from "@blademidia/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireSessionApi } from "@/lib/auth";
+import { requireOwnerSessionApi } from "@/lib/auth";
 import { parseBody } from "@/lib/api";
 
+/** Configurações — dono-only (matriz de autorização do design.md). */
 export async function GET() {
-  const auth = await requireSessionApi();
+  const auth = await requireOwnerSessionApi();
   if (auth instanceof NextResponse) return auth;
   const settings = await getAgendaSettings(auth.barbershopId);
   return NextResponse.json({ settings });
@@ -21,7 +22,7 @@ const patchSchema = z
   .refine((v) => Object.keys(v).length > 0, { message: "nada para atualizar" });
 
 export async function PATCH(request: Request) {
-  const auth = await requireSessionApi();
+  const auth = await requireOwnerSessionApi();
   if (auth instanceof NextResponse) return auth;
   const { data, response } = await parseBody(request, patchSchema);
   if (response) return response;

@@ -1,6 +1,6 @@
 import { cancelFutureAppointmentsForClient, deleteClient, getClient, updateClient } from "@blademidia/db";
 import { NextResponse } from "next/server";
-import { requireSessionApi } from "@/lib/auth";
+import { requireOwnerSessionApi, requireSessionApi } from "@/lib/auth";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -37,8 +37,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   return NextResponse.json({ client: updated });
 }
 
+/** Exclusão (LGPD): dono-only (Fase 4, matriz de autorização do design.md). */
 export async function DELETE(_request: Request, { params }: RouteParams) {
-  const auth = await requireSessionApi();
+  const auth = await requireOwnerSessionApi();
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;

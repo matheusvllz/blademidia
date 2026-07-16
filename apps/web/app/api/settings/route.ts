@@ -1,9 +1,10 @@
 import { getInactivityThreshold, setInactivityThreshold } from "@blademidia/db";
 import { NextResponse } from "next/server";
-import { requireSessionApi } from "@/lib/auth";
+import { requireOwnerSessionApi } from "@/lib/auth";
 
+/** Configurações — dono-only (matriz de autorização do design.md). */
 export async function GET() {
-  const auth = await requireSessionApi();
+  const auth = await requireOwnerSessionApi();
   if (auth instanceof NextResponse) return auth;
 
   const inactivityDaysThreshold = await getInactivityThreshold(auth.barbershopId);
@@ -11,7 +12,7 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const auth = await requireSessionApi();
+  const auth = await requireOwnerSessionApi();
   if (auth instanceof NextResponse) return auth;
 
   const body = await request.json().catch(() => ({}));

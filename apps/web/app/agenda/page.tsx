@@ -1,24 +1,34 @@
 import { instantToZonedDateISO } from "@blademidia/core";
 import { getBarbershop, listAppointments, listBarbers, listClients, listServices } from "@blademidia/db";
+import Link from "next/link";
 import { requireSessionPage } from "@/lib/auth";
 import { AgendaBoard } from "@/components/agenda-board";
+import { AgendaWeekGrid } from "@/components/agenda-week-grid";
 import type { AppointmentSummary } from "@/components/appointment-block";
 import type { AppointmentDetail } from "@/components/appointment-detail-panel";
 
 interface PageProps {
-  searchParams: Promise<{ date?: string }>;
+  searchParams: Promise<{ date?: string; view?: string }>;
 }
 
 export default async function AgendaPage({ searchParams }: PageProps) {
   const session = await requireSessionPage();
-  const { date: dateParam } = await searchParams;
+  const { date: dateParam, view: viewParam } = await searchParams;
+  const view = viewParam === "grade" ? "grade" : "dia";
 
-  const [shop, barbers, services, clients] = await Promise.all([
+  const [shop, allBarbers, services, clients] = await Promise.all([
     getBarbershop(session.barbershopId),
     listBarbers(session.barbershopId, { onlyActive: true }),
     listServices(session.barbershopId, { onlyActive: true }),
     listClients(session.barbershopId),
   ]);
+
+  // Funcionário (Fase 4, Decision 5 do design.md): só a própria agenda, em
+  // qualquer visão — sem coluna/seleção de colegas.
+  const barbers =
+    session.role === "funcionario"
+      ? allBarbers.filter((b) => b.id === session.barberId)
+      : allBarbers;
 
   const timezone = shop?.timezone ?? "America/Sao_Paulo";
   const date = dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) ? dateParam : instantToZonedDateISO(new Date(), timezone);
@@ -68,15 +78,30 @@ export default async function AgendaPage({ searchParams }: PageProps) {
 
   return (
     <div>
-      <h1 className="mb-6 font-display text-3xl font-black uppercase text-ink">Agenda</h1>
-      <AgendaBoard
-        date={date}
-        barberColumns={barberColumns}
-        clients={clients}
-        services={services}
-        barbers={barbers}
-        detailsById={detailsById}
-      />
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-3xl font-black uppercase text-ink">Agenda</h1>
+        <div className="flex items-center gap-2">
+          <Link href={`/agenda?date=${date}`} className={view === "dia" ? "btn-gold" : "btn-secondary"}>
+            Dia
+          </Link>
+          <Link href={`/agenda?date=${date}&view=grade`} className={view === "grade" ? "btn-gold" : "btn-secondary"}>
+            Grade semanal
+          </Link>
+        </div>
+      </div>
+
+      {view === "grade" ? (
+        <AgendaWeekGrid initialWeekStart={date} barbers={barbers} clients={clients} services={services} />
+      ) : (
+        <AgendaBoard
+          date={date}
+          barberColumns={barberColumns}
+          clients={clients}
+          services={services}
+          barbers={barbers}
+          detailsById={detailsById}
+        />
+      )}
     </div>
   );
 }
