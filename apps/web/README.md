@@ -7,6 +7,14 @@ horário, agendamentos) e configurações. Ver
 (Fase 1) e [openspec/changes/archive/add-agendamento/](../../openspec/changes/archive/add-agendamento/)
 (Fase 2) para spec, design e roadmap completo.
 
+> **Texto de interface segue os guias estratégicos.** Todo rótulo, estado vazio, aviso e
+> mensagem deste painel passa pelo [Guia de COPY](../../docs/business/guia-de-copy.md) §§ 8 e
+> 13.9 — vocabulário do barbeiro, nunca jargão ("clientes", não "CRM"; "horário", não
+> "agendamento no sistema"), estados vazios que instruem em vez de informar. O painel é
+> **conveniência**, não requisito: a promessa ao cliente é "sem você operar nada"
+> ([project.md](../../openspec/project.md)), então nenhuma função essencial pode depender de
+> o barbeiro abrir esta tela.
+
 ## Rodar localmente
 
 Pré-requisito: **Docker Desktop** (Postgres local) e **Node 22+**.

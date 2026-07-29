@@ -5,6 +5,91 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 ## [Unreleased]
 
 ### Added
+- **Os 3 guias estratégicos oficiais aprovados e SDD inteiro sincronizado** (2026-07-28).
+  [Guia da Dor](docs/business/dor-central.md), [Guia da Persona](docs/business/persona-icp.md) e
+  [Guia de COPY](docs/business/guia-de-copy.md) passam a ser a **principal fonte de verdade
+  estratégica** da empresa, com precedência **Dor > Persona > COPY** e regra explícita de que
+  nenhum documento do repositório pode criar informação conflitante com eles. Índice novo em
+  [docs/business/README.md](docs/business/README.md) (papel de cada guia, como se integram e
+  constantes oficiais do negócio). Propagação por todo o SDD e pelos documentos de negócio:
+  - **`openspec/project.md`** — nova seção de abertura "Os 3 guias estratégicos oficiais";
+    § "O negócio" reescrita com o eixo **capacidade de atendimento** e a hierarquia oficial
+    (uma tese + duas provas) no lugar dos quatro problemas em lista plana; novas seções de
+    **posicionamento e proposta de valor**, **estratégia comercial e de aquisição** (motor =
+    prospecção ativa + indicação; conversão no WhatsApp; diagnóstico como mecanismo de venda;
+    âncora de payback; comparação com recepcionista, nunca com app) e **estratégia de marketing,
+    branding e comunicação**; anti-ICP explicitado; requisito não funcional de idioma agora
+    aponta o léxico do Guia de COPY; **decisão estrutural D0** registrada.
+  - **`openspec/workflow.md`** — **portão estratégico** antes do Refinamento (change fora da
+    dor, do ICP ou do posicionamento não avança) e item novo de coerência estratégica no
+    Definition of Done; fluxo leve deixa claro que até ajuste de copy passa pelo guia.
+  - **`openspec/templates/exploration.md`** — seção obrigatória **"Coerência estratégica"**
+    (relação com a dor central, persona atendida, impacto em copy, conflitos identificados).
+  - **`openspec/conventions.md`** — regra de vocabulário da UI aponta a lista completa de
+    palavras banidas e a tabela de tradução do Guia de COPY.
+  - **`docs/sdd/04-checklist-avaliador.md`** — **§ 0 "Coerência estratégica"** como primeiro
+    portão do checklist de avaliação (7 verificações).
+  - **`docs/architecture/overview.md`** — **princípio 0**: a arquitetura serve à dor central;
+    caminho crítico é receber e responder mensagem, e nada essencial pode exigir ação do
+    barbeiro no painel.
+  - **`docs/business/contexto-negocio.md`** — rebaixado a documento de apoio (design system, tom
+    de voz original, números do plano); § Posicionamento reescrita com eixo, categoria
+    reivindicada e hierarquia; relatório mensal reenquadrado como o instrumento que torna
+    visível a perda invisível.
+  - **`site/README.md`**, **`apps/web/README.md`**, **`automation/README.md`** — regras de texto
+    de cada frente: copy do site mapeada bloco a bloco pelo Guia de COPY § 13.1; microcopy do
+    painel pelo § 13.9 (com o lembrete de que o painel é conveniência, não requisito); e aviso
+    de que as respostas dos presets são **a voz da barbearia**, não da Blade — a qualidade da
+    conversa é o produto.
+  - **`CLAUDE.md`** e **`README.md`** — os três guias como leitura obrigatória de entrada.
+- **Guia oficial de COPY e comunicação** (2026-07-28) —
+  [docs/business/guia-de-copy.md](docs/business/guia-de-copy.md), derivado obrigatoriamente da
+  dor central e da persona. Passa a ser a **fonte oficial de qualquer decisão de copy** da Blade
+  Mídia: posicionamento e proposta de valor em três alturas, mensagem central da marca,
+  narrativa mestra em 6 tempos, método de exploração da dor (escada de revelação + regra da
+  absolvição), gatilhos emocionais e racionais, tom de voz com exemplos ✅/❌, léxico
+  obrigatório com tabela de tradução, conversão de funcionalidade em benefício, copy por nível
+  de consciência (1-5), fórmulas e banco de headlines/hooks/CTAs, respostas prontas às 9
+  objeções, e aplicação canal a canal com exemplos completos (site seção a seção, landing pages,
+  anúncios e roteiro de vídeo, prospecção presencial e fria, WhatsApp, reunião comercial em 7
+  tempos, Instagram, e-mail, microcopy do produto e voz do atendimento automático). Inclui
+  checklist de 10 pontos pré-publicação, lista de erros proibidos, regras de uso honesto de
+  números e um **protocolo específico para IA gerar copy** (§ 17). Referenciado como contexto
+  oficial em `openspec/project.md`, `openspec/conventions.md`, `CLAUDE.md` e `README.md`.
+- **Ticket de referência do segmento corrigido** (2026-07-28, confirmado pelos sócios):
+  **corte R$30-55**, corte + barba R$55-80, **ticket médio de trabalho R$45**. Propagado por
+  todos os documentos de negócio — modelo financeiro da dor central, faixas do ICP
+  (400-1.000 atendimentos/mês) e base de cálculo de ROI/payback da copy ("evitar 4 furos por
+  semana paga o sistema"; "~16 atendimentos recuperados no mês").
+- **Definição estratégica de Dor Central e Persona/ICP** (2026-07-28) — dois documentos novos em
+  `docs/business/`, criados a partir da análise crítica de todo o SDD e integrados ao contexto
+  oficial. Ambos são **documentos-guia de contexto estratégico** (não registram diagnóstico de
+  execução — a discussão de calibragem que os originou está resumida abaixo).
+  - [docs/business/dor-central.md](docs/business/dor-central.md) — define **o que** resolvemos.
+    Conclusão central: os três problemas comunicados hoje no site não são três dores, são **uma
+    causa e duas consequências**. A dor central é "o zap sem operador" — o dono é produtor e
+    comercial ao mesmo tempo, o WhatsApp fica sem ninguém no horário em que a demanda chega, e a
+    perda é **invisível** para ele. No-show e cliente sumido passam a ser **prova**, não tese.
+    Inclui hierarquia de dores, alternativas atuais e por que falham (padrão único: exigem que
+    alguém opere ou que o cliente final mude de canal), impacto financeiro/operacional/emocional,
+    a tensão "dor mais cara × dor mais consciente", e 8 hipóteses de campo a validar (H1-H8).
+  - [docs/business/persona-icp.md](docs/business/persona-icp.md) — define **para quem**.
+    Rafael, o barbeiro-dono que ainda corta: 28-38 anos, 2-4 cadeiras com ≥1 barbeiro parceiro,
+    sem recepcionista, R$18-45k/mês, DF. Cobre maturidade digital, rotina, medos, dores ocultas,
+    objeções ordenadas, quem influencia, vocabulário, critérios de qualificação (5 de 7),
+    anti-ICP ampliado, por que a persona é a melhor escolha estratégica e 8 hipóteses (P1-P8).
+  - **Calibragens definidas por estes documentos:** (1) faixa do ICP ajustada para
+    **2-4 cadeiras / R$18-45k/mês** — a mensalidade precisa ficar entre 1,5% e 4% do faturamento
+    e o volume de mensagem precisa sustentar a dor; (2) eixo de posicionamento definido como
+    **capacidade de atendimento** ("a barbearia continua atendendo quando o dono não pode"), que
+    cobre resposta, confirmação e reativação sob uma promessa só, mantendo a fronteira com
+    tráfego/divulgação; (3) hierarquia fixada em **uma tese + duas provas**; (4) regra de uso
+    honesto de números: toda projeção rotulada como projeção e todo número acompanhado da conta.
+  - **Integração:** referenciados em `openspec/project.md` (seção de persona reescrita + tabela
+    de documentos de referência), `CLAUDE.md` (novo passo 0 obrigatório antes de qualquer tarefa
+    + item 4 dos próximos passos), `README.md` (tabela "Comece por aqui") e
+    `docs/business/contexto-negocio.md` (aviso de precedência no topo + ICP e anti-ICP
+    atualizados no extrato).
 - **Fidelização de clientes + Papel de funcionário (Fase 4)**
   (`add-fidelizacao-e-funcionarios`), aprovada e implementada. Duas capabilities novas,
   deliberadamente combinadas numa change só (decisão registrada de Vítor, apesar do risco de

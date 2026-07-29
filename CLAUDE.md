@@ -66,10 +66,14 @@ barbearia; o número de WhatsApp é o ativo do barbeiro (warm-up/rate-limit não
    Caddy) num VPS (Hetzner ~R$30-60/mês ou Oracle Free ARM), apontar DNS, preencher `.env`.
 3. **Primeiro cliente real**: copiar preset (`presets/clientes/<slug>.json`), preencher
    dados do negócio, provisionar, barbeiro escaneia QR — runbook em `automation/README.md`.
-4. **Pendências comerciais (Matheus)**: preço da taxa de gestão, texto de contrato
+4. **Validar dor e persona em campo (Matheus)**: [dor-central.md](docs/business/dor-central.md)
+   e [persona-icp.md](docs/business/persona-icp.md) listam as hipóteses a validar (H1-H8 e
+   P1-P8) em conversas reais de prospecção. H1 e H2 (ele perde por demora **e não sabe disso**)
+   são as decisivas: se caírem, a dor central muda e os três documentos de negócio se reescrevem.
+5. **Pendências comerciais (Matheus)**: preço da taxa de gestão, texto de contrato
    (cancelamento/limites de responsabilidade), regra de carência de inadimplência — ver
    perguntas bloqueantes em `openspec/changes/add-agency-ops-panel/exploration.md`.
-5. **Produto SaaS**: iniciar `init-project-skeleton` (proposal já escrito, aguarda
+6. **Produto SaaS**: iniciar `init-project-skeleton` (proposal já escrito, aguarda
    confirmação das ADRs) e depois `auth-tenancy` → `crm-clientes` → `agendamento`.
 
 **Convenções de infraestrutura (não quebrar):** Netlify site_id
@@ -79,6 +83,17 @@ dir `site/`; secret `NETLIFY_BUILD_HOOK` no GitHub aciona o deploy; push direto 
 
 ## Antes de qualquer tarefa
 
+0. **Contexto estratégico (obrigatório para qualquer coisa que toque produto, site, copy,
+   posicionamento, UI ou prospecção):** leia, nesta ordem,
+   [docs/business/dor-central.md](docs/business/dor-central.md) (**o que** resolvemos),
+   [docs/business/persona-icp.md](docs/business/persona-icp.md) (**para quem**) e
+   [docs/business/guia-de-copy.md](docs/business/guia-de-copy.md) (**como falamos** — fonte
+   oficial de toda decisão de copy e comunicação, com protocolo próprio para IA na § 17).
+   São a fonte da verdade estratégica e prevalecem sobre o extrato em
+   [docs/business/contexto-negocio.md](docs/business/contexto-negocio.md). Regras derivadas:
+   **uma peça de comunicação nunca tem duas teses** (se não puder ser resumida em "seu zap fica
+   sem ninguém e você perde cliente sem saber", está fora do posicionamento); **ticket de
+   referência: corte R$30-55, médio R$45**; **todo número vem com a conta à vista**.
 1. Leia [openspec/project.md](openspec/project.md) — contexto e decisões estruturais (D1-D6).
 2. Se a tarefa pertence a uma change, leia nesta ordem: `proposal.md` → `specs/` da change → `design.md` → `tasks.md`.
 3. Consulte [openspec/conventions.md](openspec/conventions.md) para formato de requisitos, nomenclatura e padrões de código.
@@ -92,7 +107,8 @@ dir `site/`; secret `NETLIFY_BUILD_HOOK` no GitHub aciona o deploy; push direto 
 - Toda query de dados de negócio é escopada por `barbershop_id` via camada de repositório (ADR-0007). Sem exceções.
 - Provedores externos (WhatsApp, LLM) só via interfaces em `packages/whatsapp` e `packages/ai`.
 - Nunca logar conteúdo de mensagens de clientes finais, telefones completos ou segredos.
-- UI e mensagens em PT-BR com o vocabulário do barbeiro (proibido: "lead", "funil", "conversão" — ver contexto de negócio).
+- UI e mensagens em PT-BR com o vocabulário do barbeiro (proibido: "lead", "funil", "conversão" — lista completa e tabela de tradução em [docs/business/guia-de-copy.md](docs/business/guia-de-copy.md) § 8).
+- **Todo texto voltado ao mercado ou exibido ao usuário segue o [guia de copy](docs/business/guia-de-copy.md)** — inclusive microcopy de UI, estados vazios e mensagens automáticas enviadas ao cliente final (§ 13.9). Antes de entregar, rode o checklist da § 14.
 - Ao concluir tarefas do `tasks.md`, marque `[x]` somente com evidência de validação (teste passando, saída de comando).
 
 ## Fluxo obrigatório de toda funcionalidade

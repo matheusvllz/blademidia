@@ -15,6 +15,21 @@
 
 <Qual dor/oportunidade motiva a mudança? É comprovado ou hipótese?>
 
+## Coerência estratégica (portão — preencher antes de seguir)
+
+> Fonte: [Guia da Dor](../../docs/business/dor-central.md) ·
+> [Guia da Persona](../../docs/business/persona-icp.md) ·
+> [Guia de COPY](../../docs/business/guia-de-copy.md)
+
+- **Relação com a dor central:** <ataca a tese (zap sem operador), sustenta uma das provas
+  (no-show / cliente sumido), ou é benefício de segunda ordem? Se não se encaixa em nenhum,
+  justifique por que a change existe.>
+- **Persona atendida:** <é o ICP (2-4 cadeiras, dono cortando, R$18-45k/mês) ou outro perfil?
+  Se for outro, isso é decisão dos sócios, não da change.>
+- **Impacto em comunicação/copy:** <a change introduz texto visível ao barbeiro ou ao cliente
+  final dele? Se sim, listar onde e confirmar aderência ao léxico do Guia de COPY.>
+- **Conflitos identificados com os guias:** <nenhum | descrever e propor correção>
+
 ## Objetivos
 
 - ...

@@ -16,6 +16,25 @@ Este repositório é a **base única de trabalho da Blade Mídia** e serve a tr�
 Filosofia de entrega: **SLC** (Simple, Lovable, Complete) — escopo enxuto, acabamento
 bom, nada entregue pela metade.
 
+## Contexto estratégico — os 3 guias oficiais
+
+Antes de mexer em produto, site, comunicação ou prospecção, leia os três guias em
+[docs/business/](docs/business/README.md). São a **fonte oficial de verdade estratégica** da
+empresa, aprovada pelos sócios, e devem ser consultados em qualquer decisão futura sobre dor,
+persona ou copy:
+
+| Guia | Define | Papel |
+|---|---|---|
+| **[Guia da Dor](docs/business/dor-central.md)** | o problema central que a empresa resolve | **o quê** |
+| **[Guia da Persona](docs/business/persona-icp.md)** | quem é o cliente ideal (e quem não é) | **para quem** |
+| **[Guia de COPY](docs/business/guia-de-copy.md)** | como a empresa se comunica em todos os canais | **como** |
+
+Eles funcionam de forma integrada e a COPY da empresa é construída com base nos três em
+conjunto. Precedência em caso de conflito: **Dor > Persona > COPY**.
+
+Em uma linha: **a barbearia perde cliente em silêncio porque o WhatsApp fica sem operador
+enquanto o dono corta — e a Blade atende esse zap por ele.**
+
 ## Operadores
 
 | Sócio | Papel |
@@ -35,7 +54,10 @@ bom, nada entregue pela metade.
 | Entender o negócio e as decisões estruturais | [openspec/project.md](openspec/project.md) |
 | Entender o fluxo de desenvolvimento do produto | [openspec/workflow.md](openspec/workflow.md) |
 | Ver a arquitetura proposta e por quê | [docs/architecture/overview.md](docs/architecture/overview.md) |
-| Contexto de negócio (ICP, tom de voz, design system) | [docs/business/contexto-negocio.md](docs/business/contexto-negocio.md) |
+| **Saber qual dor a Blade resolve (e qual não resolve)** | [docs/business/dor-central.md](docs/business/dor-central.md) |
+| **Saber para quem vendemos (ICP e anti-ICP)** | [docs/business/persona-icp.md](docs/business/persona-icp.md) |
+| **Escrever qualquer copy (site, anúncio, prospecção, zap, UI)** | [docs/business/guia-de-copy.md](docs/business/guia-de-copy.md) |
+| Contexto de negócio (tom de voz, design system, números do plano) | [docs/business/contexto-negocio.md](docs/business/contexto-negocio.md) |
 
 ## Estrutura do repositório
 

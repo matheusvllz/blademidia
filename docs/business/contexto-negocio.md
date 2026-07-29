@@ -4,24 +4,55 @@
 > Design System 2025) com os fatos que impactam o produto. Os documentos originais (HTML)
 > são a fonte primária; em caso de conflito, eles prevalecem.
 
+> ⚠️ **Este documento é secundário desde 2026-07-28.** Dor, persona e comunicação passaram a ser
+> definidas pelos **3 guias estratégicos oficiais**, aprovados pelos sócios:
+>
+> | Guia | Papel |
+> |---|---|
+> | **[Guia da Dor](dor-central.md)** (`dor-central.md`) | define o problema central que a empresa resolve |
+> | **[Guia da Persona](persona-icp.md)** (`persona-icp.md`) | define quem é o cliente ideal e quem não é |
+> | **[Guia de COPY](guia-de-copy.md)** (`guia-de-copy.md`) | define como a empresa se comunica em todos os canais |
+>
+> **Precedência: Dor > Persona > COPY > este extrato.** Em qualquer conflito sobre problema,
+> público, posicionamento, proposta de valor ou linguagem, os guias prevalecem. Este documento
+> permanece como referência de **design system, tom de voz original e números do plano de ação**.
+>
+> **Ticket de referência (2026-07-28):** corte **R$30-55** · corte + barba **R$55-80** ·
+> ticket médio de trabalho **R$45**.
+
 ## Posicionamento
 
+> Definição normativa completa: [Guia de COPY](guia-de-copy.md) §§ 2-3 e
+> [Guia da Dor](dor-central.md) § 11.
+
 - Exclusivamente barbearias. "Não vendemos tráfego. Vendemos processo."
-- Problema resolvido: retenção, não aquisição — mensagem sem resposta, no-show, cliente sumido.
+- **Eixo:** *capacidade de atendimento* — a barbearia continua atendendo quando o dono não pode.
+  Cobre resposta, confirmação e reativação sob uma promessa só, e mantém a fronteira com
+  tráfego/divulgação (fora do escopo).
+- **Categoria reivindicada:** *atendimento operado para barbearia* — nunca "software de gestão".
+  A comparação mental correta é com **recepcionista**, não com aplicativo.
+- **Problema resolvido:** o zap sem operador — mensagem sem resposta enquanto o dono corta. O
+  no-show e o cliente sumido são **consequências da mesma causa**, e entram como prova, nunca
+  como teses paralelas.
 - Tagline: *"Sua barbearia está perdendo cliente todo dia no WhatsApp. A gente resolve isso."*
 - Promessa central: **"Sistema instalado, funcionando, sem você operar nada."**
+- Proposta de valor em 1 linha: *"A gente atende o zap da sua barbearia enquanto você corta."*
 
 ## ICP — Rafael, o barbeiro-dono
 
+> Resumo. A definição completa (rotina, medos, dores ocultas, objeções, influenciadores, como
+> pesquisa, como fala, critérios de qualificação) está no
+> [Guia da Persona](persona-icp.md), que é a fonte da verdade.
+
 | Atributo | Valor |
 |---|---|
-| Perfil | 26-40 anos, barbearia independente, 1-3 cadeiras, dono presente |
-| Faturamento | R$10-35k/mês |
+| Perfil | 28-38 anos, barbearia independente, **2-4 cadeiras** com ≥1 barbeiro parceiro, sem recepcionista, dono presente e cortando |
+| Faturamento | **R$18-45k/mês** da casa · corte R$30-55 · ticket médio R$45 · 400-1.000 atendimentos/mês |
 | Tecnologia | Instagram + WhatsApp + papel/memória; nunca usou CRM |
-| Dor principal | Horário vazio por no-show; mensagem sem resposta por horas |
+| Dor principal | **O zap sem operador**: mensagem sem resposta enquanto ele corta → cliente marca em outro lugar e ele nunca fica sabendo. No-show e cliente sumido são **consequências da mesma causa**, não dores paralelas — ver [dor-central.md § 9](dor-central.md) |
 | Objeções | "Já tentei e não funcionou" · "Não tenho tempo de aprender" · "Meu cliente é fiel" |
 | Vocabulário | "horário", "agenda", "cliente", "corte", "zap", "encaixe" — nunca "lead/CRM/funil" |
-| Anti-ICP | Franquia, barbearia de shopping 10+ barbeiros, salão feminino, dono com gestor de marketing |
+| Anti-ICP | Franquia, barbearia de shopping 10+ barbeiros, salão feminino, dono com gestor de marketing, barbearia com recepcionista dedicada, barbeiro solo/cadeira alugada, casa abaixo de ~R$15k/mês, barbearia com menos de 6 meses, e quem procura tráfego/divulgação — lista completa em [persona-icp.md § 9.2](persona-icp.md) |
 
 ## Números do negócio (plano de ação)
 
@@ -47,18 +78,28 @@ Formato definido no briefing — o produto deve produzir estes números por barb
 - X clientes reativados automaticamente;
 - Y no-shows evitados por confirmação;
 - Z mensagens respondidas pelo bot;
-- R$ estimado recuperado (reativados × ticket médio + no-shows evitados × ticket médio).
+- R$ estimado recuperado (reativados × ticket médio + no-shows evitados × ticket médio) —
+  **ticket médio de referência: R$45**, sempre com a conta à vista.
+
+O relatório é o instrumento que torna **visível a perda invisível** da dor central: ele mostra,
+mês a mês, o que teria vazado e não vazou. Por isso é peça de retenção comercial, não enfeite.
 
 ## Tom de voz (impacta toda copy do produto)
 
+> Princípios originais do briefing. A **aplicação prática** — exemplos ✅/❌, registro por canal,
+> léxico obrigatório, tabela de tradução e checklist — está no
+> [Guia de COPY](guia-de-copy.md) §§ 7-8, que é a fonte de trabalho do dia a dia.
+
 1. **Direto** — frases curtas, sem rodeio;
 2. **Confiante** — parceiro experiente, nunca arrogante;
-3. **Específico** — número real, nunca promessa vaga;
+3. **Específico** — número real com âncora de cálculo, nunca promessa vaga;
 4. **Humano** — tecnologia invisível: "resposta automática no zap", não "bot"; "lista de clientes", não "CRM";
-5. **Provocador** — nunca agressivo.
+5. **Provocador** — nunca agressivo, e **nunca culpando o barbeiro** (regra da absolvição:
+   o inimigo é a situação, não a pessoa — [Guia de COPY](guia-de-copy.md) § 5.3).
 
 Proibições absolutas: jargão de marketing, "Olá, tudo bem?", promessas vagas, voz passiva,
-adjetivos sem âncora, "nossa plataforma/solução" (use "o sistema").
+adjetivos sem âncora, "nossa plataforma/solução" (use "o sistema"). Lista completa de palavras
+banidas: [Guia de COPY](guia-de-copy.md) § 8.2.
 
 ## Design System
 

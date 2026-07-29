@@ -2,6 +2,19 @@
 
 Use este checklist para validar se uma implementação, criada por humano ou agente de IA, está aderente aos artefatos OpenSpec.
 
+## 0. Coerência estratégica (portão — Blade Mídia)
+
+> Fonte: [Guia da Dor](../business/dor-central.md) · [Guia da Persona](../business/persona-icp.md) ·
+> [Guia de COPY](../business/guia-de-copy.md). Reprovou aqui, não avança.
+
+- [ ] A change se relaciona à dor central ou a uma de suas duas provas (no-show, cliente sumido) — ou tem justificativa registrada se for benefício de segunda ordem.
+- [ ] O público atendido é o ICP definido no Guia da Persona (ou a exceção foi aprovada pelos sócios).
+- [ ] Nenhuma promessa introduzida contradiz o posicionamento ("você não opera nada", "não vendemos tráfego", "vendemos resultado operado, não ferramenta").
+- [ ] Todo texto visível ao barbeiro passou pelo léxico do Guia de COPY § 8 (sem "lead", "funil", "CRM", "plataforma", "dashboard", "conversão"…).
+- [ ] Todo texto enviado ao cliente final da barbearia usa a voz da **barbearia**, não da Blade (Guia de COPY § 13.9).
+- [ ] Todo número exibido (valor, projeção, meta) vem com a conta/âncora à vista e usa o ticket de referência (corte R$30-55, médio R$45).
+- [ ] Checklist de 10 pontos do Guia de COPY § 14 rodado nos textos novos.
+
 ## 1. Alinhamento com `proposal.md`
 
 - [ ] A implementação resolve o problema descrito no proposal.

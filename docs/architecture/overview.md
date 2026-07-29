@@ -6,6 +6,11 @@
 
 ## Princípios
 
+0. **A arquitetura serve à dor central** — o sistema existe para que o WhatsApp da barbearia
+   nunca fique sem operador ([Guia da Dor](../business/dor-central.md)). Daí decorrem duas
+   consequências arquiteturais duras: o caminho crítico é **receber e responder mensagem**
+   (tudo o mais é apoio), e **nada essencial pode exigir ação do barbeiro** no painel — a
+   promessa vendida é "sem você operar nada".
 1. **Simplicidade operacional primeiro** — time técnico de 1 pessoa; cada serviço adicional é custo de operação permanente.
 2. **Monolito modular** — módulos com fronteiras claras por capability dentro de um único deploy; extraível no futuro se necessário, sem pagar o preço de microservices agora.
 3. **Multi-tenant desde o dia 1, sem infraestrutura distribuída** (decisão D5).

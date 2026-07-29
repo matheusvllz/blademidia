@@ -6,7 +6,7 @@
 - **Requisitos**: PT-BR com palavras-chave normativas em inglês maiúsculo (estilo RFC 2119): `SHALL`, `MUST`, `SHOULD`, `MAY`, `SHALL NOT`, `MUST NOT`.
 - **Cenários**: palavras-chave `GIVEN` / `WHEN` / `THEN` / `AND` em inglês; descrição em PT-BR.
 - **Código**: identificadores, nomes de arquivos e mensagens de commit em inglês. Textos exibidos ao usuário em PT-BR (via camada de textos, nunca hardcoded espalhado).
-- **UI**: vocabulário do barbeiro — "cliente", "horário", "agenda", "zap". Proibido no produto: "lead", "funil", "CRM" (na UI diga "clientes"), "conversão", "churn".
+- **UI**: vocabulário do barbeiro — "cliente", "horário", "agenda", "zap". Proibido no produto: "lead", "funil", "CRM" (na UI diga "clientes"), "conversão", "churn". **Lista completa de palavras banidas, tabela de tradução obrigatória e regras de microcopy (estados vazios, mensagens automáticas ao cliente final): [docs/business/guia-de-copy.md](../docs/business/guia-de-copy.md) §§ 8 e 13.9 — fonte oficial para qualquer texto exibido ao usuário.**
 
 ## Qualidade de requisitos
 

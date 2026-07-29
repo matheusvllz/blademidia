@@ -3,6 +3,15 @@
 Motor de atendimento automático no WhatsApp (via Evolution API) + presets por cliente.
 Node puro (18+), **zero dependências** — nada de `npm install`.
 
+> ⚠️ **As respostas configuradas nos presets são a voz da BARBEARIA falando com o cliente
+> final dela — não a voz da Blade.** Antes de escrever ou ajustar qualquer resposta em
+> `presets/`, leia [Guia de COPY](../docs/business/guia-de-copy.md) § 13.9: informal e direto,
+> emoji contido (no máximo 1), nunca "Olá, tudo bem?" nem "Prezado cliente", sempre oferecendo
+> horários concretos em vez de "qual seu melhor horário?", e passando para o humano sem drama
+> quando o assunto sai do script. Este atendimento **é** a entrega da promessa central da
+> empresa ("sistema instalado, funcionando, sem você operar nada") — a qualidade da conversa é
+> o produto.
+
 ## O que tem aqui
 
 | Arquivo | Função |

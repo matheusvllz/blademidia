@@ -1,6 +1,15 @@
 # Fluxo de Desenvolvimento — Spec-Driven Development
 
 > Regra absoluta: **nenhuma implementação acontece antes da aprovação da especificação.**
+>
+> **Portão estratégico (aplica-se a toda change):** antes da etapa 2 (Refinamento), a exploração
+> precisa demonstrar coerência com os três guias estratégicos oficiais —
+> [Guia da Dor](../docs/business/dor-central.md),
+> [Guia da Persona](../docs/business/persona-icp.md) e
+> [Guia de COPY](../docs/business/guia-de-copy.md) (ver [project.md](project.md) § "Os 3 guias
+> estratégicos oficiais"). Uma change que resolve uma dor fora da hierarquia oficial, serve um
+> público fora do ICP ou introduz texto fora do posicionamento **não avança** — ou se corrige, ou
+> a divergência sobe para decisão dos sócios e o guia é atualizado primeiro.
 
 ## O fluxo obrigatório
 
@@ -57,6 +66,7 @@ Pode avançar com **premissas marcadas** se a ambiguidade não afetar comportame
 
 Uma change só é **Done** quando TODOS os itens abaixo forem verdadeiros:
 
+- [ ] **Coerência estratégica verificada**: a change não conflita com os 3 guias oficiais (Dor, Persona, COPY) e todo texto exibido ao usuário passou pelo checklist do [Guia de COPY](../docs/business/guia-de-copy.md) § 14;
 - [ ] Todas as tarefas do `tasks.md` concluídas ou explicitamente canceladas, cada uma com evidência de validação;
 - [ ] Checklist do avaliador ([docs/sdd/04](../docs/sdd/04-checklist-avaliador.md)) aprovado;
 - [ ] Testes automatizados relevantes passam (unit, integração e contrato quando aplicável);
@@ -97,7 +107,7 @@ Tipos: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`. Escopo = capa
 
 ## Fluxo leve (exceção controlada)
 
-Para mudanças triviais — typo, ajuste de copy, bump de dependência, correção óbvia de bug sem mudança de comportamento especificado — o fluxo completo é dispensado:
+Para mudanças triviais — typo, bump de dependência, correção óbvia de bug sem mudança de comportamento especificado — o fluxo completo é dispensado. **Ajuste de copy segue por aqui, mas nunca sem o [Guia de COPY](../docs/business/guia-de-copy.md)**: mesmo um texto de uma linha passa pelo léxico (§ 8) e pelo checklist (§ 14).
 
 1. Branch `fix/...` → commit → PR → merge.
 2. **Critério objetivo**: se a mudança altera qualquer comportamento descrito em uma spec, exige regra de negócio nova, toca dados ou integrações — **não é trivial**, e o fluxo completo se aplica.
