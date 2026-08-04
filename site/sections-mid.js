@@ -141,7 +141,7 @@ function Agenda() {
           React.createElement(
             "div",
             { className: "eyebrow reveal" },
-            "03 — Confirmação automática",
+            "05 · Confirmação automática",
           ),
           React.createElement(
             "h2",
@@ -162,7 +162,6 @@ function Agenda() {
             "se confirma",
             React.createElement("br", null),
             React.createElement("span", { className: "gold" }, "sozinho"),
-            ".",
           ),
           React.createElement(
             "p",
@@ -176,7 +175,7 @@ function Agenda() {
                 maxWidth: "42ch",
               },
             },
-            "24h antes do horário, o sistema pergunta se o cliente confirma. Quem não responde, libera o slot. O encaixe é avisado automaticamente — sua agenda se preenche em tempo real.",
+            "24h antes do horário, o sistema pergunta se o cliente vem. Quem não responde libera o horário e o próximo da fila já é avisado. A agenda se ajeita sozinha enquanto você tá com a máquina na mão.",
           ),
           React.createElement(
             "p",
@@ -184,7 +183,7 @@ function Agenda() {
               className: "reveal d3",
               style: { color: "var(--smoke)", fontSize: 16, lineHeight: 1.6, maxWidth: "42ch" },
             },
-            "Resultado: no-show de 8 por semana cai pra 1–2. A cadeira que era cara virou faturamento.",
+            "Com o corte a R$45, 8 furos por semana dão R$1.440 por mês de cadeira parada em horário bom. A meta do primeiro mês é derrubar isso pra 1 ou 2 por semana.",
           ),
           React.createElement(
             "div",
@@ -192,13 +191,13 @@ function Agenda() {
             React.createElement(
               "div",
               null,
-              React.createElement("div", { className: "l" }, "POTENCIAL DO SISTEMA · POR SEMANA"),
+              React.createElement("div", { className: "l" }, "META DO PRIMEIRO MÊS · POR SEMANA"),
               React.createElement(
                 "div",
                 { className: "h" },
-                "8 no-shows → ",
+                "8 furos → ",
                 React.createElement("span", null, "1"),
-                " no-show / semana",
+                " furo / semana",
               ),
             ),
             React.createElement(
@@ -221,6 +220,62 @@ function Agenda() {
     ),
   );
 }
+function WhyOthersFail() {
+  return React.createElement(
+    "section",
+    { className: "sec", "data-screen-label": "Por que o resto falha" },
+    React.createElement(
+      "div",
+      { className: "container", style: { maxWidth: 920 } },
+      React.createElement(
+        "div",
+        { className: "sec-head" },
+        React.createElement("div", { className: "eyebrow reveal" }, "03 · Você já tentou"),
+        React.createElement(
+          "h2",
+          { className: "reveal d1" },
+          "Você já tentou de tudo,",
+          React.createElement("br", null),
+          "e tudo te deu ",
+          React.createElement("span", null, "mais trabalho"),
+        ),
+        React.createElement(
+          "p",
+          { className: "sub reveal d2" },
+          "Todas as saídas que existem por aí precisam de duas coisas que uma barbearia não tem: alguém sobrando pra operar, e um cliente disposto a mudar o jeito dele de mandar mensagem.",
+        ),
+      ),
+      React.createElement(
+        "div",
+        { className: "fail-list" },
+        window.FAILURES.map((f, i) =>
+          React.createElement(
+            "div",
+            { className: "fail-row reveal", style: { transitionDelay: `${i * 0.06}s` }, key: i },
+            React.createElement("div", { className: "name" }, f.title),
+            React.createElement("div", { className: "why" }, f.body),
+          ),
+        ),
+      ),
+      React.createElement(
+        "p",
+        {
+          className: "reveal",
+          style: {
+            marginTop: 40,
+            fontFamily: "'Barlow Condensed',sans-serif",
+            fontWeight: 700,
+            fontSize: "clamp(20px,2.4vw,26px)",
+            textTransform: "uppercase",
+            color: "var(--ink)",
+            lineHeight: 1.25,
+          },
+        },
+        "Você não precisa de mais gente chegando, precisa parar de perder quem já chega.",
+      ),
+    ),
+  );
+}
 function Process() {
   return React.createElement(
     "section",
@@ -231,18 +286,19 @@ function Process() {
       React.createElement(
         "div",
         { className: "sec-head" },
-        React.createElement("div", { className: "eyebrow reveal" }, "04 — O sistema"),
+        React.createElement("div", { className: "eyebrow reveal" }, "06 · Como funciona"),
         React.createElement(
           "h2",
           { className: "reveal d1" },
-          "Três camadas. Uma ",
-          React.createElement("span", null, "operação"),
-          ".",
+          "Três coisas acontecendo",
+          React.createElement("br", null),
+          "sem você ",
+          React.createElement("span", null, "mexer em nada"),
         ),
         React.createElement(
           "p",
           { className: "sub reveal d2" },
-          "A Blade Mídia não vende ferramenta — vende processo instalado. Cada camada resolve um buraco específico. As três juntas viram um sistema que roda sozinho.",
+          "A gente não entrega um sistema pra você aprender a usar. A gente instala, treina com o jeito da sua casa e opera. Se você tiver que mexer em alguma coisa pra funcionar, quer dizer que a gente falhou.",
         ),
       ),
       React.createElement(
@@ -285,18 +341,19 @@ function Metrics() {
       React.createElement(
         "div",
         { className: "sec-head" },
-        React.createElement("div", { className: "eyebrow reveal" }, "05 — Metas do sistema"),
+        React.createElement("div", { className: "eyebrow reveal" }, "07 · O que a gente persegue"),
         React.createElement(
           "h2",
           { className: "reveal d1" },
-          "O que muda quando",
+          "Aqui é meta,",
           React.createElement("br", null),
-          "o sistema entra.",
+          "não ",
+          React.createElement("span", null, "média inventada"),
         ),
         React.createElement(
           "p",
           { className: "sub reveal d2" },
-          "A gente é nova — não tem média inflada pra mostrar. Tem as metas que o sistema é construído pra bater em toda barbearia, e é por elas que a gente responde no primeiro mês.",
+          "A gente é nova nisso e não tem histórico inflado pra te mostrar. São as metas que o sistema foi construído pra bater, cada uma com a conta à vista. Quando a primeira barbearia completar 30 dias, o número real entra no lugar da meta.",
         ),
       ),
       React.createElement(
@@ -316,6 +373,22 @@ function Metrics() {
           ),
         ),
       ),
+      React.createElement(
+        "div",
+        { className: "price-bar reveal", style: { maxWidth: 760, margin: "40px auto 0" } },
+        React.createElement(
+          "div",
+          null,
+          React.createElement("div", { className: "l" }, "A conta que fecha a decisão"),
+          React.createElement(
+            "div",
+            { className: "h" },
+            "Evitar ",
+            React.createElement("span", null, "4 furos"),
+            " por semana já paga o sistema inteiro",
+          ),
+        ),
+      ),
     ),
   );
 }
@@ -332,19 +405,18 @@ function Differentiator() {
         React.createElement(
           "div",
           { className: "diff-mark" },
-          React.createElement("span", { className: "badge reveal" }, "06 — Posicionamento"),
+          React.createElement("span", { className: "badge reveal" }, "08 · Posicionamento"),
           React.createElement(
             "h3",
             { className: "reveal d1" },
             "SÓ",
             React.createElement("br", null),
-            "BARBEARIAS",
-            React.createElement("span", { className: "gold" }, "."),
+            React.createElement("span", { className: "gold" }, "BARBEARIA"),
           ),
           React.createElement(
             "p",
             { className: "reveal d2" },
-            "Nenhuma agência genérica tem um nome que só faz sentido pra barbearia. Especialização gera confiança. E confiança vende sem desconto.",
+            'A gente não atende "qualquer negócio" pra depois adaptar o texto. Encaixe, corte com barba, o parceiro que trabalha na comissão, o sábado que lota: já conhecemos esse vocabulário e essas regras de cor. Especialização não é discurso, é o que faz o seu cliente não perceber diferença.',
           ),
           React.createElement(
             "div",
@@ -366,7 +438,7 @@ function Differentiator() {
               "O QUE NÃO ATENDEMOS:",
             ),
             React.createElement("br", null),
-            "Salões mistos · Estética · Franquias 10+ cadeiras · Negócios fora do nicho",
+            "Salão misto · Estética · Franquias e redes · Barbearia com recepção própria · Quem procura divulgação",
           ),
         ),
         React.createElement(
@@ -375,7 +447,7 @@ function Differentiator() {
           React.createElement(
             "div",
             { className: "diff-cols-head reveal" },
-            React.createElement("div", null, "Agência genérica"),
+            React.createElement("div", null, "O de sempre"),
             React.createElement("div", null, "Blade Mídia"),
           ),
           React.createElement(
@@ -399,4 +471,4 @@ function Differentiator() {
     ),
   );
 }
-Object.assign(window, { Agenda, Process, Metrics, Differentiator });
+Object.assign(window, { Agenda, WhyOthersFail, Process, Metrics, Differentiator });

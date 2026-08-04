@@ -1,16 +1,16 @@
-const TWEAK_DEFAULTS = { accent: "#C9A84C", headline: "agenda", marqueeSpeed: 38, showMarquee: !0 },
+const TWEAK_DEFAULTS = { accent: "#C9A84C", headline: "perda", marqueeSpeed: 38, showMarquee: !0 },
   HEADLINES = {
-    agenda: { l1: "AGENDA", l2: "CHEIA", l3: "TODO DIA", l3stroke: "TODO" },
-    cliente: { l1: "CLIENTE", l2: "VOLTA", l3: "SOZINHO", l3stroke: "SOZINHO" },
-    processo: { l1: "PROCESSO", l2: "INSTALADO", l3: "RODANDO", l3stroke: "RODANDO" },
+    perda: { l1: "VOCÊ PERDE", l2: "CLIENTE", l2gold: !0, l3stroke: "TODO", l3rest: "DIA" },
+    zap: { l1: "SEU ZAP", l2: "FICA SEM", l3gold: "NINGUÉM" },
+    silencio: { l1: "ELE SUMIU", l2: "E VOCÊ", l3gold: "NEM VIU" },
   },
   PRESETS = {
-    classico: { accent: "#C9A84C", headline: "agenda", marqueeSpeed: 38, showMarquee: !0 },
-    navalha: { accent: "#C0392B", headline: "cliente", marqueeSpeed: 34, showMarquee: !0 },
-    money: { accent: "#1F8A5B", headline: "agenda", marqueeSpeed: 38, showMarquee: !0 },
-    premium: { accent: "#6F3FF5", headline: "processo", marqueeSpeed: 42, showMarquee: !0 },
-    street: { accent: "#D9531E", headline: "cliente", marqueeSpeed: 30, showMarquee: !0 },
-    prata: { accent: "#9FB2C4", headline: "agenda", marqueeSpeed: 46, showMarquee: !1 },
+    classico: { accent: "#C9A84C", headline: "perda", marqueeSpeed: 38, showMarquee: !0 },
+    navalha: { accent: "#C0392B", headline: "zap", marqueeSpeed: 34, showMarquee: !0 },
+    money: { accent: "#1F8A5B", headline: "perda", marqueeSpeed: 38, showMarquee: !0 },
+    premium: { accent: "#6F3FF5", headline: "silencio", marqueeSpeed: 42, showMarquee: !0 },
+    street: { accent: "#D9531E", headline: "zap", marqueeSpeed: 30, showMarquee: !0 },
+    prata: { accent: "#9FB2C4", headline: "perda", marqueeSpeed: 46, showMarquee: !1 },
   };
 function applyPresetFromURL(n) {
   try {
@@ -31,7 +31,7 @@ function applyPresetFromURL(n) {
 }
 window.PRESETS = PRESETS;
 function HeroSwap({ accent: n, headline: e }) {
-  const a = HEADLINES[e] || HEADLINES.agenda;
+  const a = HEADLINES[e] || HEADLINES.perda;
   return React.createElement(
     "header",
     { className: "hero", id: "top" },
@@ -46,30 +46,23 @@ function HeroSwap({ accent: n, headline: e }) {
         React.createElement(
           "div",
           { className: "eyebrow hero-eyebrow" },
-          "Sistema de aquisição e retenção · Est. 2025",
+          "Atendimento operado pra barbearia · Est. 2025",
         ),
         React.createElement(
           "h1",
           null,
           a.l1,
           React.createElement("br", null),
-          a.l2,
-          React.createElement("span", { className: "gold" }, "."),
+          a.l2gold ? React.createElement("span", { className: "gold" }, a.l2) : a.l2,
           React.createElement("br", null),
-          e === "agenda"
+          a.l3stroke
             ? React.createElement(
                 React.Fragment,
                 null,
                 React.createElement("span", { className: "stroke" }, a.l3stroke),
-                " DIA",
-                React.createElement("span", { className: "gold" }, "."),
+                " " + a.l3rest,
               )
-            : React.createElement(
-                "span",
-                null,
-                React.createElement("span", { className: "gold" }, a.l3),
-                React.createElement("span", { className: "gold" }, "."),
-              ),
+            : React.createElement("span", { className: "gold" }, a.l3gold),
         ),
       ),
       React.createElement(
@@ -78,7 +71,7 @@ function HeroSwap({ accent: n, headline: e }) {
         React.createElement(
           "div",
           { className: "hero-tag" },
-          "A Blade Mídia implementa o sistema que responde no zap, confirma horário e traz o cliente de volta — exclusivo pra barbearias.",
+          "Acontece no zap, enquanto você tá com a mão na cabeça do cliente. A gente atende esse zap por você: responde em segundos, confirma os horários e chama de volta quem sumiu.",
         ),
         React.createElement(
           "div",
@@ -87,7 +80,7 @@ function HeroSwap({ accent: n, headline: e }) {
             "div",
             null,
             React.createElement("strong", null, "NICHO"),
-            "Só barbearias",
+            "Só barbearia",
           ),
           React.createElement(
             "div",
@@ -117,7 +110,7 @@ function HeroSwap({ accent: n, headline: e }) {
         "div",
         { className: "hero-scroll" },
         React.createElement("span", { className: "line" }),
-        "SCROLL · O DIAGNÓSTICO",
+        "SCROLL · A CONTA QUE NINGUÉM FAZ",
       ),
       React.createElement(
         "div",
@@ -125,9 +118,13 @@ function HeroSwap({ accent: n, headline: e }) {
         React.createElement(
           "a",
           { href: "#contato", className: "btn btn-gold" },
-          "Quero ver na minha barbearia →",
+          "Ver meu diagnóstico →",
         ),
-        React.createElement("a", { href: "#sistema", className: "btn btn-ghost" }, "Como funciona"),
+        React.createElement(
+          "a",
+          { href: "#sistema", className: "btn btn-ghost" },
+          "Ver a conversa rodando",
+        ),
       ),
     ),
   );
@@ -152,12 +149,15 @@ function App() {
       React.createElement(HeroSwap, { accent: n.accent, headline: n.headline }),
       n.showMarquee && React.createElement(window.Marquee, null),
       React.createElement(window.Problem, null),
+      React.createElement(window.Absolution, null),
+      React.createElement(window.WhyOthersFail, null),
       React.createElement(window.WhatsAppDemo, null),
       React.createElement(window.Agenda, null),
       React.createElement(window.Process, null),
       React.createElement(window.Metrics, null),
       React.createElement(window.Differentiator, null),
       React.createElement(window.Cases, null),
+      React.createElement(window.Operators, null),
       React.createElement(window.FAQ, null),
       React.createElement(window.CTA, null),
       React.createElement(window.Footer, null),
@@ -176,9 +176,9 @@ function App() {
           label: "Headline principal",
           value: n.headline,
           options: [
-            { value: "agenda", label: "Agenda cheia, todo dia." },
-            { value: "cliente", label: "Cliente volta sozinho." },
-            { value: "processo", label: "Processo instalado, rodando." },
+            { value: "perda", label: "Você perde cliente todo dia" },
+            { value: "zap", label: "Seu zap fica sem ninguém" },
+            { value: "silencio", label: "Ele sumiu e você nem viu" },
           ],
           onChange: (a) => e("headline", a),
         }),

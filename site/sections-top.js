@@ -35,113 +35,23 @@ function Nav() {
       React.createElement(
         "div",
         { className: "nav-links" },
-        React.createElement("a", { href: "#problema" }, "Diagnóstico"),
-        React.createElement("a", { href: "#sistema" }, "Sistema"),
-        React.createElement("a", { href: "#casos" }, "Resultados"),
-        React.createElement("a", { href: "#faq" }, "FAQ"),
-        React.createElement("a", { href: "#contato", className: "nav-cta" }, "Fale com a Blade"),
+        React.createElement("a", { href: "#problema" }, "O problema"),
+        React.createElement("a", { href: "#sistema" }, "Como funciona"),
+        React.createElement("a", { href: "#casos" }, "A conta"),
+        React.createElement("a", { href: "#faq" }, "Perguntas"),
+        React.createElement("a", { href: "#contato", className: "nav-cta" }, "Ver meu diagnóstico"),
       ),
     )
   );
 }
-function Hero({ accent: a }) {
-  return React.createElement(
-    "header",
-    { className: "hero", id: "top" },
-    React.createElement("div", { className: "hero-grid-bg" }),
-    React.createElement("div", { className: "hero-noise" }),
-    React.createElement(
-      "div",
-      { className: "hero-inner" },
-      React.createElement(
-        "div",
-        null,
-        React.createElement(
-          "div",
-          { className: "eyebrow hero-eyebrow" },
-          "Sistema de aquisição e retenção · Est. 2025",
-        ),
-        React.createElement(
-          "h1",
-          { className: "reveal in" },
-          "AGENDA",
-          React.createElement("br", null),
-          "CHEIA",
-          React.createElement("span", { className: "gold" }, "."),
-          React.createElement("br", null),
-          React.createElement("span", { className: "stroke" }, "TODO"),
-          " DIA",
-          React.createElement("span", { className: "gold" }, "."),
-        ),
-      ),
-      React.createElement(
-        "div",
-        { className: "hero-side reveal in d2" },
-        React.createElement(
-          "div",
-          { className: "hero-tag" },
-          "A Blade Mídia implementa o sistema que responde no zap, confirma horário e traz o cliente de volta — exclusivo pra barbearias.",
-        ),
-        React.createElement(
-          "div",
-          { className: "hero-meta" },
-          React.createElement(
-            "div",
-            null,
-            React.createElement("strong", null, "NICHO"),
-            "Só barbearias",
-          ),
-          React.createElement(
-            "div",
-            null,
-            React.createElement("strong", null, "FOCO"),
-            "Brasília / DF",
-          ),
-          React.createElement(
-            "div",
-            null,
-            React.createElement("strong", null, "SETUP"),
-            "72 horas",
-          ),
-          React.createElement(
-            "div",
-            null,
-            React.createElement("strong", null, "GARANTIA"),
-            "Primeiro mês",
-          ),
-        ),
-      ),
-    ),
-    React.createElement(
-      "div",
-      { className: "hero-bottom" },
-      React.createElement(
-        "div",
-        { className: "hero-scroll" },
-        React.createElement("span", { className: "line" }),
-        "SCROLL · O DIAGNÓSTICO",
-      ),
-      React.createElement(
-        "div",
-        { className: "hero-cta-row" },
-        React.createElement(
-          "a",
-          { href: "#contato", className: "btn btn-gold" },
-          "Quero ver na minha barbearia →",
-        ),
-        React.createElement("a", { href: "#sistema", className: "btn btn-ghost" }, "Como funciona"),
-      ),
-    ),
-  );
-}
 function Marquee() {
   const a = [
-      "Sua barbearia perde cliente todo dia no WhatsApp",
-      "Agenda cheia não é sorte — é processo",
-      "Bot que responde em 8 segundos",
-      "Cliente que some volta sozinho",
-      "Só barbearias · Brasília · Est. 2025",
-      "Sem você operar nada",
+      "Quem não foi respondido não reclama, só não volta",
+      "Mesmo número, mesma conversa, respondida na hora",
+      "Um atendente que não sai da cadeira",
+      "Não é a crise, é o seu zap",
+      "Você fecha a barbearia e o zap continua trabalhando",
+      "Só barbearia · Só Brasília · Sem você mexer em nada",
     ],
     e = [...a, ...a];
   return React.createElement(
@@ -166,20 +76,23 @@ function Problem() {
         React.createElement(
           "div",
           { className: "sec-head" },
-          React.createElement("div", { className: "eyebrow reveal" }, "01 — Diagnóstico"),
+          React.createElement(
+            "div",
+            { className: "eyebrow reveal" },
+            "01 · O que acontece todo dia",
+          ),
           React.createElement(
             "h2",
             { className: "reveal d1" },
-            "A agenda não está vazia.",
+            "A cadeira vazia não é falta de cliente,",
             React.createElement("br", null),
-            "Está ",
-            React.createElement("span", null, "vazando"),
-            ".",
+            "é falta de ",
+            React.createElement("span", null, "resposta"),
           ),
           React.createElement(
             "p",
             { className: "sub reveal d2" },
-            "Barbearia boa não fecha por falta de cliente. Fecha porque o cliente foi embora e ninguém percebeu. Três sangrias que aparecem em toda barbearia que a gente diagnostica.",
+            'São 14h. Chega um "oi, tem horário pra amanhã?" e você tá com a máquina na mão. Pensa em responder assim que terminar o corte, mas só lembra às 17h30. Quando responde, o cara já cortou em outro lugar, e ele nunca vai te contar isso.',
           ),
         ),
         React.createElement(
@@ -194,20 +107,75 @@ function Problem() {
               React.createElement("div", { className: "prob-body" }, a.body),
               React.createElement(
                 "div",
-                { className: "prob-meta" },
-                React.createElement("span", null, "Custo médio"),
-                React.createElement("strong", null, a.metric),
-              ),
-              React.createElement(
-                "div",
-                {
-                  className: "prob-meta",
-                  style: { marginTop: -16, borderTop: "none", paddingTop: 0 },
-                },
-                React.createElement("span", { style: { opacity: 0 } }, "."),
-                React.createElement("span", { style: { fontSize: 9 } }, a.metricLabel),
+                { className: "prob-anchor" },
+                React.createElement("div", { className: "num" }, a.num2),
+                React.createElement("div", { className: "calc" }, a.anchor, " · ", a.anchorLabel),
               ),
             ),
+          ),
+        ),
+      ),
+    )
+  );
+}
+function Absolution() {
+  return (
+    useReveal(),
+    React.createElement(
+      "section",
+      { className: "sec sec-dk", "data-screen-label": "Absolvição" },
+      React.createElement(
+        "div",
+        { className: "container", style: { maxWidth: 920 } },
+        React.createElement(
+          "div",
+          { className: "sec-head" },
+          React.createElement("div", { className: "eyebrow reveal" }, "02 · Antes de continuar"),
+          React.createElement(
+            "h2",
+            { className: "reveal d1" },
+            "Não é desorganização sua,",
+            React.createElement("br", null),
+            "é que ninguém corta e responde ",
+            React.createElement("span", null, "ao mesmo tempo"),
+          ),
+          React.createElement(
+            "p",
+            { className: "sub reveal d2" },
+            "Você é quem produz e quem vende, ao mesmo tempo. Quando escolhe terminar o degradê em vez de olhar o celular, você tá tomando a decisão certa, porque a hora cortando vale mais. É por isso que esse buraco nunca se fecha sozinho.",
+          ),
+          React.createElement(
+            "p",
+            { className: "sub reveal d3", style: { marginTop: 4 } },
+            "Seu atendimento na cadeira é ótimo. O problema tá no atendimento de antes da cadeira.",
+          ),
+        ),
+        React.createElement(
+          "div",
+          { className: "band-ink reveal d4" },
+          React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "div",
+              { className: "l" },
+              "A pergunta que ninguém consegue responder",
+            ),
+            React.createElement(
+              "div",
+              { className: "q" },
+              "Quantos clientes você perdeu esse mês sem saber?",
+            ),
+            React.createElement(
+              "div",
+              { className: "d" },
+              "Furo você consegue contar. Agora mensagem que morreu sem resposta, não tem como. É justamente aí que mora a maior parte do prejuízo.",
+            ),
+          ),
+          React.createElement(
+            "a",
+            { href: "#contato", className: "btn btn-gold" },
+            "Quero ver o número da minha barbearia →",
           ),
         ),
       ),
@@ -260,27 +228,26 @@ function WhatsAppDemo() {
           React.createElement(
             "div",
             { className: "demo-copy" },
-            React.createElement("div", { className: "eyebrow" }, "02 — Atendimento"),
+            React.createElement("div", { className: "eyebrow" }, "04 · Veja funcionando"),
             React.createElement(
               "h3",
               null,
-              "O bot que responde",
+              "Um atendente",
               React.createElement("br", null),
-              "como ",
-              React.createElement("span", null, "você"),
-              ".",
+              "dentro do seu ",
+              React.createElement("span", null, "zap"),
               React.createElement("br", null),
-              "Em 8 segundos.",
+              "respondendo na hora",
             ),
             React.createElement(
               "p",
               null,
-              "Treinado com sua linguagem, seu cardápio, seus horários. Funciona enquanto você está na cadeira, no almoço, fora de hora — o cliente sempre tem resposta.",
+              "A gente coloca um atendente dentro do WhatsApp que a barbearia já usa. Mesmo número, mesma conversa, mesmo jeito de falar. Seu cliente manda mensagem como sempre mandou e agora tem alguém ali pra responder.",
             ),
             React.createElement(
               "p",
               null,
-              "Quando sai do script, te passa o controle. Cliente nunca percebe que falou com bot. Só percebe que foi atendido rápido.",
+              "Ele mostra os horários que existem de verdade, marca, salva o cliente e confirma um dia antes. Quando o assunto foge do script, cai pra você na hora. O cliente não percebe diferença nenhuma, só percebe que foi atendido rápido.",
             ),
             React.createElement(
               "div",
@@ -294,14 +261,14 @@ function WhatsAppDemo() {
               React.createElement(
                 "div",
                 null,
-                React.createElement("div", { className: "num" }, "24/7"),
-                React.createElement("div", { className: "lbl" }, "Cobertura"),
+                React.createElement("div", { className: "num" }, "24h"),
+                React.createElement("div", { className: "lbl" }, "O zap atendido"),
               ),
               React.createElement(
                 "div",
                 null,
-                React.createElement("div", { className: "num" }, "100%"),
-                React.createElement("div", { className: "lbl" }, "Em tom da casa"),
+                React.createElement("div", { className: "num" }, "0"),
+                React.createElement("div", { className: "lbl" }, "Coisas pra você fazer"),
               ),
             ),
           ),
@@ -374,10 +341,10 @@ function WhatsAppDemo() {
           "div",
           { className: "demo-bar", style: { maxWidth: 760, margin: "48px auto 0" } },
           React.createElement("div", { className: "dot" }),
-          "SIMULAÇÃO · BOT BLADE NO ZAP · RESPOSTA EM < 30s",
+          "SIMULAÇÃO · MESMA CONVERSA, MESMO NÚMERO · VOCÊ CONTINUA CORTANDO",
         ),
       ),
     )
   );
 }
-Object.assign(window, { Nav, Hero, Marquee, Problem, WhatsAppDemo, useReveal });
+Object.assign(window, { Nav, Marquee, Problem, Absolution, WhatsAppDemo, useReveal });

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blade.Mídia — agenda cheia, todo dia</title>
+<title>Blade Mídia — o zap da sua barbearia respondido na hora</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -429,25 +429,29 @@
     color:var(--smoke);
     line-height:1.55;
   }
-  .prob-meta{
+  .prob-anchor{
     margin-top:auto;
     padding-top:24px;
     border-top:1px dashed var(--border);
     display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    font-family:'Space Mono',monospace;
-    font-size:10px;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-    color:var(--wire);
+    flex-direction:column;
+    gap:6px;
   }
-  .prob-meta strong{
-    color:var(--red);
-    font-size:22px;
+  .prob-anchor .num{
     font-family:'Barlow Condensed',sans-serif;
     font-weight:800;
+    font-size:26px;
+    color:var(--red);
     letter-spacing:0;
+    line-height:1;
+  }
+  .prob-anchor .calc{
+    font-family:'Space Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.02em;
+    text-transform:none;
+    color:var(--wire);
+    line-height:1.4;
   }
 
   /* ───── DEMO ───── */
@@ -1332,6 +1336,77 @@
   .reveal.d3{transition-delay:.24s}
   .reveal.d4{transition-delay:.32s}
 
+  /* ───── ABSOLUTION BAND ───── */
+  .band-ink{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    border-left:3px solid var(--gold);
+    border-radius:0 4px 4px 0;
+    padding:32px 34px;
+    margin-top:40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:24px;
+  }
+  .band-ink .l{
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    color:var(--gold);
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .band-ink .q{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700;
+    font-size:clamp(22px,2.6vw,30px);
+    text-transform:uppercase;
+    color:var(--chalk);
+    line-height:1.15;
+    letter-spacing:.005em;
+    max-width:34ch;
+  }
+  .band-ink .d{
+    font-size:14px;
+    color:var(--wire);
+    line-height:1.55;
+    max-width:40ch;
+    margin-top:10px;
+  }
+  @media (max-width:680px){.band-ink{padding:26px 24px}}
+
+  /* ───── WHY OTHERS FAIL ───── */
+  .fail-list{
+    display:flex;
+    flex-direction:column;
+  }
+  .fail-row{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:32px;
+    padding:26px 0;
+    border-bottom:1px solid var(--border);
+    align-items:start;
+  }
+  .fail-row:first-child{border-top:1px solid var(--border)}
+  @media (max-width:780px){.fail-row{grid-template-columns:1fr;gap:8px}}
+  .fail-row .name{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700;
+    font-size:19px;
+    text-transform:uppercase;
+    color:var(--ink);
+    line-height:1.15;
+  }
+  .fail-row .why{
+    font-size:14.5px;
+    color:var(--smoke);
+    line-height:1.6;
+    max-width:64ch;
+  }
+
   /* ───── PRICE CHIP ───── */
   .price-bar{
     background:var(--ink);
@@ -1376,12 +1451,12 @@
   }
 </style>
 
-<meta name="description" content="Sistema de atendimento e retenção pra barbearias de Brasília: bot no zap que responde em segundos, confirmação automática e cliente que volta sozinho.">
+<meta name="description" content="Sua barbearia perde cliente todo dia no WhatsApp e você nunca fica sabendo. A gente instala um atendente dentro do seu zap: responde em segundos, marca, confirma e chama de volta quem sumiu. Só barbearia. Só Brasília/DF.">
 <meta name="theme-color" content="#0D0D0D">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Blade.Mídia — agenda cheia, todo dia">
-<meta property="og:description" content="Bot no zap + agenda cheia + cliente que não some. Sistema de retenção pra barbearias. Brasília/DF.">
-<meta property="og:url" content="https://blademidia.netlify.app">
+<meta property="og:title" content="Blade Mídia — o zap da sua barbearia respondido na hora">
+<meta property="og:description" content="Sua barbearia perde cliente todo dia no WhatsApp e você nunca fica sabendo. A gente resolve isso — e você não opera nada. Só barbearia. Só Brasília/DF.">
+<meta property="og:url" content="https://blademidia.site">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='13' fill='%230D0D0D'/><text x='50%25' y='55%25' font-family='Arial,sans-serif' font-weight='900' font-size='32' fill='%23C9A84C' text-anchor='middle' dominant-baseline='central'>B.</text></svg>">
 </head>

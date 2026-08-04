@@ -8,20 +8,19 @@ function Cases() {
       React.createElement(
         "div",
         { className: "sec-head" },
-        React.createElement("div", { className: "eyebrow reveal" }, "07 — Projeções"),
+        React.createElement("div", { className: "eyebrow reveal" }, "09 · Isso é pra você?"),
         React.createElement(
           "h2",
           { className: "reveal d1" },
-          "O que o sistema",
+          "Existe uma conta",
           React.createElement("br", null),
-          "foi feito pra ",
-          React.createElement("span", null, "entregar"),
-          ".",
+          "pro tamanho da ",
+          React.createElement("span", null, "sua barbearia"),
         ),
         React.createElement(
           "p",
           { className: "sub reveal d2" },
-          "A Blade Mídia é nova e está montando as primeiras parcerias em Brasília — então a gente não infla case que não tem. Os números abaixo são projeções do modelo por porte de barbearia: metas de operação. Quando os primeiros resultados reais entrarem, é aqui que eles aparecem.",
+          "São três portes, três contas, todas com a base à vista: corte entre R$30 e R$55, média de R$45. São projeções do modelo, e quando existir resultado medido, ele entra aqui no lugar.",
         ),
       ),
       React.createElement(
@@ -125,18 +124,23 @@ function FAQ() {
       React.createElement(
         "div",
         { className: "sec-head" },
-        React.createElement("div", { className: "eyebrow reveal" }, "08 — Objeções honestas"),
+        React.createElement(
+          "div",
+          { className: "eyebrow reveal" },
+          "11 · As perguntas que o barbeiro faz mesmo",
+        ),
         React.createElement(
           "h2",
           { className: "reveal d1" },
-          "As perguntas que o barbeiro ",
-          React.createElement("span", null, "realmente"),
-          " faz.",
+          "Sem rodeio,",
+          React.createElement("br", null),
+          "do mesmo jeito que a gente responde ",
+          React.createElement("span", null, "ao vivo"),
         ),
         React.createElement(
           "p",
           { className: "sub reveal d2" },
-          "As objeções abaixo são as 6 mais comuns nas reuniões com barbeiros. Respondemos do mesmo jeito que respondemos ao vivo — sem rodeio, sem vender.",
+          "As perguntas abaixo são as mais comuns nas reuniões com barbeiros. A gente responde do mesmo jeito que responde ao vivo, sem rodeio e sem forçar venda.",
         ),
       ),
       React.createElement(
@@ -158,26 +162,8 @@ function FAQ() {
       ),
     ),
   );
-} /* Operators: seção "Quem opera" (Vítor + Matheus). Desativada no render por ora
-   (decisão de Vítor 2026-07-06 — apresentação não convenceu). Código preservado;
-   reativar reincluindo <Operators/> antes de <CTA/> no app.js. Ver docs/business. */
+}
 function Operators() {
-  const ops = [
-    {
-      id: "01",
-      mono: "VM",
-      name: "Vítor Machado",
-      role: "Responsável técnico",
-      line: "Constrói e opera o sistema. Monitora as conversas e a saúde do zap todo dia.",
-    },
-    {
-      id: "02",
-      mono: "MV",
-      name: "Matheus Vellozo",
-      role: "Responsável comercial",
-      line: "Acompanha o resultado e cuida da relação com cada barbearia parceira.",
-    },
-  ];
   return React.createElement(
     "section",
     { className: "sec sec-dk", id: "equipe", "data-screen-label": "Quem opera" },
@@ -187,26 +173,25 @@ function Operators() {
       React.createElement(
         "div",
         { className: "sec-head" },
-        React.createElement("div", { className: "eyebrow reveal" }, "09 — Quem opera"),
+        React.createElement("div", { className: "eyebrow reveal" }, "10 · Quem responde por isso"),
         React.createElement(
           "h2",
           { className: "reveal d1" },
-          "Duas pessoas com nome.",
+          "Duas pessoas com nome,",
           React.createElement("br", null),
-          "Não um ",
+          "não um ",
           React.createElement("span", null, "call center"),
-          ".",
         ),
         React.createElement(
           "p",
           { className: "sub reveal d2" },
-          "Ninguém terceirizado responde por você. Quem constrói o sistema e quem acompanha o resultado tem nome — e WhatsApp direto, todo dia.",
+          "Serviço operado precisa de alguém do outro lado quando dá problema. Aqui são dois sócios, com nome, rosto e WhatsApp direto, e é sempre um dos dois que te responde.",
         ),
       ),
       React.createElement(
         "div",
         { className: "operators-wrap" },
-        ops.map((o, i) =>
+        window.OPERATORS.map((o, i) =>
           React.createElement(
             "div",
             { className: "operator reveal", style: { transitionDelay: `${i * 0.08}s` }, key: o.id },
@@ -268,18 +253,17 @@ function CTA() {
             React.createElement(
               "div",
               { className: "eyebrow reveal", style: { color: "var(--gold)" } },
-              "09 — Próximo passo",
+              "12 · Próximo passo",
             ),
             React.createElement(
               "h2",
               { className: "reveal d1", style: { marginTop: 24 } },
-              "20 MINUTOS.",
+              "Descubra quanto",
               React.createElement("br", null),
-              "UMA ",
-              React.createElement("span", null, "PERGUNTA"),
-              ".",
+              "o seu ",
+              React.createElement("span", null, "zap"),
               React.createElement("br", null),
-              "FUNCIONA OU NÃO.",
+              "tá te custando",
             ),
             React.createElement(
               "p",
@@ -293,19 +277,19 @@ function CTA() {
                   lineHeight: 1.55,
                 },
               },
-              "Marque uma conversa de 20 minutos. A gente olha sua agenda, seu zap, sua taxa de no-show — e te fala na hora se o sistema faz sentido. Se não fizer, te aviso antes de cobrar nada.",
+              "Responde três coisas aqui embaixo e eu te devolvo, no seu zap, uma conta com os seus números: quanto a sua barbearia deixa na mesa por mês entre mensagem sem resposta e horário que fura. Leva 1 minuto, sem apresentação de 40 slides. Se não fizer sentido pra sua casa, eu falo isso na hora, antes de cobrar qualquer coisa.",
             ),
             React.createElement(
               "div",
               { className: "cta-meta reveal d3", style: { marginTop: 36 } },
               React.createElement("strong", null, "GARANTIA"),
-              " · primeiro mês com cancelamento sem multa",
+              " · primeiro mês, cancela sem multa",
               React.createElement("br", null),
               React.createElement("strong", null, "SETUP"),
-              ' · 72h do "fechei" ao bot ativo',
+              ' · 72h do "fechei" ao zap rodando',
               React.createElement("br", null),
-              React.createElement("strong", null, "PARCERIAS"),
-              " · selecionando as primeiras barbearias de Brasília",
+              React.createElement("strong", null, "SEU NÚMERO"),
+              " · continua seu, no seu celular",
             ),
           ),
           React.createElement(
@@ -334,7 +318,7 @@ function CTA() {
                         textTransform: "uppercase",
                       },
                     },
-                    "QUASE LÁ",
+                    "RECEBIDO",
                   ),
                   React.createElement(
                     "div",
@@ -352,9 +336,8 @@ function CTA() {
                     a.nome.split(" ")[0] || "Beleza",
                     ",",
                     React.createElement("br", null),
-                    "finaliza no ",
-                    React.createElement("span", { style: { color: "var(--gold)" } }, "Instagram"),
-                    ".",
+                    "fica de olho no seu ",
+                    React.createElement("span", { style: { color: "var(--gold)" } }, "zap"),
                   ),
                   React.createElement(
                     "div",
@@ -366,13 +349,13 @@ function CTA() {
                         marginBottom: 20,
                       },
                     },
-                    "Abrimos o nosso Instagram pra você. Manda ",
+                    "Vou montar a conta com os números da sua barbearia e te chamar no WhatsApp. Se quiser adiantar, chama a gente no ",
                     React.createElement(
                       "strong",
                       { style: { color: "var(--chalk)" } },
-                      '"diagnóstico"',
+                      "Instagram",
                     ),
-                    " na DM que a gente te responde rapidinho com 3 horários.",
+                    " agora, é o mesmo atendimento.",
                   ),
                   React.createElement(
                     "a",
@@ -383,7 +366,7 @@ function CTA() {
                       className: "btn btn-gold",
                       style: { justifyContent: "center" },
                     },
-                    "Abrir Instagram →",
+                    "Chamar no Instagram →",
                   ),
                 )
               : React.createElement(
@@ -413,7 +396,7 @@ function CTA() {
                         marginBottom: 6,
                       },
                     },
-                    "Diagnóstico gratuito · 20 min",
+                    "Diagnóstico gratuito · leva 1 minuto",
                   ),
                   React.createElement(Field, {
                     label: "Seu nome",
@@ -428,7 +411,7 @@ function CTA() {
                     placeholder: "Ex: Casa do Corte",
                   }),
                   React.createElement(Field, {
-                    label: "WhatsApp",
+                    label: "Seu WhatsApp",
                     value: a.zap,
                     onChange: (i) => e({ ...a, zap: i }),
                     placeholder: "(61) 9 9999-9999",
@@ -440,7 +423,7 @@ function CTA() {
                       className: "btn btn-gold",
                       style: { justifyContent: "center", marginTop: 8 },
                     },
-                    "Marcar diagnóstico →",
+                    "Quero ver a conta da minha barbearia →",
                   ),
                   React.createElement(
                     "div",
@@ -454,7 +437,7 @@ function CTA() {
                         marginTop: 4,
                       },
                     },
-                    "SEM SPAM · SEM LIGAÇÃO DE VENDEDOR · SÓ ZAP",
+                    "SEM SPAM · SEM LIGAÇÃO DE VENDEDOR · A GENTE TE CHAMA NO ZAP",
                   ),
                 ),
           ),
@@ -521,37 +504,42 @@ function Footer() {
         React.createElement(
           "div",
           { className: "foot-tag" },
-          "Sistema de aquisição e retenção pra barbearias. Brasília · Brasil. Est. 2025.",
+          "Atendimento operado pra barbearia. Brasília · DF. Est. 2025.",
         ),
       ),
       React.createElement(
         "div",
         { className: "foot-col" },
-        React.createElement("h5", null, "Sistema"),
+        React.createElement("h5", null, "O sistema"),
         React.createElement(
           "ul",
           null,
           React.createElement(
             "li",
             null,
-            React.createElement("a", { href: "#problema" }, "Diagnóstico"),
+            React.createElement("a", { href: "#problema" }, "O problema"),
           ),
           React.createElement(
             "li",
             null,
             React.createElement("a", { href: "#sistema" }, "Como funciona"),
           ),
-          React.createElement("li", null, React.createElement("a", { href: "#casos" }, "Cases")),
-          React.createElement("li", null, React.createElement("a", { href: "#faq" }, "FAQ")),
+          React.createElement("li", null, React.createElement("a", { href: "#casos" }, "A conta")),
+          React.createElement("li", null, React.createElement("a", { href: "#faq" }, "Perguntas")),
         ),
       ),
       React.createElement(
         "div",
         { className: "foot-col" },
-        React.createElement("h5", null, "Contato"),
+        React.createElement("h5", null, "Falar com a gente"),
         React.createElement(
           "ul",
           null,
+          React.createElement(
+            "li",
+            null,
+            React.createElement("a", { href: "#contato" }, "Ver meu diagnóstico"),
+          ),
           React.createElement(
             "li",
             null,
@@ -564,21 +552,11 @@ function Footer() {
           React.createElement(
             "li",
             null,
-            React.createElement("a", { href: "#contato" }, "Diagnóstico 20min"),
-          ),
-          React.createElement(
-            "li",
-            null,
             React.createElement(
               "a",
               { href: "https://instagram.com/blademidia.br", target: "_blank", rel: "noopener" },
               "@blademidia.br",
             ),
-          ),
-          React.createElement(
-            "li",
-            null,
-            React.createElement("a", { href: "#contato" }, "Marcar conversa"),
           ),
         ),
       ),
@@ -592,7 +570,7 @@ function Footer() {
           React.createElement(
             "li",
             { style: { fontSize: 13, color: "rgba(255,255,255,.6)", lineHeight: 1.55 } },
-            '"A Blade Mídia não vende tráfego. Vende processo."',
+            '"Não vendemos divulgação. A gente resolve o atendimento."',
           ),
         ),
       ),
@@ -600,8 +578,12 @@ function Footer() {
     React.createElement(
       "div",
       { className: "foot-bottom" },
-      React.createElement("div", null, "© 2026 Blade.Mídia · Sistema de retenção pra barbearias"),
-      React.createElement("div", null, "Brasília / DF · @blademidia.br"),
+      React.createElement(
+        "div",
+        null,
+        "© 2026 Blade.Mídia · Atendimento operado pra barbearia · Brasília / DF",
+      ),
+      React.createElement("div", null, "@blademidia.br"),
     ),
   );
 }
