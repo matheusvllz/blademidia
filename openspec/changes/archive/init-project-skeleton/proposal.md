@@ -4,7 +4,20 @@
 `init-project-skeleton`
 
 ## Status
-Draft <!-- vira Proposed/Approved após confirmação da pergunta bloqueante em exploration.md -->
+**Superseded** (2026-09-07) <!-- nunca chegou a Approved -->
+
+> Esta change nasceu quando o repositório só tinha fundação SDD (specs, ADRs, docs) e nenhum
+> código. Ela nunca foi formalmente aprovada nem implementada como tal — mas o monorepo que
+> ela propunha (`apps/web`, `apps/worker`, `packages/core`, `packages/db`, `packages/whatsapp`,
+> `packages/ai`, Postgres+Drizzle, pg-boss, Docker Compose local) **nasceu organicamente dentro
+> da change `add-crm-clientes`** (Fase 1, concluída 2026-07-07) e foi ganhando o restante do
+> escopo aqui previsto nas Fases seguintes. Os fatos: os pacotes existem, buildam, têm CI,
+> health checks implícitos via rotas reais, e um README de setup validado — os objetivos desta
+> proposal foram todos atingidos, só que por outro caminho e sem que esta change fosse marcada
+> como tal. Arquivada como `Superseded` em vez de `Done` porque o vínculo formal
+> proposal→implementação nunca existiu; não há tasks aqui marcadas `[x]` com evidência.
+> `packages/whatsapp` é a única peça ainda pendente — nasce de verdade na Fase 5
+> (`add-whatsapp-canal`), ver `docs/sdd/06-plano-execucao-fase-5.md`.
 
 ## Context
 Ver [exploration.md](exploration.md). O repositório contém apenas fundação SDD (specs,
