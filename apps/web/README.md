@@ -44,7 +44,7 @@ Acesse `http://localhost:3000` — redireciona para `/login`.
 
 ## Criar o primeiro login (barbearia + usuário)
 
-Não existe tela de "criar conta" (onboarding é feito por Vítor/Matheus, não self-service —
+Não existe tela de "criar conta" (onboarding é feito por Matheus, com apoio pontual do pai quando é preciso mexer em código, não self-service —
 ver `project.md`, fora de escopo v1):
 
 ```bash

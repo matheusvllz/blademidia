@@ -5,7 +5,10 @@ Este projeto usa **Spec-Driven Development**. Estas regras não são opcionais.
 ## O que é este repositório (leia primeiro)
 
 A Blade Mídia é uma agência que vende **retenção/atendimento automático para barbearias**.
-Sócios: **Vítor Machado** (técnico) e **Matheus Vellozo** (comercial). Este repositório
+Sócio único: **Matheus Vellozo** (comercial e operação geral do negócio). Pai de Matheus
+(desenvolvedor) apoia pontualmente a implementação técnica, sem ser sócio. *(Atualizado em
+2026-09-07 — até então a estrutura era de dois sócios; Vítor Machado não faz mais parte da
+operação.)* Este repositório
 único serve **três frentes** — saiba em qual você está mexendo antes de agir:
 
 | Frente | Pasta | Regime |
@@ -32,7 +35,8 @@ Tudo roda em **Node puro (18+), sem `npm install`**. Ver `automation/README.md` 
   e o QR de pareamento. Depende de `EVOLUTION_URL`/`EVOLUTION_API_KEY` (senão, dry-run).
 - **Dois painéis** (`panel-server.mjs`, dados locais em `automation/data/` — fora do git):
   - **Painel da AGÊNCIA** (`/`, pasta `panel/`): estilo do site (Ink/Gold). Gestão de
-    barbearias (tenants), CRM dos clientes finais, detecção de inativos. Para Vítor e Matheus.
+    barbearias (tenants), CRM dos clientes finais, detecção de inativos. Para Matheus (e apoio
+    técnico pontual do pai).
   - **Painel do CLIENTE** (`/cliente?barbershop=<slug>`, pasta `client-panel/`):
     **deliberadamente simples e claro (não segue o estilo do site)** — é ferramenta do
     barbeiro no celular. Preset clonável por cliente.
@@ -52,7 +56,8 @@ barbearia; o número de WhatsApp é o ativo do barbeiro (warm-up/rate-limit não
 **O que JÁ funciona (validado):**
 - Site no ar (blademidia.netlify.app) com auto-deploy a cada push em `site/`.
 - Formulário de diagnóstico do site capturando leads no Netlify Forms (ver painel
-  Netlify → Forms) com notificação por e-mail ao Vítor a cada envio.
+  Netlify → Forms) com notificação por e-mail a Matheus a cada envio (checar se o e-mail
+  cadastrado nas notificações do Netlify já foi atualizado — isso é config externa, não só doc).
 - Stack Evolution local em Docker (`infra/evolution/docker-compose.local.yml`) — testado:
   instância criada via `provision.mjs`, QR gerado, eventos reais chegando no
   `webhook-server.mjs`. Auth local: API key `local-dev-key` (só dev; produção usa `.env`).

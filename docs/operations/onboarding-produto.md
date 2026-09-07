@@ -1,6 +1,6 @@
 # Onboarding de uma barbearia no produto (CRM + Agenda)
 
-> Runbook operacional — Vítor/Matheus rodam isso ao levar uma barbearia da operação
+> Runbook operacional — Matheus roda isso (com apoio técnico pontual do pai quando necessário) ao levar uma barbearia da operação
 > manual (`automation/`) para o produto (`apps/web`). Ver
 > [design.md, Decision 4](../../openspec/changes/archive/add-crm-clientes/design.md) para o
 > racional: a migração é um **ponto de corte** — depois dela, o produto é a fonte de
