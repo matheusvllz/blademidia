@@ -25,7 +25,7 @@ e é o que se corrige quando divergir.
 
 ## O negócio
 
-A **Blade Mídia** é uma empresa especializada exclusivamente em barbearias (Brasília/DF na fase 1). Dois sócios: **Vítor Machado** (implementação técnica) e **Matheus Vellozo** (comercial: prospecção, reuniões, fechamento).
+A **Blade Mídia** é uma empresa especializada exclusivamente em barbearias (Brasília/DF na fase 1). Sócio único: **Matheus Vellozo** (comercial: prospecção, reuniões, fechamento — e operação geral do negócio). O pai de Matheus, desenvolvedor, apoia pontualmente a implementação técnica (não é sócio). *(Atualizado em 2026-09-07 — até 2026-08 a estrutura era de dois sócios, Vítor Machado e Matheus Vellozo; Vítor não faz mais parte da operação. Referências a "Vítor" em registros anteriores deste repositório são histórico.)*
 
 O produto é um **atendimento operado para barbearia**, entregue como serviço gerenciado sobre um SaaS próprio. O eixo em que a Blade compete é **capacidade de atendimento** — *a barbearia continua atendendo quando o dono não pode*. O objetivo NÃO é gerar demanda nova para as barbearias (tráfego e divulgação estão fora do escopo): é **parar o vazamento da demanda que já chega**.
 
@@ -163,7 +163,7 @@ Blade).
 
 - **LGPD**: o sistema armazena dados pessoais (nome, telefone, histórico de visitas) de clientes finais das barbearias. Consentimento, retenção e exclusão devem ser considerados em toda spec que toque dados de clientes.
 - **O número de WhatsApp é o ativo mais valioso do barbeiro.** Qualquer risco de banimento é risco de negócio crítico.
-- **Time técnico de 1 pessoa** (Vítor) com desenvolvimento assistido por IA. Simplicidade operacional > sofisticação arquitetural.
+- **Time técnico**: Matheus (não-técnico) com apoio pontual do pai (dev) e desenvolvimento assistido por IA. Simplicidade operacional > sofisticação arquitetural continua sendo o princípio guia.
 - **Idioma e linguagem**: toda a interface e comunicação com clientes em PT-BR, no vocabulário do barbeiro. A lista completa de palavras banidas, a tabela de tradução obrigatória e as regras de microcopy estão no [Guia de COPY](../docs/business/guia-de-copy.md) §§ 8 e 13.9 — **é requisito não funcional, não preferência de estilo**. Antes de entregar qualquer texto, rodar o checklist da § 14 do guia.
 - **Design System**: paleta Ink `#0D0D0D` / Gold `#C9A84C` / Chalk `#F5F2EC` / Steel `#2B2B2B` / Wire `#8C8C8C`; tipografia Barlow Condensed (display), Barlow (corpo), Space Mono (labels). Detalhes em [docs/business/contexto-negocio.md](../docs/business/contexto-negocio.md).
 
