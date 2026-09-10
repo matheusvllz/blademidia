@@ -4,18 +4,19 @@
 `add-atendimento-ia`
 
 ## Status
-**Approved** (2026-09-10) <!-- Aprovação: todas as decisões de arquitetura, modelo e voz desta
+**Done** (2026-09-10) <!-- Aprovação: todas as decisões de arquitetura, modelo e voz desta
 change foram tomadas por Matheus em 2026-09-07 e registradas em
 docs/sdd/06-plano-execucao-fase-5.md §§ 4.1-4.3 e 7 (ver também exploration.md, seção
 "Regras de negócio — Confirmadas"). Não há pergunta bloqueante de negócio em aberto. Em
 2026-09-10 Matheus instruiu avançar ("pode começar a próxima etapa"), na sequência das 4
 changes da Fase 5 definida por ele mesmo (whatsapp-canal → atendimento-ia →
-confirmacao-agendamento → reativacao-clientes). Único ponto pendente, fora do escopo técnico
-desta change (mesma natureza do BSP em add-whatsapp-canal, por instrução explícita "por
-último configurar chaves, assinaturas, etc"): não existe `ANTHROPIC_API_KEY` real neste
-ambiente, o que bloqueia apenas o portão de qualidade (bateria de conversas reais) e a
-promoção final do ADR-0005 para "Aceito" — não bloqueia a implementação, testada com o SDK da
-Anthropic mockado por injeção de dependência. -->
+confirmacao-agendamento → reativacao-clientes). Implementada e verificada de ponta a ponta na
+mesma sessão (ver tasks.md): 210 testes automatizados no monorepo, curl real assinado contra
+Postgres real, boot real do worker. Único ponto pendente, fora do escopo técnico desta change
+(mesma natureza do BSP em add-whatsapp-canal, por instrução explícita "por último configurar
+chaves, assinaturas, etc"): grupo 9 do tasks.md — `ANTHROPIC_API_KEY` real e o portão de
+qualidade (bateria de conversas reais), que bloqueiam apenas a promoção final do ADR-0005 para
+"Aceito" sem ressalva, não a implementação em si. -->
 
 ## Context
 Ver [exploration.md](exploration.md) e

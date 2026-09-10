@@ -87,9 +87,11 @@ packages/db/
 
 ### Decision 3: Escalação por "N falhas de entendimento" é determinística, não auto-relatada pelo modelo
 - Decision: `whatsapp_conversations.bot_stall_count` (novo, `integer default 0`) incrementa
-  toda vez que um turno termina **sem nenhuma tool de domínio executada com sucesso** (agenda
-  ou cadastro; a tool de escalação não conta como "sucesso de domínio") e **sem** o modelo
-  pedir escalação explícita; zera sempre que uma tool de domínio executa com sucesso. Ao
+  toda vez que um turno termina **sem nenhuma tool de domínio chamada** (agenda ou cadastro; a
+  tool de escalação não conta como tool de domínio) e **sem** o modelo pedir escalação
+  explícita; zera sempre que qualquer tool de domínio é chamada — inclusive quando a tool
+  recusa por regra de negócio (ex.: horário ocupado), porque isso ainda é o bot agindo
+  estruturadamente, não uma falha de entendimento. Ao
   atingir `STALL_THRESHOLD = 2` (proposto no exploration.md), o orquestrador força
   `handover = humano` **independente do texto do modelo**, com uma mensagem fixa de devolução
   (não gerada pelo modelo) que já passou pelo checklist da § 14 do guia de copy: *"acho melhor
@@ -206,6 +208,27 @@ packages/db/
 - Consequences: `packages/ai` ganha dependência de `@blademidia/db` só para gravar
   `ai_usage_events` (Decision 5) — avaliado e aceito porque é a mesma tabela que o próprio
   pacote produz o dado para popular; o orquestrador ainda decide *quando* chamar.
+
+### Decision 11: Schemas das tools usam `zod/v4`, não a raiz `zod` (achado durante a implementação)
+- Decision: `packages/core/src/agenda/tools.ts` e `packages/core/src/clients/tools.ts` importam
+  `{ z } from "zod/v4"` em vez de `{ z } from "zod"`. `anthropic-client.ts` tipa o cast de
+  schema como `z.ZodType` do mesmo `zod/v4`.
+- Rationale (achado, não estava no plano): `betaZodTool` do `@anthropic-ai/sdk` 0.125.0 espera
+  um `ZodType` cujos internos são os de `zod/v4` (`_zod.def`), não os de `zod` v3 clássico
+  (`_def`) — apesar de o pacote instalado ser um único `zod@3.25.76`, essa versão empacota as
+  duas APIs lado a lado (`.` = v3 clássico; `./v4` = v4) exatamente para permitir essa migração
+  gradual. Passar um schema v3 clássico para `betaZodTool` falha em tempo de compilação (tipos
+  incompatíveis) e falharia em runtime (conversão para JSON Schema espera o formato v4). A
+  correção é trocar o import só nos DOIS arquivos que definem schemas consumidos por
+  `betaZodTool` — o resto do monorepo (`apps/web`, outros usos de `zod` em `packages/core`)
+  continua em v3 clássico sem necessidade de mudança, já que `.parse()`/`.describe()`/
+  `.optional()`/`z.infer` se comportam de forma equivalente nas duas APIs para os casos usados
+  aqui.
+- Trade-offs: duas "famílias" de zod convivendo no mesmo monorepo (v3 clássico na maioria do
+  código, v4 nos schemas de tool) — documentado aqui e nos comentários dos dois arquivos para
+  não confundir quem for mexer depois.
+- Consequences: `pnpm --filter @blademidia/core typecheck` e a suíte de testes de `core`
+  (47/47) e `ai` (42/42) passam com a migração; nenhum outro arquivo precisou mudar.
 
 ## Alternatives Considered
 ### Alternative 1: Detectar "falha de entendimento" analisando o texto do modelo

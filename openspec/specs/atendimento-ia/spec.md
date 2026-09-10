@@ -1,11 +1,19 @@
-# Delta for atendimento-ia
+# Capability: atendimento-ia
 
-> Capability nova — este delta contém apenas `ADDED Requirements` e, na conclusão da change,
-> vira a spec inicial em `openspec/specs/atendimento-ia/spec.md`.
+> Spec permanente — fonte da verdade do comportamento do atendimento automático por IA.
+> Não editar diretamente: toda mudança passa por uma change (ver [workflow](../../workflow.md)).
+>
+> Histórico:
+> - Fase 5.2 (loop de conversa, tools de domínio, escalação, estagnação, degradação, custo por
+>   tenant) estabelecida pela change `add-atendimento-ia` (concluída 2026-09-10).
+>
+> Escopo atual: responde mensagens recebidas pelo canal `whatsapp-canal` usando
+> `claude-haiku-4-5` com tool use sobre as tools de agenda (`packages/core`) e uma tool de
+> cadastro básico de cliente. Envio iniciado pela barbearia fora da janela de 24h
+> (`confirmacao-agendamento`, `reativacao-clientes`) e qualquer UI de resposta pelo painel são
+> capabilities/escopos separados — não estão aqui.
 
-## ADDED Requirements
-
-### Requirement: Loop de conversa roda no worker, nunca no webhook
+## Requirement: Loop de conversa roda no worker, nunca no webhook
 O sistema SHALL processar toda resposta automática de IA dentro de um job assíncrono
 (`apps/worker`), nunca dentro do handler HTTP do webhook.
 
@@ -52,7 +60,7 @@ agendamento.
 O sistema SHALL passar a posse de uma conversa para humano (`handover = humano`) quando o
 modelo identificar pedido explícito, frustração ou assunto fora do escopo da barbearia, e
 também quando a conversa não progredir por um número determinado de turnos consecutivos sem
-nenhuma tool de domínio executada com sucesso.
+nenhuma tool de domínio chamada.
 
 #### Scenario: Escalação explícita pelo modelo
 - GIVEN uma conversa em andamento
@@ -62,15 +70,16 @@ nenhuma tool de domínio executada com sucesso.
   ao cliente, e o bot SHALL parar de responder àquela conversa
 
 #### Scenario: Conversa não progride por falhas de entendimento consecutivas
-- GIVEN uma conversa em que N turnos consecutivos terminam sem nenhuma tool de domínio
-  executada com sucesso e sem escalação explícita
+- GIVEN uma conversa em que N turnos consecutivos terminam sem nenhuma tool de domínio chamada
+  e sem escalação explícita
 - WHEN o N-ésimo turno consecutivo nessa condição termina
 - THEN o sistema SHALL marcar `handover = humano` e SHALL enviar a mensagem fixa de devolução,
   independentemente do texto que o modelo tenha gerado nesse turno
 
-#### Scenario: Tool de domínio bem-sucedida reseta o contador de estagnação
+#### Scenario: Qualquer chamada de tool de domínio reseta o contador de estagnação
 - GIVEN uma conversa com turnos anteriores contabilizados como estagnados
-- WHEN um novo turno executa com sucesso qualquer tool de domínio (agenda ou cadastro)
+- WHEN um novo turno chama qualquer tool de domínio (agenda ou cadastro), mesmo que a tool
+  recuse por regra de negócio (ex.: horário ocupado)
 - THEN o sistema SHALL zerar o contador de estagnação daquela conversa
 
 ## Requirement: Degradação sem interromper o canal quando a IA está indisponível

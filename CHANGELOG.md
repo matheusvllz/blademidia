@@ -5,6 +5,54 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 ## [Unreleased]
 
 ### Added
+- **Atendimento por IA (Fase 5.2)** (`add-atendimento-ia`), aprovada e implementada — segunda
+  das 4 changes da Fase 5, conecta o loop de conversa por IA ao canal WhatsApp entregue por
+  `add-whatsapp-canal`. É aqui que a tese central do produto ("o zap continua atendendo quando
+  o dono não pode") passa a existir de fato.
+  - **`packages/ai`** (reescrito, deixa de ser esqueleto): `AiClient` desacoplado do provedor
+    (mesmo padrão de `WhatsAppProvider`/ADR-0004) — adapter real via
+    `client.beta.messages.toolRunner` + `betaZodTool` do SDK da Anthropic; adapter dry-run sem
+    rede, que por padrão simula escalação para humano em vez de inventar resposta (o que
+    permitiu verificar o loop inteiro de ponta a ponta sem `ANTHROPIC_API_KEY`, ainda não
+    configurada neste ambiente). System prompt versionado, sem conteúdo volátil; loop de
+    conversa com limite de iterações; escalação por gatilho explícito do modelo (tool
+    dedicada) e por estagnação determinística (contador persistido, não auto-relatada pelo
+    modelo); degradação para atendimento humano em erro do provedor, sem perder a mensagem do
+    cliente; registro de custo (tokens) por tenant desde o primeiro turno.
+  - **`packages/core`**: tool nova `cadastrar_cliente_basico`, para o caso mais comum do
+    produto — cliente escreve pela primeira vez e quer agendar sem estar no CRM ainda.
+  - **`packages/db`**: `whatsapp_conversations` ganha `bot_stall_count` (contador de
+    estagnação); tabela nova `ai_usage_events` (tokens por turno, escopada por
+    `barbershop_id`).
+  - **`apps/worker`**: `process-inbound.ts` passa a acionar o loop de IA quando a conversa
+    está com `handover = bot` e sem opt-out, aplicar o resultado (enviar resposta, persistir
+    como mensagem de saída, atualizar estagnação/handover, registrar uso) e degradar com
+    segurança em qualquer falha do provedor de IA.
+  - **Achado técnico durante a implementação**: o SDK da Anthropic (`betaZodTool`) exige
+    schemas Zod no formato `zod/v4`, incompatível em tempo de execução com o `zod` v3 clássico
+    já usado pelas tools de agenda — corrigido migrando só os dois arquivos de schema de tool
+    (`packages/core/src/agenda/tools.ts`, `packages/core/src/clients/tools.ts`) para
+    `zod/v4`, sem afetar o resto do monorepo (zod 3.25+ empacota as duas APIs lado a lado
+    exatamente para essa migração).
+  - **ADR-0005 corrigido**: `thinking` não é suportado pelo Haiku 4.5 nesta tarefa (omitido de
+    propósito); prompt caching não liga com o tamanho atual do system prompt (mínimo de 4096
+    tokens do modelo) — custo recalculado em ~R$42/mês no cenário original do ADR, ainda
+    confortável no orçamento (D4). Status do ADR passa a "Aceito, pendente de portão de
+    qualidade".
+  - Verificado de verdade: 210 testes automatizados no total do monorepo (`packages/ai` 45
+    novos/reescritos, `packages/core` 47 incluindo 3 novos, `packages/db` 50 incluindo 4
+    novos, `apps/worker` 26 incluindo 6 novos de atendimento-ia) + fluxo real de ponta a ponta
+    via `curl` assinado contra o webhook real (Change 1) → Postgres real → boot real do worker
+    → loop de IA (dry-run, sem credencial) → escalação segura por padrão → envio real via
+    adapter dry-run do WhatsApp → mensagem de saída persistida e visível — sem nenhum
+    conteúdo de mensagem nem telefone completo nos logs (telefone mascarado `***xxxx`). Change
+    **concluída (Done)**: spec permanente nova em
+    [openspec/specs/atendimento-ia/spec.md](openspec/specs/atendimento-ia/spec.md), ADR-0005
+    atualizado, change arquivada em `openspec/changes/archive/add-atendimento-ia/`.
+    **Pendente antes de produção** (fora desta change, tarefa comercial/operacional do
+    Matheus, deliberadamente por último): `ANTHROPIC_API_KEY` real e a bateria de qualidade do
+    plano de execução § 7 contra `claude-haiku-4-5` de verdade — se reprovar, troca para
+    `AI_MODEL=claude-sonnet-5` sem mudança de código. [add-atendimento-ia]
 - **Canal WhatsApp (Fase 5)** (`add-whatsapp-canal`), aprovada e implementada — primeira das
   4 changes da Fase 5 (canal WhatsApp + atendimento por IA), fundação de que as outras três
   (`atendimento-ia`, `confirmacao-agendamento`, `reativacao-clientes`) dependem inteiramente.
