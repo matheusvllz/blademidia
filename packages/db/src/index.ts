@@ -22,3 +22,5 @@ export * from "./repositories/loyalty";
 // Fase 5 — canal WhatsApp
 export * from "./repositories/whatsapp-conversations";
 export * from "./repositories/whatsapp-messages";
+// Fase 5.2 — atendimento por IA
+export * from "./repositories/ai-usage";

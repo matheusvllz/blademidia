@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "../client";
 import { whatsappConversations, type whatsappHandoverEnum } from "../schema/whatsapp-conversations";
 
@@ -127,6 +127,40 @@ export async function markOptOut(barbershopId: string, conversationId: string): 
   await db
     .update(whatsappConversations)
     .set({ optedOutAt: new Date() })
+    .where(
+      and(
+        eq(whatsappConversations.barbershopId, barbershopId),
+        eq(whatsappConversations.id, conversationId),
+      ),
+    );
+}
+
+/**
+ * Contador de "stall" (Fase 5.2, `add-atendimento-ia`, design.md Decision 3): incrementa
+ * atomicamente (`bot_stall_count + 1`, sem race de leitura-depois-escrita) e devolve o valor
+ * novo — quem chama decide se atingiu o limite (`STALL_THRESHOLD`, em `packages/ai`).
+ */
+export async function incrementBotStallCount(
+  barbershopId: string,
+  conversationId: string,
+): Promise<number> {
+  const [updated] = await db
+    .update(whatsappConversations)
+    .set({ botStallCount: sql`${whatsappConversations.botStallCount} + 1` })
+    .where(
+      and(
+        eq(whatsappConversations.barbershopId, barbershopId),
+        eq(whatsappConversations.id, conversationId),
+      ),
+    )
+    .returning({ botStallCount: whatsappConversations.botStallCount });
+  return updated?.botStallCount ?? 0;
+}
+
+export async function resetBotStallCount(barbershopId: string, conversationId: string): Promise<void> {
+  await db
+    .update(whatsappConversations)
+    .set({ botStallCount: 0 })
     .where(
       and(
         eq(whatsappConversations.barbershopId, barbershopId),

@@ -11,5 +11,8 @@ import { resolve } from "node:path";
  */
 const rootEnvPath = resolve(process.cwd(), "../../.env");
 if (existsSync(rootEnvPath)) {
-  config({ path: rootEnvPath });
+  // `quiet: true`: silencia a linha de "tip" promocional que o dotenv 17+ imprime a cada
+  // carregamento (inclusive um link para um domínio de terceiro) — achado incidental durante a
+  // change `add-atendimento-ia`; sem isso, todo log real (worker, testes) fica poluído.
+  config({ path: rootEnvPath, quiet: true });
 }

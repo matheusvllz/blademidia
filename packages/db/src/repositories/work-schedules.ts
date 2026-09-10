@@ -23,6 +23,19 @@ export async function listWorkSchedules(
     .orderBy(asc(workSchedules.weekday), asc(workSchedules.startTime));
 }
 
+/**
+ * Grade de TODOS os barbeiros da barbearia (Fase 5.2, `add-atendimento-ia`) — usada para
+ * resumir o horário de funcionamento no system prompt do bot (não interessa de qual barbeiro é
+ * cada janela, só quando a barbearia tem alguém trabalhando).
+ */
+export async function listWorkSchedulesForBarbershop(barbershopId: string): Promise<WorkScheduleRecord[]> {
+  return db
+    .select()
+    .from(workSchedules)
+    .where(eq(workSchedules.barbershopId, barbershopId))
+    .orderBy(asc(workSchedules.weekday), asc(workSchedules.startTime));
+}
+
 /** Substitui a grade semanal inteira do barbeiro (transação). */
 export async function setWorkSchedules(
   barbershopId: string,
