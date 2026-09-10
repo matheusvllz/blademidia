@@ -20,3 +20,5 @@ export * from "./loyalty-redemptions";
 // Fase 5 — canal WhatsApp
 export * from "./whatsapp-conversations";
 export * from "./whatsapp-messages";
+// Fase 5.2 — atendimento por IA
+export * from "./ai-usage-events";
