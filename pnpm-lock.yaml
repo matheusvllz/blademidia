@@ -23,6 +23,9 @@ importers:
       '@blademidia/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@blademidia/whatsapp':
+        specifier: workspace:*
+        version: link:../../packages/whatsapp
       '@react-pdf/renderer':
         specifier: ^4.5.1
         version: 4.5.1(react@19.2.7)
@@ -32,6 +35,9 @@ importers:
       next:
         specifier: ^15.1.4
         version: 15.5.20(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      pg-boss:
+        specifier: ^10.1.5
+        version: 10.4.2
       react:
         specifier: ^19.0.0
         version: 19.2.7
@@ -84,6 +90,9 @@ importers:
       '@blademidia/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@blademidia/whatsapp':
+        specifier: workspace:*
+        version: link:../../packages/whatsapp
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -157,6 +166,21 @@ importers:
       drizzle-kit:
         specifier: ^0.28.1
         version: 0.28.1
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.0
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.0)
+
+  packages/whatsapp:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.0
       tsx:
         specifier: ^4.19.2
         version: 4.23.0
@@ -1725,6 +1749,7 @@ packages:
   cron-parser@4.9.0:
     resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
     engines: {node: '>=12.0.0'}
+    deprecated: v4 is no longer maintained, upgrade to v5
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -2080,6 +2105,7 @@ packages:
   eslint@9.39.4:
     resolution: {integrity: sha512-XoMjdBOwe/esVgEvLmNsD3IRHkm7fbKIUGvrleloJXUZgDHig2IPWNniv+GwjyJXzuNqVjlr5+4yVUZjycJwfQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'

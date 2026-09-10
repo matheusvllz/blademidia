@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE_NAME } from "./lib/session";
 
-const PUBLIC_PATHS = ["/login", "/api/auth/login"];
+/**
+ * `/api/webhooks/whatsapp` (Fase 5, `add-whatsapp-canal`) é chamado pela Meta/BSP, não por um
+ * usuário logado — a autenticação dela é a assinatura HMAC do provedor (verificada dentro da
+ * própria rota), não a sessão de cookie. Precisa ficar fora do gate deste middleware.
+ */
+const PUBLIC_PATHS = ["/login", "/api/auth/login", "/api/webhooks/whatsapp"];
 
 /**
  * Gate leve: só checa a PRESENÇA do cookie de sessão — não valida a assinatura

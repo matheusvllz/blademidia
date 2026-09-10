@@ -1,6 +1,6 @@
 # Onboarding de uma barbearia no produto (CRM + Agenda)
 
-> Runbook operacional — Vítor/Matheus rodam isso ao levar uma barbearia da operação
+> Runbook operacional — Matheus roda isso (com apoio técnico pontual do pai quando necessário) ao levar uma barbearia da operação
 > manual (`automation/`) para o produto (`apps/web`). Ver
 > [design.md, Decision 4](../../openspec/changes/archive/add-crm-clientes/design.md) para o
 > racional: a migração é um **ponto de corte** — depois dela, o produto é a fonte de
@@ -79,6 +79,59 @@
   estruturada; não há o que migrar além de serviços/barbeiros/horário de funcionamento.
 - **Preço de serviço não preenchido no preset** (`"PREENCHER"` ou não numérico) — o serviço
   é criado sem preço de tabela; preencher manualmente em Configurações → Serviços.
+
+## Passo a passo — canal WhatsApp (Fase 5, `add-whatsapp-canal`)
+
+> Depois do onboarding do CRM (e, se fizer sentido, da Agenda). Liga o número da barbearia ao
+> produto via **coexistência**: o WhatsApp Business App continua no celular do barbeiro
+> funcionando normalmente, e o mesmo número passa a responder também pela Cloud API — ver
+> `docs/sdd/06-plano-execucao-fase-5.md` § 3.3 e `docs/architecture/decisions/
+> ADR-0004-whatsapp-provider-abstraido.md` ("Decisão final") para o racional completo.
+>
+> **Genérico de propósito**: o passo a passo abaixo é o fluxo de Embedded Signup com
+> coexistência que vale para qualquer BSP com mensalidade fixa (§ 5.9 do plano). Quando o BSP
+> específico for contratado (§ 5.10), substitua os passos 2-4 pelas telas/nomes exatos do
+> painel dele — a estrutura (consentimento de histórico, versão mínima do app, teste antes do
+> número real) não muda.
+
+1. **Confirmar a versão do WhatsApp Business App** no celular do barbeiro — precisa ser
+   2.24.17 ou superior para a coexistência funcionar. Atualizar pela loja do app se for mais
+   antiga.
+
+2. **Iniciar o Embedded Signup pelo painel do BSP contratado**, escolhendo a opção de conectar
+   uma conta/número do WhatsApp Business App já existente (não "criar número novo" — isso é o
+   caminho clássico sem coexistência, que tira o número do celular).
+
+3. **Decidir o consentimento de sincronização de histórico** (até 180 dias) junto com o
+   barbeiro antes de confirmar — é uma escolha explícita no fluxo, não automática. Recusar não
+   quebra a coexistência, só não traz o histórico antigo do app para o produto.
+
+4. **Concluir o Embedded Signup** e anotar o identificador de número/canal (`phone_number_id`
+   ou equivalente do BSP) que ele devolve.
+
+5. **Configurar a barbearia no produto** com esse identificador:
+   ```ts
+   // via packages/db — setWhatsappPhoneNumberId(barbershopId, phoneNumberId)
+   ```
+   (ainda não há script de linha de comando para isto — usar via script pontual, mesmo padrão
+   do `create-barbershop.ts`, até existir demanda para automatizar).
+
+6. **Testar com um número de teste antes do número real do cliente**: mandar uma mensagem, ver
+   ela persistida em `/conversas` no painel; responder pelo próprio WhatsApp Business App e
+   confirmar que aparece a marca "com o barbeiro" na conversa (prova que o espelhamento da
+   coexistência está funcionando).
+
+7. **Avisar o barbeiro** que, com a coexistência ativa, o número dele continua funcionando
+   exatamente como antes no celular — nada muda na rotina dele até a Fase 5.2
+   (`add-atendimento-ia`) começar a responder automaticamente.
+
+### O que a coexistência NÃO faz (limitações confirmadas)
+
+- **Chat em grupo não sincroniza** — só conversas individuais.
+- **Mensagens que desaparecem, visualização única e localização ao vivo são desativadas**
+  após o onboarding da coexistência.
+- **Throughput combinado de 20 mensagens/segundo** entre app e API — folgado para o volume
+  desta fase, mas relevante se a Blade crescer para um volume alto.
 
 ## Nuance de privacidade encontrada (reportar, não é bug desta migração)
 

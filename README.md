@@ -37,10 +37,14 @@ enquanto o dono corta — e a Blade atende esse zap por ele.**
 
 ## Operadores
 
-| Sócio | Papel |
+| Quem | Papel |
 |---|---|
-| **Vítor Machado** | Técnico — constrói e opera o sistema, monitora a saúde das conexões |
-| **Matheus Vellozo** | Comercial — prospecção, fechamento, relação com cada barbearia |
+| **Matheus Vellozo** | Sócio único — comercial, prospecção, fechamento, relação com cada barbearia e operação geral do negócio |
+| **Pai de Matheus (dev)** | Apoio técnico pontual — ajuda em implementação quando necessário; não é sócio |
+
+> Atualizado em 2026-09-07: a partir desta data a operação é só de Matheus; Vítor Machado não
+> faz mais parte da Blade Mídia. Menções a "Vítor" em registros anteriores (CHANGELOG, changes
+> arquivadas) são histórico e não foram reescritas.
 
 ## Comece por aqui
 

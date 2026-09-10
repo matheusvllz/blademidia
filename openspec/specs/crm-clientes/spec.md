@@ -9,10 +9,13 @@
 >   2026-07-15): histórico passa a referenciar o catálogo de serviço/barbeiro, exclusão LGPD
 >   abrange agendamentos futuros, dashboard ganha agenda de hoje, perfil ganha próximo
 >   agendamento.
+> - Fase 5 (canal WhatsApp) estendida pela change `add-whatsapp-canal` (concluída
+>   2026-09-10): exclusão LGPD passa a anonimizar também as conversas/mensagens de WhatsApp
+>   associadas ao cliente.
 >
-> Escopo atual: Fases 1-2. Comportamentos de fases futuras (relatório mensal, fidelização,
-> envio automático de mensagem) pertencem a outras capabilities (`relatorios`,
-> `fidelizacao-clientes`, `whatsapp-canal`, `reativacao-clientes`) e não estão aqui.
+> Escopo atual: Fases 1-2 + delta da Fase 5. Comportamentos de fases futuras (relatório
+> mensal, fidelização, atendimento por IA) pertencem a outras capabilities (`relatorios`,
+> `fidelizacao-clientes`, `atendimento-ia`, `reativacao-clientes`) e não estão aqui.
 
 ## Requirement: Cadastro de cliente
 O sistema SHALL permitir que o barbeiro-dono cadastre um cliente com, no mínimo, nome e
@@ -147,7 +150,9 @@ de hoje e faltas recentes).
 O sistema SHALL permitir que o barbeiro-dono exclua um cliente a pedido, removendo os
 dados pessoais identificáveis e preservando os totais agregados de histórico/relatório já
 fechados de forma anonimizada. A exclusão SHALL também tratar os agendamentos futuros do
-cliente, cancelando-os e desvinculando a identidade removida.
+cliente, cancelando-os e desvinculando a identidade removida, e SHALL anonimizar as
+conversas e mensagens de WhatsApp associadas ao cliente, preservando o conteúdo operacional
+sem vínculo com a identidade removida.
 
 #### Scenario: Exclusão a pedido do titular
 - GIVEN um cliente cadastrado com histórico de atendimentos
@@ -161,6 +166,12 @@ cliente, cancelando-os e desvinculando a identidade removida.
 - WHEN o barbeiro exclui esse cliente
 - THEN o sistema SHALL cancelar os agendamentos futuros desse cliente, liberando os horários
 - AND SHALL desvincular a identidade removida sem quebrar a visão da agenda nem os agregados
+
+#### Scenario: Exclusão anonimiza conversas de WhatsApp associadas
+- GIVEN um cliente com conversas de WhatsApp registradas (`whatsapp-canal`, Fase 5)
+- WHEN o barbeiro exclui esse cliente a pedido do titular dos dados
+- THEN o sistema SHALL remover o vínculo entre a conversa e a identidade do cliente
+- AND SHALL preservar o conteúdo das mensagens já trocadas, sem telefone identificável
 
 ## Requirement: Próximo agendamento no perfil do cliente
 O sistema SHALL exibir, no perfil do cliente, o próximo agendamento futuro do cliente (data,

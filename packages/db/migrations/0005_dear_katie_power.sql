@@ -1,0 +1,2 @@
+ALTER TABLE "barbershops" ADD COLUMN "whatsapp_phone_number_id" text;--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "barbershops_whatsapp_phone_number_id_idx" ON "barbershops" USING btree ("whatsapp_phone_number_id");

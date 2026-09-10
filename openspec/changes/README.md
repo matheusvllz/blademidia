@@ -30,6 +30,22 @@ em [`openspec/workflow.md`](../workflow.md).
 
 | Change ID | Título | Status | Capabilities |
 |---|---|---|---|
-| — | — | — | — |
+| `add-agency-ops-panel` | Painel de Operação da Agência | Approved (só Fase 0 de 5 entregue; 5/21 tasks) | operacional (`automation/`, `infra/`) — fora do fluxo SDD do produto |
 
-> Mantenha esta tabela atualizada ao criar/arquivar changes.
+> Mantenha esta tabela atualizada ao criar/arquivar changes. Próxima a abrir:
+> `add-atendimento-ia` (Fase 5.2 do produto) — ver
+> [`docs/sdd/06-plano-execucao-fase-5.md`](../../docs/sdd/06-plano-execucao-fase-5.md).
+
+## Índice de changes arquivadas (produto, concluídas)
+
+| Change ID | Capability(ies) | Fase |
+|---|---|---|
+| `add-crm-clientes` | `crm-clientes` | 1 |
+| `add-agendamento` | `agendamento` | 2 |
+| `add-agenda-visao-semanal` | `agendamento` (delta) | — |
+| `add-relatorios` | `relatorios` | 3 |
+| `add-fidelizacao-e-funcionarios` | `fidelizacao-clientes`, `auth-tenancy` | 4 |
+| `add-whatsapp-canal` | `whatsapp-canal`, `crm-clientes` (delta) | 5 (1/4) |
+| `init-project-skeleton` | — (infraestrutura; `Superseded`, nunca chegou a `Approved` — ver o proposal arquivado) | — |
+
+Todas em `openspec/changes/archive/`, specs permanentes correspondentes em `openspec/specs/`.

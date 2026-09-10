@@ -5,7 +5,10 @@ Este projeto usa **Spec-Driven Development**. Estas regras não são opcionais.
 ## O que é este repositório (leia primeiro)
 
 A Blade Mídia é uma agência que vende **retenção/atendimento automático para barbearias**.
-Sócios: **Vítor Machado** (técnico) e **Matheus Vellozo** (comercial). Este repositório
+Sócio único: **Matheus Vellozo** (comercial e operação geral do negócio). Pai de Matheus
+(desenvolvedor) apoia pontualmente a implementação técnica, sem ser sócio. *(Atualizado em
+2026-09-07 — até então a estrutura era de dois sócios; Vítor Machado não faz mais parte da
+operação.)* Este repositório
 único serve **três frentes** — saiba em qual você está mexendo antes de agir:
 
 | Frente | Pasta | Regime |
@@ -32,7 +35,8 @@ Tudo roda em **Node puro (18+), sem `npm install`**. Ver `automation/README.md` 
   e o QR de pareamento. Depende de `EVOLUTION_URL`/`EVOLUTION_API_KEY` (senão, dry-run).
 - **Dois painéis** (`panel-server.mjs`, dados locais em `automation/data/` — fora do git):
   - **Painel da AGÊNCIA** (`/`, pasta `panel/`): estilo do site (Ink/Gold). Gestão de
-    barbearias (tenants), CRM dos clientes finais, detecção de inativos. Para Vítor e Matheus.
+    barbearias (tenants), CRM dos clientes finais, detecção de inativos. Para Matheus (e apoio
+    técnico pontual do pai).
   - **Painel do CLIENTE** (`/cliente?barbershop=<slug>`, pasta `client-panel/`):
     **deliberadamente simples e claro (não segue o estilo do site)** — é ferramenta do
     barbeiro no celular. Preset clonável por cliente.
@@ -44,37 +48,46 @@ Tudo roda em **Node puro (18+), sem `npm install`**. Ver `automation/README.md` 
 de cliente final nem telefone completo (mascarar `***1234`); todo acesso a dado é escopado por
 barbearia; o número de WhatsApp é o ativo do barbeiro (warm-up/rate-limit não são opcionais).
 
-## Estado atual e próximos passos (atualizado 2026-07-06 — manter este bloco em dia)
+## Estado atual e próximos passos (atualizado 2026-09-07 — manter este bloco em dia)
 
 **Garantia rápida**: `node automation/check.mjs` — 17 checks que provam a estrutura
 íntegra em segundos. Rode antes de demo, onboarding ou depois de qualquer mudança.
 
 **O que JÁ funciona (validado):**
-- Site no ar (blademidia.netlify.app) com auto-deploy a cada push em `site/`.
+- Site no ar (blademidia.netlify.app) com auto-deploy a cada push em `site/`, copy revisada
+  conforme o guia de copy oficial.
 - Formulário de diagnóstico do site capturando leads no Netlify Forms (ver painel
-  Netlify → Forms) com notificação por e-mail ao Vítor a cada envio.
+  Netlify → Forms) com notificação por e-mail a Matheus a cada envio (checar se o e-mail
+  cadastrado nas notificações do Netlify já foi atualizado — isso é config externa, não só doc).
 - Stack Evolution local em Docker (`infra/evolution/docker-compose.local.yml`) — testado:
   instância criada via `provision.mjs`, QR gerado, eventos reais chegando no
   `webhook-server.mjs`. Auth local: API key `local-dev-key` (só dev; produção usa `.env`).
+  Continua sendo a ferramenta da **operação da agência** (`automation/`) — não é o canal do
+  produto (ver Fase 5 abaixo, que usa Meta Cloud API via BSP, não Evolution).
 - Painéis da agência (`/`) e do cliente (`/cliente?barbershop=<slug>`) via
   `node automation/panel-server.mjs`.
+- **Produto SaaS completo até a Fase 4**, mergeado na `main`: CRM de clientes
+  (`add-crm-clientes`), agenda com anti-double-booking (`add-agendamento` +
+  `add-agenda-visao-semanal`), relatórios com PDF (`add-relatorios`), fidelização de
+  clientes + papéis dono/funcionário (`add-fidelizacao-e-funcionarios`). Todas arquivadas em
+  `openspec/changes/archive/`, specs permanentes em `openspec/specs/`.
 
-**Próximos passos, em ordem (o que falta para vender/operar):**
-1. **Parear um número real de teste**: escanear `automation/out/qr-blade-<slug>.png` com um
-   WhatsApp de teste e validar conversa real (motor respondendo). Respeitar warm-up.
-2. **VPS de produção**: subir `infra/stack/docker-compose.yml` (Evolution + painel + motor +
-   Caddy) num VPS (Hetzner ~R$30-60/mês ou Oracle Free ARM), apontar DNS, preencher `.env`.
-3. **Primeiro cliente real**: copiar preset (`presets/clientes/<slug>.json`), preencher
-   dados do negócio, provisionar, barbeiro escaneia QR — runbook em `automation/README.md`.
-4. **Validar dor e persona em campo (Matheus)**: [dor-central.md](docs/business/dor-central.md)
+**Próximos passos, em ordem:**
+1. **Fase 5 do produto — canal WhatsApp + atendimento por IA.** É o item ativo agora.
+   Plano de execução completo (decisões de arquitetura, contratos da Meta/BSP, barra de
+   verificação) em [`docs/sdd/06-plano-execucao-fase-5.md`](docs/sdd/06-plano-execucao-fase-5.md)
+   — leia-o inteiro antes de tocar em qualquer coisa desta fase. Sequência:
+   `add-whatsapp-canal` → `add-atendimento-ia` → `add-confirmacao-agendamento` →
+   `add-reativacao-clientes`. D2 (provedor) resolvida: Meta Cloud API via BSP com
+   coexistência (número continua no celular do barbeiro) — ver ADR-0004.
+2. **Pendências comerciais da operação da agência (Matheus)**: preço da taxa de gestão,
+   texto de contrato (cancelamento/limites de responsabilidade), regra de carência de
+   inadimplência — ver perguntas bloqueantes em
+   `openspec/changes/add-agency-ops-panel/exploration.md`.
+3. **Validar dor e persona em campo (Matheus)**: [dor-central.md](docs/business/dor-central.md)
    e [persona-icp.md](docs/business/persona-icp.md) listam as hipóteses a validar (H1-H8 e
    P1-P8) em conversas reais de prospecção. H1 e H2 (ele perde por demora **e não sabe disso**)
    são as decisivas: se caírem, a dor central muda e os três documentos de negócio se reescrevem.
-5. **Pendências comerciais (Matheus)**: preço da taxa de gestão, texto de contrato
-   (cancelamento/limites de responsabilidade), regra de carência de inadimplência — ver
-   perguntas bloqueantes em `openspec/changes/add-agency-ops-panel/exploration.md`.
-6. **Produto SaaS**: iniciar `init-project-skeleton` (proposal já escrito, aguarda
-   confirmação das ADRs) e depois `auth-tenancy` → `crm-clientes` → `agendamento`.
 
 **Convenções de infraestrutura (não quebrar):** Netlify site_id
 `ef53f93d-117f-420f-935b-0348612c17dc` (conta vodetmor/Intellecta) publica deste repo,
