@@ -1,4 +1,9 @@
-import { z } from "zod";
+// `zod/v4` (não a raiz `zod`, que é a API clássica v3): a change `add-atendimento-ia` precisa
+// que este schema seja estruturalmente compatível com `betaZodTool` do SDK da Anthropic, que
+// espera o `ZodType` do `zod/v4` — v3 e v4 têm `_def` internos incompatíveis em tempo de
+// execução, mesmo vindo do mesmo pacote (zod 3.25+ empacota as duas APIs lado a lado
+// justamente para essa migração). `.parse()`/`.describe()`/`.optional()` continuam iguais.
+import { z } from "zod/v4";
 import {
   type AgendaResult,
   bookAppointment,
@@ -23,6 +28,15 @@ export interface AgendaTool<I> {
   /** Executa a ação de domínio para o tenant dado. Origem das escritas: `bot`. */
   handler: (barbershopId: string, input: I) => Promise<unknown>;
 }
+
+/**
+ * Alias genérico (change `add-atendimento-ia`, design.md "Affected Components"): o formato
+ * `{name, description, inputSchema, handler(barbershopId, input)}` não é específico de agenda
+ * — é o contrato de qualquer tool que o bot pode chamar (ver também
+ * `packages/core/src/clients/tools.ts`). Mantido como alias, não renomeação, para não quebrar
+ * `AgendaTool` nos imports já existentes.
+ */
+export type BotTool<I> = AgendaTool<I>;
 
 const consultarDisponibilidadeInput = z.object({
   date: z.string().describe("Dia desejado no formato YYYY-MM-DD (fuso da barbearia)."),

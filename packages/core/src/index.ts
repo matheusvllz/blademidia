@@ -7,4 +7,5 @@
  */
 export const CORE_PACKAGE = "@blademidia/core";
 export * from "./agenda/index";
+export * from "./clients/tools";
 export * from "./relatorios/index";

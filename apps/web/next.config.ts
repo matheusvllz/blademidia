@@ -10,7 +10,9 @@ import type { NextConfig } from "next";
 // presença do cookie; a validação real da sessão é feita server-side (Node).
 const rootEnvPath = resolve(process.cwd(), "../../.env");
 if (existsSync(rootEnvPath)) {
-  config({ path: rootEnvPath });
+  // `quiet: true`: silencia a linha de "tip" promocional do dotenv 17+ (achado incidental
+  // durante `add-atendimento-ia` — ver mesmo comentário em packages/db/src/load-env.ts).
+  config({ path: rootEnvPath, quiet: true });
 }
 
 const nextConfig: NextConfig = {
