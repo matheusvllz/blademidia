@@ -30,3 +30,27 @@ export async function getOrCreateBarbershopBySlug(slug: string, name: string) {
   if (existing) return existing;
   return createBarbershop(slug, name);
 }
+
+/** Fase 5 (`add-whatsapp-canal`): resolve a barbearia dona do número/canal — é a chave de
+ * roteamento do webhook único (design.md § Data Model). */
+export async function findBarbershopByWhatsappPhoneNumberId(
+  phoneNumberId: string,
+): Promise<BarbershopRecord | null> {
+  const rows = await db
+    .select()
+    .from(barbershops)
+    .where(eq(barbershops.whatsappPhoneNumberId, phoneNumberId));
+  return rows[0] ?? null;
+}
+
+export async function setWhatsappPhoneNumberId(
+  barbershopId: string,
+  phoneNumberId: string,
+): Promise<BarbershopRecord | null> {
+  const [updated] = await db
+    .update(barbershops)
+    .set({ whatsappPhoneNumberId: phoneNumberId })
+    .where(eq(barbershops.id, barbershopId))
+    .returning();
+  return updated ?? null;
+}

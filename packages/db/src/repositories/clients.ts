@@ -1,6 +1,7 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { db } from "../client";
 import { clients } from "../schema/clients";
+import { whatsappConversations } from "../schema/whatsapp-conversations";
 
 /**
  * Regra de ouro (ADR-0007): toda função exportada aqui exige `barbershopId`
@@ -100,15 +101,34 @@ export async function updateClient(
   return updated ?? null;
 }
 
-/** LGPD: anonimiza (nome/telefone) em vez de apagar, preservando histórico agregado. */
+/**
+ * LGPD: anonimiza (nome/telefone) em vez de apagar, preservando histórico agregado.
+ * Fase 5 (`add-whatsapp-canal`, delta nesta spec): na mesma transação, desvincula e
+ * anonimiza (telefone → NULL) as conversas de WhatsApp associadas ao cliente, preservando o
+ * conteúdo das mensagens já trocadas — mesmo padrão já usado para `clients.phone`.
+ */
 export async function deleteClient(
   barbershopId: string,
   clientId: string,
 ): Promise<ClientRecord | null> {
-  const [updated] = await db
-    .update(clients)
-    .set({ name: null, phone: null, deletedAt: new Date() })
-    .where(and(eq(clients.barbershopId, barbershopId), eq(clients.id, clientId)))
-    .returning();
-  return updated ?? null;
+  return db.transaction(async (tx) => {
+    const [updated] = await tx
+      .update(clients)
+      .set({ name: null, phone: null, deletedAt: new Date() })
+      .where(and(eq(clients.barbershopId, barbershopId), eq(clients.id, clientId)))
+      .returning();
+    if (!updated) return null;
+
+    await tx
+      .update(whatsappConversations)
+      .set({ clientId: null, phone: null })
+      .where(
+        and(
+          eq(whatsappConversations.barbershopId, barbershopId),
+          eq(whatsappConversations.clientId, clientId),
+        ),
+      );
+
+    return updated;
+  });
 }
