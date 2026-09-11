@@ -6,31 +6,38 @@
 
 ## 1. `packages/db` — schema, migração e seleção
 
-- [ ] 1.1 `crm-settings.ts` (schema): `+ reactivationAutomationEnabled boolean NOT NULL DEFAULT
+- [x] 1.1 `crm-settings.ts` (schema): `+ reactivationAutomationEnabled boolean NOT NULL DEFAULT
   false`, `+ reactivationDailyCap integer NOT NULL DEFAULT 5`. Repositório
   (`settings.ts` ou arquivo próprio): expor getters/setters coerentes com o padrão já usado
   para `inactivityDaysThreshold`.
   - Depends on: —
   - Validation: unit contra Postgres real.
   - Completion criteria: barbearia nunca configurada devolve `false`/`5`.
+  - Evidência: `getReactivationSettings`/`setReactivationSettings` em `settings.ts`, cobertos
+    indiretamente por `reactivation-selection.test.ts` (ver 1.5).
 
-- [ ] 1.2 Schema novo `reactivation-sends.ts`: tabela `reactivation_sends` (`id`,
+- [x] 1.2 Schema novo `reactivation-sends.ts`: tabela `reactivation_sends` (`id`,
   `barbershopId`, `clientId`, `sentAt`, `wamid`, `clientLastVisitAt`), FKs para `barbershops` e
   `clients`, SEM unicidade por cliente (Decision 2). Exportar em `schema/index.ts`.
   - Depends on: —
   - Validation: migração aplica sem erro.
+  - Evidência: `pnpm generate` → `migrations/0008_slimy_winter_soldier.sql` → `pnpm migrate` →
+    "Migrações aplicadas com sucesso.".
 
-- [ ] 1.3 Repositório `reactivation-sends.ts`: `recordReactivationSent(barbershopId, clientId,
+- [x] 1.3 Repositório `reactivation-sends.ts`: `recordReactivationSent(barbershopId, clientId,
   wamid, clientLastVisitAt)`, `getLastReactivationSent(barbershopId, clientId)`. Exportar em
   `packages/db/src/index.ts`.
   - Depends on: 1.2
   - Validation: unit contra Postgres real.
+  - Evidência: exercitado em `reactivation-selection.test.ts` e
+    `reactivation-selection.isolation.test.ts`.
 
-- [ ] 1.4 `drizzle-kit generate` — gerar e revisar a migração SQL antes de aplicar.
+- [x] 1.4 `drizzle-kit generate` — gerar e revisar a migração SQL antes de aplicar.
   - Depends on: 1.1, 1.2
   - Validation: `pnpm --filter @blademidia/db migrate` contra Postgres local.
+  - Evidência: ver 1.2.
 
-- [ ] 1.5 `listClientsNeedingReactivation(barbershopId)` — nova função (Decision 3/4 do
+- [x] 1.5 `listClientsNeedingReactivation(barbershopId)` — nova função (Decision 3/4 do
   design.md): gate `reactivationAutomationEnabled`, cliente com `lastVisitAt` não nulo e
   inativo pelo `inactivityDaysThreshold`, telefone válido, regra de "novo ciclo" (nenhum envio
   registrado OU `lastVisitAt` atual > `clientLastVisitAt` do último envio), ordenada por mais
@@ -42,6 +49,10 @@
     cap diário respeitado com mais elegíveis do que o limite; cliente com telefone anonimizado
     (não aparece); isolamento de tenant.
   - Completion criteria: suíte cobre todos os casos acima, todos verdes.
+  - Evidência: `src/repositories/reactivation-selection.test.ts` (8/8) +
+    `reactivation-selection.isolation.test.ts` (1/1) — **9/9 verdes** contra Postgres real.
+    Suíte completa de `@blademidia/db`: `pnpm typecheck` limpo + `pnpm test` → **67/67 verdes**
+    (0 regressão).
 
 ## 2. `apps/worker` — job real de reativação
 

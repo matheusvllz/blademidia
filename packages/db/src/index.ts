@@ -25,4 +25,8 @@ export * from "./repositories/whatsapp-messages";
 // Fase 5.2 — atendimento por IA
 export * from "./repositories/ai-usage";
 
+// Fase 5.3 — confirmação automática de agendamento
 export * from "./repositories/confirmation-reminders";
+// Fase 5.4 — reativação automática de clientes
+export * from "./repositories/reactivation-sends";
+export * from "./repositories/reactivation-selection";
