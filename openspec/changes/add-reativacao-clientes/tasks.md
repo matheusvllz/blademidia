@@ -56,7 +56,7 @@
 
 ## 2. `apps/worker` — job real de reativação
 
-- [ ] 2.1 Reescrever `reactivation-sweep.ts`: para cada barbearia elegível, para cada cliente
+- [x] 2.1 Reescrever `reactivation-sweep.ts`: para cada barbearia elegível, para cada cliente
   candidato — resolve/cria a conversa, monta `bodyParams` (nome), chama
   `WhatsAppProvider.sendTemplate`, e em caso de sucesso grava `reactivation_sends` +
   `whatsapp_messages`. Falha por cliente não interrompe o lote (try/catch por iteração).
@@ -67,15 +67,25 @@
     reenvia; cliente com visita nova reaparece; cap diário respeitado; falha de um cliente não
     impede os demais; opt-out bloqueia envio; nenhum log com corpo de mensagem ou telefone
     completo.
+  - Evidência: `src/jobs/reactivation-sweep.test.ts` — **7/7 verdes** contra Postgres real +
+    provedor mockado. Achado durante o teste (mesmo padrão de `send-confirmation.test.ts`):
+    `runReactivationSweep` varre TODAS as barbearias (cross-tenant, como `no-show-sweep`) —
+    testes que dependiam de contagens globais (`result.sent`) foram reescritos para escopar
+    pelos telefones criados no próprio teste, evitando depender de estado/ordem da suíte.
 
-- [ ] 2.2 Teste de isolamento de tenant para a seleção/gravação novas.
+- [x] 2.2 Teste de isolamento de tenant para a seleção/gravação novas.
   - Depends on: 2.1
   - Validation: unit contra Postgres real.
+  - Evidência: `packages/db/src/repositories/reactivation-selection.isolation.test.ts` (1/1),
+    ver grupo 1.
 
-- [ ] 2.3 Boot real do worker, confirmando que `crm.reactivation-sweep` continua registrado em
+- [x] 2.3 Boot real do worker, confirmando que `crm.reactivation-sweep` continua registrado em
   `pgboss.queue`/`pgboss.schedule` sem erro após a reescrita (mesmo cron `0 8 * * *`).
   - Depends on: 2.1
   - Validation: manual/integração, evidência colada.
+  - Evidência: `npx tsx src/index.ts` real → "[worker] up — pg-boss iniciado, jobs
+    registrados" → consulta real `select name, cron from pgboss.schedule where name =
+    'crm.reactivation-sweep'` → `crm.reactivation-sweep | 0 8 * * *` — cron inalterado.
 
 ## 3. Ativação operacional
 
