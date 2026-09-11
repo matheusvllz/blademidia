@@ -12,6 +12,7 @@
     "migrate-automation-agenda": "tsx src/scripts/migrate-automation-agenda.ts",
     "create-barbershop": "tsx src/scripts/create-barbershop.ts",
     "enable-confirmation-automation": "tsx src/scripts/enable-confirmation-automation.ts",
+    "enable-reactivation-automation": "tsx src/scripts/enable-reactivation-automation.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "echo \"(sem eslint configurado ainda em packages/db)\""

@@ -89,16 +89,21 @@
 
 ## 3. Ativação operacional
 
-- [ ] 3.1 `packages/db/src/scripts/enable-reactivation-automation.ts` (Decision 5): recebe
+- [x] 3.1 `packages/db/src/scripts/enable-reactivation-automation.ts` (Decision 5): recebe
   `--slug=` e `--daily-cap=` (opcional), valida `whatsappPhoneNumberId` configurado, liga
   `reactivationAutomationEnabled=true` e ajusta `reactivationDailyCap` se informado.
   - Depends on: 1.1
   - Validation: manual (rodar contra barbearia de teste local, com e sem
     `whatsappPhoneNumberId`, com e sem `--daily-cap`).
+  - Evidência: 4 caminhos demonstrados manualmente — sem número (exit 1, mensagem clara); com
+    número, cap default (exit 0, "limite diário padrão"); `--daily-cap=abc` inválido (exit 1);
+    `--daily-cap=10` válido (exit 0, "limite diário 10"). `pnpm typecheck` limpo.
 
-- [ ] 3.2 `docs/operations/onboarding-produto.md`: acrescentar o passo do script 3.1, incluindo
+- [x] 3.2 `docs/operations/onboarding-produto.md`: acrescentar o passo do script 3.1, incluindo
   o lembrete explícito do pré-requisito "fazer a conta de custo contra a base real antes do
   primeiro envio" (plano § 9).
+  - Evidência: passo 9 acrescentado, logo após o passo 8 (confirmação), com os 2
+    pré-requisitos explícitos (template marketing aprovado; conta de custo) antes do comando.
   - Depends on: 3.1
   - Validation: revisão manual.
 

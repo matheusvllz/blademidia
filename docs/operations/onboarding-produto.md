@@ -138,6 +138,24 @@
    ter como enviar. Sem este passo, `apps/worker` nunca seleciona agendamentos dessa barbearia
    para o lembrete (default `false`).
 
+9. **Ligar a reativação automática de clientes** (Fase 5.4, `add-reativacao-clientes`) —
+   **a mensagem mais sensível das quatro da Fase 5**: categoria *marketing* (não *utility*),
+   iniciada pela barbearia sem o cliente ter pedido nada. Dois pré-requisitos, nesta ordem,
+   **antes** de rodar o script:
+   - Template `reativacao_cliente` (categoria *marketing*, `pt_BR`, rascunho em `design.md` da
+     change) **submetido e aprovado pela Meta** para esta barbearia — aprovação de marketing é
+     mais rigorosa que a de utility (passo 8).
+   - **Fazer a conta do custo** contra a base real de clientes inativos desta barbearia
+     (número de inativos × preço do template marketing, sem desconto de volume) — uma
+     barbearia com base grande pode ter volume bem maior do que a intuição sugere. Se estourar
+     a margem esperada, pare e reavalie antes de ligar.
+   ```sh
+   pnpm --filter @blademidia/db enable-reactivation-automation -- --slug=<slug> [--daily-cap=<n>]
+   ```
+   Mesma validação de `whatsappPhoneNumberId` do passo 8. `--daily-cap` é opcional (default 5
+   envios por execução do job, que roda 1x/dia) — é o throttling que evita despejar a lista
+   inteira de clientes inativos de uma vez.
+
 ### O que a coexistência NÃO faz (limitações confirmadas)
 
 - **Chat em grupo não sincroniza** — só conversas individuais.
