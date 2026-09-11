@@ -7,7 +7,7 @@ import {
   listAppointmentsNeedingConfirmation,
   recordReminderSent,
 } from "@blademidia/db";
-import { maskPhone, resolveWhatsAppProvider } from "@blademidia/whatsapp";
+import { maskPhone, resolveWhatsAppProvider, type WhatsAppProvider } from "@blademidia/whatsapp";
 import type PgBoss from "pg-boss";
 
 /**
@@ -45,9 +45,16 @@ export interface SendConfirmationResult {
   failed: number;
 }
 
-export async function runSendConfirmation(now: Date = new Date()): Promise<SendConfirmationResult> {
+/**
+ * `provider` é injetável (default: `resolveWhatsAppProvider(process.env)`) — usado pelos testes
+ * ponta a ponta (change `add-reativacao-clientes`) para passar o adapter dry-run real
+ * diretamente, sem precisar mockar o módulo `@blademidia/whatsapp`.
+ */
+export async function runSendConfirmation(
+  now: Date = new Date(),
+  provider: WhatsAppProvider = resolveWhatsAppProvider(process.env),
+): Promise<SendConfirmationResult> {
   const candidates = await listAppointmentsNeedingConfirmation(now);
-  const provider = resolveWhatsAppProvider(process.env);
 
   let sent = 0;
   let skipped = 0;

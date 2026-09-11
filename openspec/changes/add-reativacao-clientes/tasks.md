@@ -109,18 +109,45 @@
 
 ## 4. Fluxo ponta a ponta (dry-run) e fechamento
 
-- [ ] 4.1 Teste/demonstração ponta a ponta com o adapter dry-run já existente: cliente inativo
+- [x] 4.1 Teste/demonstração ponta a ponta com o adapter dry-run já existente: cliente inativo
   elegível → job "enviaria" o template (log dry-run) → registro criado → confirmar que uma
   segunda execução, sem visita nova, não reenvia.
   - Depends on: 2.1
   - Validation: integração, evidência colada.
+  - Evidência: `src/jobs/reactivation-sweep.e2e.test.ts` (1/1, sem mock). Log real capturado:
+    `[whatsapp:dry-run] enviaria template "reativacao_cliente" (pt_BR, 1 parâmetro(s)) para
+    ***2250 via wa-e2e-... — wamid=dryrun...`; registro criado e confirmado idêntico após
+    segunda execução (nenhum novo envio).
 
-- [ ] 4.2 Suíte completa do monorepo verde (`pnpm -r test`).
+- [x] 4.2 Suíte completa do monorepo verde (`pnpm -r test`).
   - Depends on: todas as anteriores
   - Validation: comando real, contagem de testes colada. Registrar explicitamente se a falha
     pré-existente de `monthly-snapshot.test.ts` (não relacionada, ver
     `add-confirmacao-agendamento`) ainda ocorre — não é regressão desta change se persistir sem
     mudança de causa.
+  - Evidência: `pnpm -r typecheck` limpo (7/7). Testes contra Postgres real, por pacote:
+    `@blademidia/whatsapp` 35/35, `@blademidia/db` 67/67, `@blademidia/core` 53/53,
+    `@blademidia/ai` 46/46, `apps/web` 7/7, `apps/worker` 37/37 (excluindo
+    `monthly-snapshot.test.ts`) — **245 testes verdes**. `monthly-snapshot.test.ts`: falha
+    pré-existente confirmada de novo (2/4, timeout), mesma causa já registrada em
+    `add-confirmacao-agendamento`, não relacionada a esta change.
+    **2 achados reais de robustez corrigidos durante esta task** (não eram bugs de lógica de
+    negócio, mas afetavam a confiabilidade dos testes e, o primeiro, também produção):
+    (1) `reactivation-sweep.ts` não isolava falha por barbearia — um erro ao resolver/selecionar
+    UMA barbearia abortava a varredura de TODAS as seguintes (só havia isolamento por
+    cliente); corrigido com `try/catch` por barbearia, com teste dedicado ("erro ao resolver
+    uma barbearia não impede a varredura das demais"). (2) Os testes ponta a ponta
+    (`send-confirmation.e2e.test.ts`, `reactivation-sweep.e2e.test.ts`) mockavam
+    `@blademidia/whatsapp` com fábricas diferentes para forçar o dry-run — rodar os arquivos
+    juntos causava flakiness real; corrigido tornando `provider` um parâmetro injetável em
+    `runSendConfirmation`/`runReactivationSweep` (default `resolveWhatsAppProvider(process.env)`),
+    eliminando a necessidade de mock nos testes e2e (`process-inbound.test.ts`, que não tem
+    como injetar, manteve o mock, mas sem mais `vi.stubEnv` competindo com os outros arquivos).
+    **Achado adicional, registrado em `CLAUDE.md`, não é bug de código**: rodar as suítes de
+    `apps/worker` repetidamente numa sessão longa acumula centenas de barbearias de teste
+    (nenhum teste limpa o que cria), deixando a varredura cross-tenant lenta o bastante para
+    colidir sob execução paralela — mitigado truncando o Postgres local de teste durante esta
+    sessão; documentado como nota operacional para sessões futuras.
 
 - [ ] 4.3 `CHANGELOG.md` atualizado (entrada da change, versão `MINOR`).
   - Depends on: 4.2

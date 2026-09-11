@@ -104,6 +104,16 @@ barbearia; o número de WhatsApp é o ativo do barbeiro (warm-up/rate-limit não
 dir `site/`; secret `NETLIFY_BUILD_HOOK` no GitHub aciona o deploy; push direto na `main`
 é aceito para `site/` e `automation/` (operacional), produto exige branch+PR.
 
+**Higiene do Postgres local de teste** (achado em `add-reativacao-clientes`, 2026-09-11): os
+jobs `agenda.send-confirmation`/`crm.reactivation-sweep` varrem TODAS as barbearias
+(`listBarbershops()`), então rodar as suítes de `apps/worker` repetidas vezes numa sessão longa
+acumula centenas de barbearias de teste (nenhum teste limpa o que cria) — o que deixa a
+varredura lenta o bastante para, sob execução paralela de múltiplos arquivos de teste, colidir
+com o pool de conexões e gerar falhas intermitentes reais (não são bugs de lógica). Se as
+suítes de `apps/worker` ficarem lentas ou esporadicamente falhas sem mudança de código, rode
+`docker exec blademidia-postgres-1 psql -U blademidia -d blademidia -c "TRUNCATE barbershops CASCADE;"`
+para limpar o banco local (é só dev, `pnpm migrate` recria o schema do zero se precisar).
+
 ## Antes de qualquer tarefa
 
 0. **Contexto estratégico (obrigatório para qualquer coisa que toque produto, site, copy,

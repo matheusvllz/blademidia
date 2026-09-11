@@ -1,15 +1,13 @@
 /**
  * Demonstração ponta a ponta (tasks.md 5.1), decidida na exploração (Bloqueante 3): o Done
- * técnico desta change fecha com o adapter DRY-RUN real (`resolveWhatsAppProvider` sem
- * credenciais), sem depender do template/BSP reais aprovados pela Meta. Diferente de
- * `send-confirmation.test.ts` (que mocka `@blademidia/whatsapp` para inspecionar chamadas),
- * este teste usa o pacote de verdade, sem mock — só força o dry-run via env, mesmo padrão de
- * `process-inbound.test.ts`.
- *
- * Fluxo demonstrado: agendamento entra na janela → job "enviaria" o template (log dry-run) →
- * registro de envio criado → resposta de confirmação do cliente simulada via
- * `confirmarAgendamentoTool` (o mesmo caminho que o loop de IA usaria) → status `confirmado`
- * no banco.
+ * técnico desta change fecha com o adapter DRY-RUN real (`createDryRunAdapter`), sem depender
+ * do template/BSP reais aprovados pela Meta. Diferente de `send-confirmation.test.ts` (que
+ * mocka `sendTemplate` para inspecionar chamadas), este teste usa o adapter dry-run de
+ * verdade, injetado diretamente via o parâmetro `provider` de `runSendConfirmation` — sem
+ * `vi.mock`/`vi.stubEnv` nenhum (achado, change `add-reativacao-clientes`: mockar
+ * `@blademidia/whatsapp` com fábricas diferentes neste arquivo e em
+ * `reactivation-sweep.test.ts` causava flakiness real ao rodar os dois juntos; a injeção
+ * direta elimina a fonte do problema em vez de contorná-la).
  */
 import { randomUUID } from "node:crypto";
 import {
@@ -25,21 +23,15 @@ import {
   wasReminderSent,
 } from "@blademidia/db";
 import { confirmarAgendamentoTool } from "@blademidia/core";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { WhatsAppProvider, createDryRunAdapter } from "@blademidia/whatsapp";
+import { describe, expect, it } from "vitest";
 import { runSendConfirmation } from "./send-confirmation";
+
+const dryRunProvider = new WhatsAppProvider(createDryRunAdapter());
 
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
 describe.skipIf(!hasDatabase)("fluxo ponta a ponta (dry-run): lembrete → confirmação", () => {
-  beforeAll(() => {
-    // Força o adapter dry-run mesmo com as credenciais fake do .env (Decision 8 do design.md).
-    vi.stubEnv("WHATSAPP_ACCESS_TOKEN", "");
-  });
-
-  afterAll(() => {
-    vi.unstubAllEnvs();
-  });
-
   it("agendamento → lembrete (dry-run) → registro → confirmação do cliente → status confirmado", async () => {
     const shop = await createBarbershop(`e2e-confirmacao-${randomUUID()}`, "E2E Confirmação");
     await setWhatsappPhoneNumberId(shop.id, `wa-e2e-${randomUUID()}`);
@@ -66,7 +58,7 @@ describe.skipIf(!hasDatabase)("fluxo ponta a ponta (dry-run): lembrete → confi
     const appointmentId = booked.appointment!.id;
 
     // 1) job "enviaria" o template — dry-run real, sem rede.
-    const result = await runSendConfirmation();
+    const result = await runSendConfirmation(new Date(), dryRunProvider);
     expect(result.sent).toBeGreaterThanOrEqual(1);
 
     // 2) registro de envio único criado.

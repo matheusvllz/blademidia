@@ -6,6 +6,12 @@
  * o dry-run padrão (sem `ANTHROPIC_API_KEY` neste ambiente) sempre escalaria, o que
  * impossibilitaria testar os outros caminhos (resposta simples, stall, tool de domínio) de
  * forma determinística. `createDryRunAiClient`/demais exports continuam reais (`...actual`).
+ *
+ * `resolveWhatsAppProvider` também é mockado (não só forçado por env) para sempre devolver o
+ * adapter DRY-RUN real, ignorando as credenciais fake do `.env` — achado durante
+ * `add-reativacao-clientes`: usar `vi.stubEnv("WHATSAPP_ACCESS_TOKEN", "")` aqui competia, sob
+ * execução paralela de arquivos de teste, com o mesmo stub em `send-confirmation.e2e.test.ts`/
+ * `reactivation-sweep.e2e.test.ts` (`process.env` é global ao processo; `vi.mock` não).
  */
 import { randomUUID } from "node:crypto";
 import {
@@ -18,7 +24,7 @@ import {
 } from "@blademidia/db";
 import type { AiClient } from "@blademidia/ai";
 import Anthropic from "@anthropic-ai/sdk";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 let mockAiClient: AiClient;
 
@@ -28,6 +34,11 @@ vi.mock("@blademidia/ai", async () => {
     ...actual,
     resolveAiClient: () => mockAiClient,
   };
+});
+
+vi.mock("@blademidia/whatsapp", async () => {
+  const actual = await vi.importActual<typeof import("@blademidia/whatsapp")>("@blademidia/whatsapp");
+  return { ...actual, resolveWhatsAppProvider: () => new actual.WhatsAppProvider(actual.createDryRunAdapter()) };
 });
 
 const { createDryRunAiClient } = await import("@blademidia/ai");
@@ -55,15 +66,7 @@ describe.skipIf(!hasDatabase)("processInboundMessage", () => {
   let shop: { id: string };
 
   beforeAll(async () => {
-    // Este teste exercita o adapter DRY-RUN de WhatsApp de propósito — as credenciais fake do
-    // `.env` (Change 1, só para exercitar a verificação de assinatura do webhook) fariam
-    // `resolveWhatsAppProvider` escolher o adapter real e falhar o envio contra uma URL fake.
-    vi.stubEnv("WHATSAPP_ACCESS_TOKEN", "");
     shop = await createBarbershop(`wa-worker-${randomUUID()}`, "WhatsApp Worker Test");
-  });
-
-  afterAll(() => {
-    vi.unstubAllEnvs();
   });
 
   it("mensagem de cliente atualiza last_inbound_at; resposta simples do bot não mexe no handover", async () => {

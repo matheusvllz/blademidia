@@ -26,6 +26,24 @@ let sendTemplateResult: (input: SendTemplateInput) => Promise<SendResult> = asyn
   wamid: `fake.${randomUUID()}`,
 });
 
+/** Id de barbearia cuja `getBarbershop` deve lançar nesta execução — usado só pelo teste de
+ * isolamento de falha por barbearia (achado durante a implementação: um erro transitório numa
+ * barbearia não pode abortar a varredura das demais). */
+let barbershopIdToFailOnGet: string | null = null;
+
+vi.mock("@blademidia/db", async () => {
+  const actual = await vi.importActual<typeof import("@blademidia/db")>("@blademidia/db");
+  return {
+    ...actual,
+    getBarbershop: async (barbershopId: string) => {
+      if (barbershopId === barbershopIdToFailOnGet) {
+        throw new Error("falha simulada de conexão");
+      }
+      return actual.getBarbershop(barbershopId);
+    },
+  };
+});
+
 vi.mock("@blademidia/whatsapp", async () => {
   const actual = await vi.importActual<typeof import("@blademidia/whatsapp")>("@blademidia/whatsapp");
   return {
@@ -56,6 +74,7 @@ describe.skipIf(!hasDatabase)("runReactivationSweep", () => {
   beforeEach(() => {
     sendTemplateCalls = [];
     sendTemplateResult = async () => ({ ok: true, wamid: `fake.${randomUUID()}` });
+    barbershopIdToFailOnGet = null;
   });
 
   afterEach(() => {
@@ -148,6 +167,19 @@ describe.skipIf(!hasDatabase)("runReactivationSweep", () => {
     expect(result.failed).toBeGreaterThanOrEqual(1);
     expect(result.sent).toBeGreaterThanOrEqual(1);
     expect(sendTemplateCalls.find((c) => c.toPhone === okPhone)).toBeDefined();
+  });
+
+  it("erro ao resolver uma barbearia não impede a varredura das demais", async () => {
+    const shopThatFails = await seedReadyShop("react-sweep-shop-fail");
+    await seedInactiveClient(shopThatFails, "Vítima Do Erro", 30);
+    const shopOk = await seedReadyShop("react-sweep-shop-ok");
+    const { phone: okPhone } = await seedInactiveClient(shopOk, "Barbearia Ok", 31);
+
+    barbershopIdToFailOnGet = shopThatFails;
+
+    const result = await runReactivationSweep(NOW);
+    expect(sendTemplateCalls.find((c) => c.toPhone === okPhone)).toBeDefined();
+    expect(result.sent).toBeGreaterThanOrEqual(1);
   });
 
   it("respeita reactivationDailyCap", async () => {

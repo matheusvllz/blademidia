@@ -6,7 +6,7 @@ import {
   listClientsNeedingReactivation,
   recordReactivationSent,
 } from "@blademidia/db";
-import { maskPhone, resolveWhatsAppProvider } from "@blademidia/whatsapp";
+import { maskPhone, resolveWhatsAppProvider, type WhatsAppProvider } from "@blademidia/whatsapp";
 import type PgBoss from "pg-boss";
 
 /**
@@ -41,18 +41,40 @@ export interface ReactivationSweepResult {
   failed: number;
 }
 
-export async function runReactivationSweep(now: Date = new Date()): Promise<ReactivationSweepResult> {
+/**
+ * `provider` é injetável (default: `resolveWhatsAppProvider(process.env)`) — usado pelos testes
+ * ponta a ponta para passar o adapter dry-run real diretamente, sem precisar mockar o módulo
+ * `@blademidia/whatsapp` (achado: dois arquivos de teste mockando o mesmo módulo com fábricas
+ * diferentes, mesmo isolados por arquivo, é uma fonte de fragilidade desnecessária quando dá
+ * pra evitar com injeção direta).
+ */
+export async function runReactivationSweep(
+  now: Date = new Date(),
+  provider: WhatsAppProvider = resolveWhatsAppProvider(process.env),
+): Promise<ReactivationSweepResult> {
   const shops = await listBarbershops();
-  const provider = resolveWhatsAppProvider(process.env);
 
   let sent = 0;
   let failed = 0;
 
   for (const shop of shops) {
-    const barbershop = await getBarbershop(shop.id);
-    if (!barbershop?.whatsappPhoneNumberId) continue; // sem canal configurado — nada a fazer
-
-    const candidates = await listClientsNeedingReactivation(shop.id, now);
+    let barbershop: Awaited<ReturnType<typeof getBarbershop>>;
+    let candidates: Awaited<ReturnType<typeof listClientsNeedingReactivation>>;
+    try {
+      barbershop = await getBarbershop(shop.id);
+      if (!barbershop?.whatsappPhoneNumberId) continue; // sem canal configurado — nada a fazer
+      candidates = await listClientsNeedingReactivation(shop.id, now);
+    } catch (error) {
+      // Falha ao resolver/selecionar UMA barbearia nunca deve abortar a varredura das demais
+      // (mesmo princípio de isolamento de falha da Decision 9, aplicado também aqui, não só
+      // por cliente — achado durante os testes: sem isto, um erro transitório numa barbearia
+      // no meio da lista impediria até as barbearias seguintes de serem processadas).
+      const errorType = error instanceof Error ? error.constructor.name : "erro_desconhecido";
+      console.error(
+        `[worker] ${REACTIVATION_SWEEP_QUEUE}: barbearia=${shop.id} erro_selecao=${errorType} — seguindo para a próxima barbearia`,
+      );
+      continue;
+    }
 
     for (const candidate of candidates) {
       try {
