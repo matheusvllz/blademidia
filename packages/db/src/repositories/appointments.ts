@@ -1,11 +1,14 @@
-import { and, asc, eq, gt, gte, inArray, lt, lte, ne, sql } from "drizzle-orm";
+import { and, asc, eq, gt, gte, inArray, isNull, lt, lte, ne, sql } from "drizzle-orm";
 import { db } from "../client";
 import {
   agendaSettings,
+  DEFAULT_CONFIRMATION_AUTOMATION_ENABLED,
   DEFAULT_CONFIRMATION_LEAD_HOURS,
   DEFAULT_NO_SHOW_AFTER_MIN,
 } from "../schema/agenda-settings";
 import { appointments } from "../schema/appointments";
+import { clients } from "../schema/clients";
+import { confirmationReminders } from "../schema/confirmation-reminders";
 import { paymentsLog } from "../schema/payments-log";
 import { visits } from "../schema/visits";
 
@@ -284,27 +287,65 @@ export async function listNoShowCandidates(
     );
 }
 
+export interface AppointmentNeedingConfirmation {
+  id: string;
+  barbershopId: string;
+  startsAt: Date;
+  clientId: string;
+  clientName: string | null;
+  clientPhone: string;
+}
+
 /**
  * Agendamentos "agendado" (ainda não confirmados) cujo início cai dentro da
  * janela de confirmação da barbearia (`confirmation_lead_hours`), em TODOS os
- * tenants — esqueleto do worker (Fase 2): seleciona quem SERIA notificado; o
- * envio real é da Fase 5 (`whatsapp-canal`).
+ * tenants. Job real desde a Fase 5.3 (`add-confirmacao-agendamento`, design.md
+ * Decision 3) — os 2 gates abaixo garantem envio único e só para quem está pronto:
+ * - `confirmationAutomationEnabled = true` (default `false` — barbearia sem template
+ *   aprovado nunca aparece aqui, mesmo sem nenhuma configuração);
+ * - `confirmation_reminders` ainda não tem registro para o agendamento (`LEFT JOIN` +
+ *   `IS NULL` — nunca reseleciona quem já recebeu o lembrete).
+ * `clients.phone IS NOT NULL` e `deletedAt IS NULL` — defesa contra cliente anonimizado por
+ * exclusão LGPD (que já cancela agendamentos futuros na origem; isto é cinto e suspensório,
+ * não o mecanismo principal).
  */
 export async function listAppointmentsNeedingConfirmation(
   now: Date,
-): Promise<{ id: string; barbershopId: string; startsAt: Date }[]> {
+): Promise<AppointmentNeedingConfirmation[]> {
   const leadHours = sql`coalesce(${agendaSettings.confirmationLeadHours}, ${DEFAULT_CONFIRMATION_LEAD_HOURS})`;
-  return db
-    .select({ id: appointments.id, barbershopId: appointments.barbershopId, startsAt: appointments.startsAt })
+  const automationEnabled = sql`coalesce(${agendaSettings.confirmationAutomationEnabled}, ${DEFAULT_CONFIRMATION_AUTOMATION_ENABLED})`;
+  const rows = await db
+    .select({
+      id: appointments.id,
+      barbershopId: appointments.barbershopId,
+      startsAt: appointments.startsAt,
+      clientId: clients.id,
+      clientName: clients.name,
+      clientPhone: clients.phone,
+    })
     .from(appointments)
     .leftJoin(agendaSettings, eq(agendaSettings.barbershopId, appointments.barbershopId))
+    .innerJoin(
+      clients,
+      and(eq(clients.id, appointments.clientId), eq(clients.barbershopId, appointments.barbershopId)),
+    )
+    .leftJoin(confirmationReminders, eq(confirmationReminders.appointmentId, appointments.id))
     .where(
       and(
         eq(appointments.status, "agendado"),
         gte(appointments.startsAt, now),
         lte(appointments.startsAt, sql`${now}::timestamptz + (${leadHours} * interval '1 hour')`),
+        sql`${automationEnabled} = true`,
+        isNull(confirmationReminders.id),
+        isNull(clients.deletedAt),
+        sql`${clients.phone} is not null`,
       ),
     );
+
+  // `clientPhone` é garantido não-nulo pelo filtro SQL acima (`is not null`) — o Drizzle não
+  // consegue expressar essa garantia no tipo da coluna nullable, então a asserção aqui é
+  // segura e documentada, não uma suposição nova.
+  return rows.map((row) => ({ ...row, clientPhone: row.clientPhone! }));
 }
 
 /**

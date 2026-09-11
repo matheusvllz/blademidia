@@ -50,6 +50,13 @@
       "when": 1789079422110,
       "tag": "0006_serious_lady_deathstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1789162629152,
+      "tag": "0007_smooth_doctor_strange",
+      "breakpoints": true
     }
   ]
 }

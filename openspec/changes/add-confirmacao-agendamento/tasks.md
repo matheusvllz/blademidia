@@ -5,35 +5,46 @@
 
 ## 1. `packages/db` — schema e migração
 
-- [ ] 1.1 `agenda-settings.ts` (schema): `+ confirmationAutomationEnabled boolean NOT NULL
+- [x] 1.1 `agenda-settings.ts` (schema): `+ confirmationAutomationEnabled boolean NOT NULL
   DEFAULT false`. Repositório (`agenda-settings.ts`): incluir o campo em
   `AgendaSettingsValues`/`DEFAULT_AGENDA_SETTINGS`/`getAgendaSettings`.
   - Depends on: —
   - Validation: unit (repositório) contra Postgres real.
   - Completion criteria: barbearia nunca configurada devolve `false`; `updateAgendaSettings`
     aceita ligar/desligar.
+  - Evidência: coberto por `confirmation-reminders.test.ts` (casos "sem
+    confirmationAutomationEnabled" e "com automação habilitada") — ver 1.5.
 
-- [ ] 1.2 Schema novo `confirmation-reminders.ts`: tabela `confirmation_reminders`
+- [x] 1.2 Schema novo `confirmation-reminders.ts`: tabela `confirmation_reminders`
   (`id`, `barbershopId`, `appointmentId` único, `sentAt`, `wamid`), FKs para `barbershops` e
   `appointments`. Exportar em `schema/index.ts`.
   - Depends on: —
   - Validation: migração aplica sem erro.
   - Completion criteria: constraint de unicidade existe no banco (provar com insert duplicado).
+  - Evidência: `pnpm --filter @blademidia/db generate` → migração
+    `0007_smooth_doctor_strange.sql` (tabela + `UNIQUE INDEX confirmation_reminders_appointment_idx`
+    + 2 FKs) → `pnpm --filter @blademidia/db migrate` → "Migrações aplicadas com sucesso.".
+    Unicidade provada pelo teste "recordReminderSent é idempotente" (1.3).
 
-- [ ] 1.3 Repositório `confirmation-reminders.ts`: `wasReminderSent(barbershopId,
+- [x] 1.3 Repositório `confirmation-reminders.ts`: `wasReminderSent(barbershopId,
   appointmentId)`, `recordReminderSent(barbershopId, appointmentId, wamid)` (idempotente sob
   violação de unicidade — segunda chamada não lança). Exportar em `packages/db/src/index.ts`.
   - Depends on: 1.2
   - Validation: unit contra Postgres real.
   - Completion criteria: segunda chamada de `recordReminderSent` para o mesmo agendamento não
     lança e não duplica linha.
+  - Evidência: `src/repositories/confirmation-reminders.test.ts` — 7/7 verdes, incluindo
+    "recordReminderSent é idempotente: segunda chamada para o mesmo agendamento não lança nem
+    duplica" (`second.id === first.id`, `second.wamid === first.wamid`).
 
-- [ ] 1.4 `drizzle-kit generate` — gerar e revisar a migração SQL antes de aplicar.
+- [x] 1.4 `drizzle-kit generate` — gerar e revisar a migração SQL antes de aplicar.
   - Depends on: 1.1, 1.2
   - Validation: `pnpm --filter @blademidia/db migrate` contra Postgres local.
   - Completion criteria: migração aplica limpo numa base já com as migrações anteriores.
+  - Evidência: `pnpm migrate` → "Migrações aplicadas com sucesso." (0007 aplicada sobre 0000-0006
+    já existentes).
 
-- [ ] 1.5 `listAppointmentsNeedingConfirmation` (appointments.ts): adicionar os 2 gates
+- [x] 1.5 `listAppointmentsNeedingConfirmation` (appointments.ts): adicionar os 2 gates
   (`confirmationAutomationEnabled = true`; `confirmation_reminders.sentAt IS NULL`) e o join
   com `clients` (devolver `clientId`, `clientName`, `clientPhone` além do que já retorna).
   - Depends on: 1.1, 1.3
@@ -42,26 +53,38 @@
     (LGPD) não aparece ou é tratado com segurança (decidir no teste, documentar o
     comportamento escolhido); isolamento de tenant.
   - Completion criteria: suíte cobre os 4 casos acima, todos verdes.
+  - Evidência: `src/repositories/confirmation-reminders.test.ts` (7/7) +
+    `confirmation-reminders.isolation.test.ts` (1/1) — `npx vitest run
+    src/repositories/confirmation-reminders.test.ts src/repositories/confirmation-reminders.isolation.test.ts`
+    → **8/8 verdes** contra Postgres real. Cobre: gate de automação, janela de
+    `confirmation_lead_hours`, status ≠ `agendado`, cliente anonimizado (LGPD), envio único, e
+    isolamento de tenant.
 
 ## 2. `packages/core` — tool `confirmar_agendamento`
 
-- [ ] 2.1 `agenda/tools.ts`: `confirmarAgendamentoTool` (Decision 6 do design.md), adicionada
+- [x] 2.1 `agenda/tools.ts`: `confirmarAgendamentoTool` (Decision 6 do design.md), adicionada
   ao array `agendaTools`.
   - Depends on: —
   - Validation: unit, mesmo padrão de `tools.test.ts` já existente.
   - Completion criteria: transiciona `agendado → confirmado`; chamada repetida sobre
     `confirmado` não falha (idempotência herdada de `confirmAppointment`); agendamento
     inexistente devolve erro tipado, não lança.
+  - Evidência: `src/agenda/tools.test.ts` — 5/5 verdes, incluindo 2 testes novos contra
+    Postgres real ("confirma um agendamento agendado e é idempotente ao chamar de novo";
+    "agendamento inexistente devolve erro tipado, não lança"). Suíte completa de
+    `@blademidia/core`: `pnpm typecheck` limpo + `pnpm test` → **53/53 verdes** (0 regressão).
 
-- [ ] 2.2 `agenda/timezone.ts`: `instantToZonedTimeHHMM(date, timeZone)` (Decision 7).
+- [x] 2.2 `agenda/timezone.ts`: `instantToZonedTimeHHMM(date, timeZone)` (Decision 7).
   - Depends on: —
   - Validation: unit, sem banco.
   - Completion criteria: teste cobre horário de borda (meia-noite local) e o fuso padrão
     `America/Sao_Paulo`.
+  - Evidência: `src/agenda/timezone.test.ts` — 3/3 verdes (10:00Z→10:00 local; borda
+    00:00 local; padding de 2 dígitos).
 
 ## 3. `apps/worker` — job real de confirmação
 
-- [ ] 3.1 Reescrever `send-confirmation.ts`: para cada candidato da query nova — relê o status
+- [x] 3.1 Reescrever `send-confirmation.ts`: para cada candidato da query nova — relê o status
   (Decision 4), monta `bodyParams` (nome, dia `DD/MM`, hora `HH:MM`), resolve/cria a conversa
   (`findOrCreateConversation`), chama `WhatsAppProvider.sendTemplate`, e em caso de sucesso
   grava `confirmation_reminders` + `whatsapp_messages` (direction saída, type template). Falha
@@ -72,20 +95,32 @@
     (nem chama `sendTemplate` de novo); agendamento que muda de status entre seleção e envio é
     pulado sem erro; falha do adapter num agendamento não impede os demais do lote; nenhum
     log contém corpo de mensagem ou telefone completo.
-  - Evidência esperada: `src/jobs/send-confirmation.test.ts`.
+  - Evidência: `src/jobs/send-confirmation.test.ts` — **5/5 verdes** contra Postgres real +
+    provedor mockado (`vi.mock("@blademidia/whatsapp")`), cobrindo os 5 casos do completion
+    criteria. Achado durante o teste: barbearias de outras suítes (sem
+    `whatsappPhoneNumberId`) aparecem no lote cross-tenant e são puladas pela defesa já
+    existente no job (log "sem whatsappPhoneNumberId — pulando"), confirmando que a defesa
+    funciona também contra poluição real de dados entre suítes.
 
-- [ ] 3.2 Teste de isolamento de tenant para a query/gravação novas (duas barbearias, garantir
+- [x] 3.2 Teste de isolamento de tenant para a query/gravação novas (duas barbearias, garantir
   que uma nunca vê/afeta a outra).
   - Depends on: 3.1
   - Validation: unit contra Postgres real.
   - Completion criteria: teste dedicado, verde.
+  - Evidência: `packages/db/src/repositories/confirmation-reminders.isolation.test.ts` (1/1,
+    query/gravação a nível de repositório) + `send-confirmation.test.ts` ("falha do provedor
+    num agendamento não impede os demais do mesmo lote", 2 barbearias reais, uma falha e a
+    outra é confirmada independentemente).
 
-- [ ] 3.3 Boot real do worker (`node`/`tsx` conforme já usado nas changes anteriores),
+- [x] 3.3 Boot real do worker (`node`/`tsx` conforme já usado nas changes anteriores),
   confirmando que `agenda.send-confirmation` continua registrado em `pgboss.queue`/
   `pgboss.schedule` sem erro após a reescrita.
   - Depends on: 3.1
   - Validation: manual/integração, evidência colada (consulta real no `pgboss.schedule`).
   - Completion criteria: mesmo cron `0 * * * *`, sem regressão.
+  - Evidência: ver seção "Boot real do worker" mais abaixo (registrado após 4.1, junto do
+    fluxo ponta a ponta) — consulta real em `pgboss.schedule` confirma `agenda.send-confirmation`
+    com `0 * * * *` inalterado.
 
 ## 4. Ativação operacional
 
