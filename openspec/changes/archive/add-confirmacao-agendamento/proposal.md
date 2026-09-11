@@ -4,11 +4,21 @@
 `add-confirmacao-agendamento`
 
 ## Status
-**Approved** (2026-09-11) <!-- Exploração concluída em 2026-09-11: as 3 perguntas bloqueantes
+**Done** (2026-09-11) <!-- Exploração concluída em 2026-09-11: as 3 perguntas bloqueantes
 (reenvio, gate por barbearia, Done sem template real) foram respondidas por Matheus e estão
 registradas em exploration.md, seção "Decisões da discussão". Matheus aprovou este proposal e
-os deltas de spec ("aprovo, continue") na mesma data — etapa 5 concluída. design.md e tasks.md
-produzidos na sequência; implementação segue em `feature/add-confirmacao-agendamento`. -->
+os deltas de spec ("aprovo, continue") na mesma data — etapa 5 concluída. Implementada e
+verificada de ponta a ponta na mesma sessão (ver tasks.md, todos os grupos 1-5 com evidência):
+227 testes automatizados no monorepo (Postgres real), demonstração ponta a ponta com o adapter
+dry-run REAL (sem mock), script de ativação operacional testado nos dois caminhos, boot real do
+worker. Único ponto pendente, fora do escopo técnico (mesma natureza do BSP em
+`add-whatsapp-canal`): contratar o BSP, submeter e aprovar o template `confirmacao_agendamento`
+pela Meta, e então rodar `enable-confirmation-automation` por barbearia — bloqueia só o
+primeiro envio REAL em produção, não o fechamento técnico desta change. Achado registrado
+durante a implementação, não corrigido aqui (fora de escopo): `apps/worker/src/jobs/
+monthly-snapshot.test.ts` falha por timeout pré-existente, confirmado independente desta
+change via `git stash` contra o commit anterior. -->
+
 
 ## Context
 Ver [exploration.md](exploration.md) e

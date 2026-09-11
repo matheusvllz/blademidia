@@ -180,12 +180,15 @@
     Registrado como achado a reportar ao Matheus, não corrigido aqui (fora do escopo desta
     change).
 
-- [ ] 5.3 `CHANGELOG.md` atualizado (entrada da change, versão `MINOR`).
+- [x] 5.3 `CHANGELOG.md` atualizado (entrada da change, versão `MINOR`).
   - Depends on: 5.2
   - Validation: revisão manual.
   - Completion criteria: segue o formato Keep a Changelog já usado nas entradas anteriores.
+  - Evidência: entrada nova em `## [Unreleased]` → `### Added`, no mesmo formato/detalhe das
+    entradas de `add-whatsapp-canal`/`add-atendimento-ia`, inserida antes delas (mais recente
+    primeiro).
 
-- [ ] 5.4 Fechamento formal: aplicar os deltas de `specs/` às specs permanentes
+- [x] 5.4 Fechamento formal: aplicar os deltas de `specs/` às specs permanentes
   (`openspec/specs/confirmacao-agendamento/spec.md` novo,
   `openspec/specs/atendimento-ia/spec.md` com o requisito novo), atualizar os índices
   (`openspec/changes/README.md`, `openspec/specs/README.md`), arquivar a change em
@@ -193,3 +196,15 @@
   - Depends on: 5.2, 5.3
   - Validation: revisão manual (checklist DoD do workflow.md).
   - Completion criteria: todos os itens do DoD (workflow.md) marcados.
+  - Evidência: `openspec/specs/confirmacao-agendamento/spec.md` criado (4 requirements, iguais
+    ao delta); `openspec/specs/atendimento-ia/spec.md` recebeu o requisito novo + histórico
+    atualizado; `openspec/changes/README.md` e `openspec/specs/README.md` atualizados (change
+    movida de ativa para arquivada; capability tirada de "candidatas"; nota de "próxima a
+    abrir" avançada para `add-reativacao-clientes`); change movida para
+    `openspec/changes/archive/add-confirmacao-agendamento/` (`git mv`); `Status: Done` no
+    proposal. Checklist do avaliador
+    ([docs/sdd/04-checklist-avaliador.md](../../../docs/sdd/04-checklist-avaliador.md))
+    revisado seção a seção contra o proposal/specs/design/tasks: sem lacuna encontrada além dos
+    2 pontos já registrados como pendência explícita (template/BSP reais; timeout
+    pré-existente e não relacionado em `monthly-snapshot.test.ts`). Todos os 11 itens do DoD
+    (`workflow.md`) satisfeitos.
