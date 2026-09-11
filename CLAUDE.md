@@ -71,25 +71,25 @@ barbearia; o número de WhatsApp é o ativo do barbeiro (warm-up/rate-limit não
   `add-agenda-visao-semanal`), relatórios com PDF (`add-relatorios`), fidelização de
   clientes + papéis dono/funcionário (`add-fidelizacao-e-funcionarios`). Todas arquivadas em
   `openspec/changes/archive/`, specs permanentes em `openspec/specs/`.
-- **Fase 5 do produto, 3 das 4 changes concluídas** (ainda só em branches locais
-  `feature/<change-id>`, NÃO mergeadas na `main` — Matheus não pediu): `add-whatsapp-canal`
-  (canal WhatsApp via Meta Cloud API/BSP, coexistência), `add-atendimento-ia` (loop de
-  conversa por IA) e `add-confirmacao-agendamento` (lembrete automático + confirmação via
-  tool do bot). Todas arquivadas em `openspec/changes/archive/`, specs permanentes em
-  `openspec/specs/`.
+- **Fase 5 do produto CONCLUÍDA — as 4 changes** (ainda só em branches locais
+  `feature/<change-id>` empilhadas, NÃO mergeadas na `main` — Matheus não pediu):
+  `add-whatsapp-canal` (canal WhatsApp via Meta Cloud API/BSP, coexistência),
+  `add-atendimento-ia` (loop de conversa por IA), `add-confirmacao-agendamento` (lembrete
+  automático + confirmação via tool do bot) e `add-reativacao-clientes` (reativação de
+  clientes inativos, categoria marketing, regra de "novo ciclo" + throttling). Todas
+  arquivadas em `openspec/changes/archive/`, specs permanentes em `openspec/specs/`.
 
 **Próximos passos, em ordem:**
-1. **`add-reativacao-clientes` (Fase 5.4) — última change da Fase 5.** Plano de execução
-   completo (decisões de arquitetura, contratos da Meta/BSP, barra de verificação) em
-   [`docs/sdd/06-plano-execucao-fase-5.md`](docs/sdd/06-plano-execucao-fase-5.md) § 9 — leia-o
-   antes de começar. Categoria *marketing* (regras de opt-out mais rígidas, custo real por
-   mensagem — ver § 3.5) — diferente das 3 anteriores. Autorizada por Matheus, com 3 ressalvas
-   registradas que continuam valendo (ver § 9).
-2. **Pendência comercial que bloqueia o primeiro envio real das 2 changes de mensageria
-   proativa** (`add-confirmacao-agendamento` já feita, `add-reativacao-clientes` a seguir):
-   contratar o BSP com mensalidade fixa (D2/ADR-0004 § 5.9, ainda não cotado) e submeter/aprovar
-   os templates junto à Meta. Não bloqueia o fechamento técnico das changes (fecham com o
-   adapter dry-run), só o uso em produção.
+1. **Pendência comercial que bloqueia o primeiro envio REAL das mensagens automáticas**
+   (`add-confirmacao-agendamento` e `add-reativacao-clientes` já fecharam tecnicamente com o
+   adapter dry-run): contratar o BSP com mensalidade fixa (D2/ADR-0004 § 5.9, ainda não
+   cotado), submeter/aprovar os 2 templates junto à Meta (`confirmacao_agendamento` categoria
+   utility; `reativacao_cliente` categoria marketing), e — só para reativação — fazer a conta
+   de custo contra a base real de inativos antes do primeiro envio (plano § 9). Não bloqueia
+   nenhum fechamento técnico, só o uso em produção.
+2. **Próxima fase do produto ainda não definida** — a Fase 5 completa a tese central do
+   produto (zap sem operador → resposta, confirmação e reativação automáticas). Definir com
+   Matheus o que vem depois (Fase 6) antes de abrir uma change nova.
 3. **Pendências comerciais da operação da agência (Matheus)**: preço da taxa de gestão,
    texto de contrato (cancelamento/limites de responsabilidade), regra de carência de
    inadimplência — ver perguntas bloqueantes em

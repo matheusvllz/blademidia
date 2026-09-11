@@ -76,13 +76,22 @@ SHALL ocorrer para uma conversa marcada como opt-out.
 
 ### Requirement: Falha de envio não interrompe o lote
 O sistema SHALL registrar a falha de envio para um cliente sem lançar exceção não tratada e
-SHALL continuar processando os demais clientes elegíveis da mesma execução.
+SHALL continuar processando os demais clientes elegíveis da mesma execução — e uma falha ao
+resolver ou selecionar candidatos para UMA barbearia SHALL NOT impedir o processamento das
+demais barbearias na mesma execução.
 
 #### Scenario: Falha no envio de um cliente
 - GIVEN dois ou mais clientes elegíveis na mesma execução do job
 - WHEN o envio do template para um deles falha (erro do provedor/BSP)
 - THEN o sistema SHALL registrar a falha sem lançar exceção não tratada
 - AND SHALL continuar processando os demais clientes elegíveis da mesma execução
+
+#### Scenario: Falha ao resolver uma barbearia
+- GIVEN duas ou mais barbearias elegíveis na mesma execução do job
+- WHEN a resolução ou seleção de candidatos falha para UMA delas (ex.: erro transitório de
+  conexão)
+- THEN o sistema SHALL registrar a falha sem lançar exceção não tratada
+- AND SHALL continuar processando as demais barbearias da mesma execução
 
 ### Requirement: Registro de envio para uso futuro em relatórios
 O sistema SHALL registrar, para cada envio de reativação, identificadores técnicos suficientes

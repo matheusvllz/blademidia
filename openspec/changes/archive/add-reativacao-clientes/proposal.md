@@ -4,10 +4,22 @@
 `add-reativacao-clientes`
 
 ## Status
-**Approved** (2026-09-11) <!-- Exploração concluída em 2026-09-11: as 2 perguntas bloqueantes
+**Done** (2026-09-11) <!-- Exploração concluída em 2026-09-11: as 2 perguntas bloqueantes
 (escopo da régua; regra de reenvio) foram respondidas por Matheus e estão registradas em
 exploration.md, seção "Decisões da discussão". Matheus aprovou este proposal e os deltas de
-spec ("pode continuar") na mesma data — etapa 5 concluída. -->
+spec ("pode continuar") na mesma data — etapa 5 concluída. Implementada e verificada de ponta a
+ponta na mesma sessão (ver tasks.md, todos os grupos 1-4 com evidência): 245 testes
+automatizados no monorepo (Postgres real), demonstração ponta a ponta com o adapter dry-run
+real (sem mock), script de ativação testado nos 4 caminhos, boot real do worker. 2 achados de
+robustez encontrados e corrigidos durante a implementação (isolamento de falha por barbearia;
+provider do WhatsApp injetável nos jobs, ver design.md Decisions 9/10). Único ponto pendente,
+fora do escopo técnico (mesma natureza do BSP nas 2 changes anteriores): contratar o BSP,
+submeter/aprovar o template `reativacao_cliente` (categoria marketing) pela Meta, fazer a conta
+de custo contra a base real de inativos, e então rodar `enable-reactivation-automation` por
+barbearia — bloqueia só o primeiro envio REAL em produção, não o fechamento técnico. Achado
+registrado, não corrigido aqui (fora de escopo, pré-existente): `monthly-snapshot.test.ts`
+falha por timeout, mesma causa já confirmada independente em `add-confirmacao-agendamento`.
+**A Fase 5 do produto está com as 4 changes concluídas.** -->
 
 ## Context
 Ver [exploration.md](exploration.md) e

@@ -129,10 +129,30 @@ aconselhamento jurídico.
 Idêntico à Decision 8 de `add-confirmacao-agendamento`: sem credenciais configuradas, o adapter
 dry-run já cobre o caminho de teste completo, sem infraestrutura nova.
 
-### Decision 9 — falha de envio não interrompe o lote
+### Decision 9 — falha de envio não interrompe o lote (por cliente E por barbearia)
 Mesmo padrão da change anterior: `try/catch` por cliente dentro do `for`, sem criar
 `reactivation_sends` para uma tentativa que falhou (ela volta a ser candidata na próxima
 execução, dentro do limite diário).
+
+**Achado durante a implementação, corrigido**: o isolamento original só cobria o nível de
+cliente — um erro ao resolver `getBarbershop`/`listClientsNeedingReactivation` para UMA
+barbearia (ex.: falha transitória de conexão) abortava a varredura de TODAS as barbearias
+seguintes na mesma execução, já que essa parte do loop não tinha `try/catch` próprio. Corrigido
+com isolamento também no nível de barbearia — mesmo princípio da Decision 9, aplicado uma
+camada acima. Testado com um `getBarbershop` mockado para falhar numa barbearia específica,
+confirmando que as demais continuam sendo processadas.
+
+### Decision 10 — `provider` injetável, não mockado, nos testes ponta a ponta
+Achado durante a implementação: os testes ponta a ponta desta change e de
+`add-confirmacao-agendamento` mockavam `@blademidia/whatsapp` (`vi.mock`) para forçar o adapter
+dry-run, cada um com uma fábrica de mock ligeiramente diferente. Rodar os dois arquivos juntos
+causava flakiness real (achado, não totalmente explicado pela documentação pública do Vitest,
+mas reproduzido de forma consistente e eliminado pela mudança abaixo). Corrigido tornando
+`provider` um parâmetro opcional de `runSendConfirmation`/`runReactivationSweep`
+(default `resolveWhatsAppProvider(process.env)`) — os testes ponta a ponta agora instanciam
+`new WhatsAppProvider(createDryRunAdapter())` diretamente e passam como argumento, sem
+`vi.mock` nenhum para este módulo. Mudança pequena e sem efeito em produção (o default
+preserva o comportamento anterior).
 
 ## Modelo de dados — resumo da migração
 

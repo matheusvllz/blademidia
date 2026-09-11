@@ -149,14 +149,32 @@
     colidir sob execução paralela — mitigado truncando o Postgres local de teste durante esta
     sessão; documentado como nota operacional para sessões futuras.
 
-- [ ] 4.3 `CHANGELOG.md` atualizado (entrada da change, versão `MINOR`).
+- [x] 4.3 `CHANGELOG.md` atualizado (entrada da change, versão `MINOR`).
   - Depends on: 4.2
   - Validation: revisão manual.
+  - Evidência: entrada nova em `## [Unreleased]` → `### Added`, mesmo formato/detalhe das
+    entradas anteriores, inserida antes delas (mais recente primeiro) — marca a Fase 5 do
+    produto como concluída (4/4 changes).
 
-- [ ] 4.4 Fechamento formal: aplicar o delta de `specs/reativacao-clientes/spec.md` à spec
+- [x] 4.4 Fechamento formal: aplicar o delta de `specs/reativacao-clientes/spec.md` à spec
   permanente nova, atualizar os índices (`openspec/changes/README.md`,
   `openspec/specs/README.md` — inclusive marcar a Fase 5 como CONCLUÍDA, 4/4), atualizar
   `CLAUDE.md`, arquivar a change em `openspec/changes/archive/add-reativacao-clientes/`,
   `Status: Done` no proposal.
   - Depends on: 4.2, 4.3
   - Validation: revisão manual (checklist DoD do workflow.md + checklist do avaliador).
+  - Evidência: `openspec/specs/reativacao-clientes/spec.md` criado (6 requirements — o delta
+    ganhou um cenário a mais durante o fechamento, "Falha ao resolver uma barbearia", para
+    documentar o achado de robustez corrigido no grupo 4); `openspec/changes/README.md` e
+    `openspec/specs/README.md` atualizados (change movida para arquivada; capability tirada de
+    "candidatas"; nota "Fase 5 concluída, 4/4" substituindo a de "próxima a abrir");
+    `CLAUDE.md` atualizado (Fase 5 completa, próximos passos renumerados); change movida para
+    `openspec/changes/archive/add-reativacao-clientes/` (`git mv`); `Status: Done` no proposal.
+    Checklist do avaliador
+    ([docs/sdd/04-checklist-avaliador.md](../../../docs/sdd/04-checklist-avaliador.md))
+    revisado seção a seção: sem lacuna encontrada além das pendências já registradas
+    explicitamente (template/BSP/conta de custo reais; timeout pré-existente e não relacionado
+    em `monthly-snapshot.test.ts`). Todos os 11 itens do DoD (`workflow.md`) satisfeitos —
+    incluindo o item de coerência estratégica (§0 do checklist), com a divergência real entre
+    documentos (régua única vs. em degraus) resolvida por decisão explícita de Matheus, não
+    por suposição.

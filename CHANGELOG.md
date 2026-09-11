@@ -5,6 +5,65 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 ## [Unreleased]
 
 ### Added
+- **Reativação automática de clientes inativos (Fase 5.4)** (`add-reativacao-clientes`),
+  aprovada e implementada — **quarta e última change da Fase 5**, liga o esqueleto de seleção
+  da Fase 2 (`apps/worker/src/jobs/reactivation-sweep.ts`, que só logava a contagem) ao envio
+  real de template pelo canal WhatsApp. Marcada pelo plano de execução como a change de maior
+  risco da fase: categoria de template **marketing** (não *utility*), mensagem iniciada pela
+  barbearia sem o cliente ter pedido nada.
+  - **Divergência real entre documentos, resolvida por decisão de Matheus**: `project.md` e
+    `dor-central.md` descreviam um único limiar de inatividade (21+ dias); `guia-de-copy.md`
+    descrevia uma "régua de reativação (21/30/45 dias)" como recurso vendido. Decidido: limiar
+    único nesta v1 (reaproveita `inactivityDaysThreshold`, já configurável desde a Fase 1); a
+    régua em degraus fica registrada como possível change futura, sem compromisso de prazo.
+  - **Regra de reenvio**: um cliente só volta a ser elegível para reativação depois de uma
+    visita nova seguida de um novo período de inatividade ("novo ciclo") — nunca reenvia em
+    loop para quem continua sumido sem ter respondido. Implementada comparando o `lastVisitAt`
+    atual do cliente contra o snapshot guardado no envio anterior (`reactivation_sends`), sem
+    precisar de um contador de "ciclo" explícito.
+  - **`packages/db`**: `crm_settings` ganha `reactivationAutomationEnabled` (gate por
+    barbearia) e `reactivationDailyCap` (throttling — nunca despeja a lista inteira de
+    inativos de uma vez, default 5/execução). Tabela nova `reactivation_sends` (log
+    append-only, sem unicidade por cliente — diferente de `confirmation_reminders`, o mesmo
+    cliente pode legitimamente receber mais de uma reativação ao longo do tempo).
+    `listClientsNeedingReactivation` — seleção própria do canal (telefone + gate + regra de
+    "novo ciclo" + cap diário), separada de `getDashboard` (Fase 1) de propósito. Cliente sem
+    nenhuma visita registrada nunca entra na seleção automática ("você sumiu" não se aplica a
+    quem nunca veio).
+  - **`apps/worker`**: `reactivation-sweep.ts` reescrito — envia o template via
+    `WhatsAppProvider.sendTemplate` para cada barbearia habilitada, respeitando opt-out (sem
+    exceção) e o limite diário. Nenhuma tool nova em `packages/core`/`packages/ai`: a resposta
+    do cliente a uma reativação é uma conversa aberta que já cai inteiramente nas tools
+    existentes do `atendimento-ia`.
+  - **Ativação operacional**: script novo `enable-reactivation-automation.ts` (mesmo padrão de
+    `enable-confirmation-automation.ts`, com `--daily-cap` opcional). Runbook de onboarding
+    atualizado com os 2 pré-requisitos explícitos: template marketing aprovado pela Meta **e**
+    conta de custo contra a base real de inativos antes do primeiro envio (o plano de execução
+    exige isso — reativação é a única das 4 mensagens automáticas sem desconto de volume).
+  - **Base legal documentada explicitamente** (exigência do plano de execução, não decisão
+    implícita): legítimo interesse, com o opt-out (já existente, sem exceção) como salvaguarda
+    — registrado no `design.md` da change arquivada, com a ressalva de que dúvida jurídica real
+    é para advogado, não para decisão de agente.
+  - **2 achados de robustez corrigidos durante a implementação** (afetavam confiabilidade dos
+    testes e, o primeiro, também produção): isolamento de falha por barbearia (não só por
+    cliente) na varredura cross-tenant; `provider` do WhatsApp tornado injetável em
+    `runSendConfirmation`/`runReactivationSweep`, eliminando mocks conflitantes entre arquivos
+    de teste ponta a ponta.
+  - Verificado de verdade: 245 testes automatizados no monorepo (Postgres real) +
+    demonstração ponta a ponta com o adapter dry-run real, sem mock (cliente inativo → log
+    real `[whatsapp:dry-run] enviaria template "reativacao_cliente"...` → registro criado →
+    segunda execução sem visita nova não reenvia) + boot real do worker confirmando
+    `crm.reactivation-sweep` registrado em `pgboss.schedule`, cron `0 8 * * *` inalterado.
+    Change **concluída (Done)**: spec permanente nova em
+    [openspec/specs/reativacao-clientes/spec.md](openspec/specs/reativacao-clientes/spec.md),
+    change arquivada em `openspec/changes/archive/add-reativacao-clientes/`. **A Fase 5 do
+    produto está com as 4 changes concluídas** (`add-whatsapp-canal`, `add-atendimento-ia`,
+    `add-confirmacao-agendamento`, `add-reativacao-clientes`) — todas ainda em branches locais
+    empilhadas, não mergeadas na `main` (Matheus não pediu).
+    **Pendente antes de produção** (tarefa comercial do Matheus, fora do fluxo técnico):
+    contratar o BSP, submeter e aprovar o template `reativacao_cliente` pela Meta, fazer a
+    conta de custo contra a base real, e então rodar `enable-reactivation-automation` por
+    barbearia. [add-reativacao-clientes]
 - **Confirmação automática de agendamento (Fase 5.3)** (`add-confirmacao-agendamento`),
   aprovada e implementada — terceira das 4 changes da Fase 5, liga o esqueleto de seleção da
   Fase 2 (`apps/worker/src/jobs/send-confirmation.ts`, que só logava) ao envio real de
