@@ -118,42 +118,67 @@
   - Depends on: 3.1
   - Validation: manual/integração, evidência colada (consulta real no `pgboss.schedule`).
   - Completion criteria: mesmo cron `0 * * * *`, sem regressão.
-  - Evidência: ver seção "Boot real do worker" mais abaixo (registrado após 4.1, junto do
-    fluxo ponta a ponta) — consulta real em `pgboss.schedule` confirma `agenda.send-confirmation`
-    com `0 * * * *` inalterado.
+  - Evidência: `npx tsx src/index.ts` real (Postgres real) → log "[worker] up — pg-boss
+    iniciado, jobs registrados" → consulta real `select name, cron from pgboss.schedule where
+    name = 'agenda.send-confirmation'` → `agenda.send-confirmation | 0 * * * *` — cron
+    inalterado, job registrado.
 
 ## 4. Ativação operacional
 
-- [ ] 4.1 `packages/db/src/scripts/enable-confirmation-automation.ts` (Decision 5): recebe
+- [x] 4.1 `packages/db/src/scripts/enable-confirmation-automation.ts` (Decision 5): recebe
   `--slug=`, valida que a barbearia tem `whatsappPhoneNumberId` configurado, liga
   `confirmationAutomationEnabled=true`; falha com mensagem clara se a validação não passar.
   - Depends on: 1.1
   - Validation: manual (rodar contra barbearia de teste local, com e sem
     `whatsappPhoneNumberId`).
   - Completion criteria: os dois caminhos (falha e sucesso) demonstrados com saída real.
+  - Evidência: rodado manualmente contra Postgres local — sem número: "Barbearia 'Ativação
+    Teste' (...) ainda não tem whatsappPhoneNumberId configurado." (exit 1); com número:
+    "Confirmação automática LIGADA para 'Ativação Teste 2' (...), número wa-manual-...."
+    (exit 0). `pnpm --filter @blademidia/db typecheck` limpo.
 
-- [ ] 4.2 `docs/operations/onboarding-produto.md`: acrescentar o passo do script 4.1, logo
+- [x] 4.2 `docs/operations/onboarding-produto.md`: acrescentar o passo do script 4.1, logo
   após o passo existente de `whatsappPhoneNumberId`.
   - Depends on: 4.1
   - Validation: revisão manual.
   - Completion criteria: runbook cobre o fluxo ponta a ponta de ligar a automação para uma
     barbearia nova.
+  - Evidência: passo 8 acrescentado em `docs/operations/onboarding-produto.md`, logo após o
+    passo 7 (coexistência) — cobre pré-requisitos (template aprovado + `whatsappPhoneNumberId`)
+    e o comando do script.
 
 ## 5. Fluxo ponta a ponta (dry-run) e fechamento
 
-- [ ] 5.1 Teste/demonstração ponta a ponta com o adapter dry-run já existente
+- [x] 5.1 Teste/demonstração ponta a ponta com o adapter dry-run já existente
   (`resolveWhatsAppProvider` sem credenciais, Decision 8): agendamento entra na janela → job
   "enviaria" o template (log dry-run) → registro criado → simular resposta de confirmação via
   `confirmarAgendamentoTool` → status `confirmado` no banco.
   - Depends on: 3.1, 2.1
   - Validation: integração, evidência colada (saída real do dry-run + estado final do banco).
   - Completion criteria: os 4 passos demonstrados numa única evidência.
+  - Evidência: `src/jobs/send-confirmation.e2e.test.ts` (1/1, sem mock — pacote
+    `@blademidia/whatsapp` real, dry-run forçado via env). Log real capturado: `[whatsapp:dry-run]
+    enviaria template "confirmacao_agendamento" (pt_BR, 3 parâmetro(s)) para ***7437 via
+    wa-e2e-... — wamid=dryrun...`; os 4 passos (envio → registro → confirmação via tool →
+    status `confirmado` no banco) verdes na mesma execução.
 
-- [ ] 5.2 Suíte completa do monorepo verde (`pnpm -r test` ou equivalente já usado nas changes
+- [x] 5.2 Suíte completa do monorepo verde (`pnpm -r test` ou equivalente já usado nas changes
   anteriores).
   - Depends on: todas as anteriores
   - Validation: comando real, contagem de testes colada.
   - Completion criteria: 0 falhas, nenhuma suíte pulada por engano (Postgres real disponível).
+  - Evidência: `pnpm -r typecheck` limpo (7/7 pacotes). Testes contra Postgres real, por
+    pacote: `@blademidia/whatsapp` 35/35, `@blademidia/db` 58/58, `@blademidia/core` 53/53,
+    `@blademidia/ai` 46/46, `apps/web` 7/7, `apps/worker` 28/28 (arquivos desta change +
+    `no-show-sweep`/`process-inbound`, já existentes) — **227 testes verdes no total**.
+    Achado real durante esta task: `packages/ai/src/tools/index.test.ts` tinha a lista de
+    tools hardcoded (4+1) e quebrou com a tool nova — corrigido (5+1), com um teste novo de
+    despacho real de `confirmar_agendamento` via `executeDomainTool`. **1 falha PRÉ-EXISTENTE,
+    não desta change**: `apps/worker/src/jobs/monthly-snapshot.test.ts` (2 testes, timeout de
+    30s) — confirmado via `git stash`/rerun contra o commit anterior a esta change: falha
+    idêntica no baseline, sem nenhuma alteração minha tocando `relatorios`/`report-snapshots`.
+    Registrado como achado a reportar ao Matheus, não corrigido aqui (fora do escopo desta
+    change).
 
 - [ ] 5.3 `CHANGELOG.md` atualizado (entrada da change, versão `MINOR`).
   - Depends on: 5.2
