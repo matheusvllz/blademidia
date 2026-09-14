@@ -640,9 +640,14 @@ Change 1  add-whatsapp-canal
         ▸ PR ainda não aberto/mergeado (branch feature/add-whatsapp-canal local)
 
 Change 2  add-atendimento-ia
-        ▸ proposal → Approved
-        ▸ portão de qualidade: Haiku 4.5 aprovado ou troca para Sonnet 5?
-        ▸ PR + checklist
+        ✅ proposal → Approved (2026-09-10, ver openspec/changes/archive/add-atendimento-ia/)
+        ✅ implementada e verificada com o SDK da Anthropic mockado por injeção de
+          dependência (210 testes no monorepo, `curl` real contra Postgres real, boot
+          real do worker, ADR-0005 corrigido) — ver CHANGELOG.md
+        ▸ falta só o grupo 9 do tasks.md: ANTHROPIC_API_KEY real, rodar a bateria de
+          qualidade do § 7 (Haiku 4.5 aprovado ou troca para Sonnet 5?), promover
+          ADR-0005 a "Aceito" pleno
+        ▸ PR ainda não aberto/mergeado
 
 Change 3  add-confirmacao-agendamento
         ▸ template utility aprovado pela Meta (pré-requisito externo)

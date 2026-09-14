@@ -11,7 +11,10 @@
     "lint": "echo \"(sem eslint configurado ainda em packages/ai)\""
   },
   "dependencies": {
-    "@blademidia/core": "workspace:*"
+    "@anthropic-ai/sdk": "0.125.0",
+    "@blademidia/core": "workspace:*",
+    "@blademidia/db": "workspace:*",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "tsx": "^4.19.2",

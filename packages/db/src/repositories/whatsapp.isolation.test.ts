@@ -6,7 +6,13 @@ import { randomUUID } from "node:crypto";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createBarbershop } from "./barbershops";
 import { createClient, deleteClient } from "./clients";
-import { findOrCreateConversation, getConversation, listConversations } from "./whatsapp-conversations";
+import {
+  findOrCreateConversation,
+  getConversation,
+  incrementBotStallCount,
+  listConversations,
+  resetBotStallCount,
+} from "./whatsapp-conversations";
 import { createMessage, listMessages } from "./whatsapp-messages";
 
 const hasDatabase = Boolean(process.env.DATABASE_URL);
@@ -76,5 +82,21 @@ describe.skipIf(!hasDatabase)("isolamento entre barbearias (whatsapp)", () => {
     // A operação foi escopada por a.id — não deve ter tocado nada da barbearia B.
     const listB = await listConversations(b.id);
     expect(listB.every((c) => c.clientId === null || c.phone !== null)).toBe(true);
+  });
+
+  it("bot_stall_count incrementa atomicamente e reseta, escopado por barbearia (add-atendimento-ia)", async () => {
+    const conv = await findOrCreateConversation(a.id, "num-a", "+5511955550000", null);
+
+    expect(await incrementBotStallCount(a.id, conv.id)).toBe(1);
+    expect(await incrementBotStallCount(a.id, conv.id)).toBe(2);
+
+    // Tentar incrementar com o barbershopId errado não deve afetar a conversa de A.
+    expect(await incrementBotStallCount(b.id, conv.id)).toBe(0);
+    const afterCrossTenantAttempt = await getConversation(a.id, conv.id);
+    expect(afterCrossTenantAttempt?.botStallCount).toBe(2);
+
+    await resetBotStallCount(a.id, conv.id);
+    const afterReset = await getConversation(a.id, conv.id);
+    expect(afterReset?.botStallCount).toBe(0);
   });
 });

@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { barbershops } from "./barbershops";
 import { clients } from "./clients";
 
@@ -14,6 +14,11 @@ import { clients } from "./clients";
  *
  * `handover`: quem responde agora — `bot` (produto) ou `humano` (barbeiro, seja pelo painel
  * futuro ou pelo próprio WhatsApp Business App sob coexistência). Ver design.md Decision 5.
+ *
+ * `botStallCount` (Fase 5.2, `add-atendimento-ia`, design.md Decision 3): turnos consecutivos
+ * do bot que terminaram sem nenhuma tool de domínio executada com sucesso e sem escalação
+ * explícita. Zera a cada tool de domínio bem-sucedida; ao atingir o limite (`STALL_THRESHOLD`
+ * em `packages/ai/src/escalation.ts`), força `handover = humano`.
  */
 export const whatsappHandoverEnum = pgEnum("whatsapp_handover", ["bot", "humano"]);
 
@@ -30,6 +35,7 @@ export const whatsappConversations = pgTable(
     lastInboundAt: timestamp("last_inbound_at", { withTimezone: true }),
     handover: whatsappHandoverEnum("handover").notNull().default("bot"),
     optedOutAt: timestamp("opted_out_at", { withTimezone: true }),
+    botStallCount: integer("bot_stall_count").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [

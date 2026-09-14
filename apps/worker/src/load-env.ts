@@ -10,5 +10,7 @@ import { resolve } from "node:path";
  */
 const rootEnvPath = resolve(process.cwd(), "../../.env");
 if (existsSync(rootEnvPath)) {
-  config({ path: rootEnvPath });
+  // `quiet: true`: silencia a linha de "tip" promocional do dotenv 17+ (achado incidental
+  // durante `add-atendimento-ia` — ver mesmo comentário em packages/db/src/load-env.ts).
+  config({ path: rootEnvPath, quiet: true });
 }

@@ -1,81 +1,65 @@
-import { agendaTools } from "@blademidia/core";
+import { agendaTools, cadastrarClienteBasicoDefinition, executeCadastrarClienteBasico } from "@blademidia/core";
+import type { ToolDefinitionForRuntime } from "../types";
 
 /**
- * Exposição das tools da agenda no formato de tool-use da Claude API (ADR-0005
- * + ADR-0008). O contrato (nome, descrição, validação, handler) vive em
- * `@blademidia/core` — aqui só traduzimos para o formato que o SDK da
- * Anthropic espera. NADA é executado em runtime nesta fase (sem loop de
- * conversa, sem canal — isso é `atendimento-ia`, Fase 5).
+ * Reescrita da change `add-atendimento-ia` (plano § 4.3, design.md "Affected Components"):
+ * elimina o JSON Schema mantido à mão do esqueleto da Fase 2 — as tools continuam Zod
+ * (`packages/core`), e é `anthropic-client.ts` (o único lugar que importa o SDK de verdade)
+ * quem usa `betaZodTool` para convertê-las. Aqui só ficam nome/descrição/schema (para listar
+ * ao modelo) e o despacho de execução.
  *
- * O `input_schema` (JSON Schema) é mantido manualmente em espelho ao
- * `inputSchema` (Zod) de cada tool em `packages/core/src/agenda/tools.ts`.
- * Evitamos adicionar uma dependência de conversão (ex.: zod-to-json-schema) só
- * para isto, já que nenhuma tool roda nesta fase; reavaliar quando o loop de
- * conversa da Fase 5 for implementado de verdade.
+ * `escalar_para_humano` NÃO está aqui (design.md Decision 2): é tratada localmente em
+ * `loop.ts`, porque não é uma ação de domínio — é um sinal de controle da conversa.
  */
-export interface ClaudeToolDefinition {
-  name: string;
-  description: string;
-  input_schema: Record<string, unknown>;
+
+export function getBotTools(): ToolDefinitionForRuntime[] {
+  return [
+    ...agendaTools.map((tool) => ({
+      name: tool.name,
+      description: tool.description,
+      inputSchema: tool.inputSchema,
+    })),
+    cadastrarClienteBasicoDefinition,
+  ];
 }
 
-const JSON_SCHEMAS: Record<string, Record<string, unknown>> = {
-  consultar_disponibilidade: {
-    type: "object",
-    properties: {
-      date: { type: "string", description: "Dia desejado (YYYY-MM-DD, fuso da barbearia)." },
-      serviceId: { type: "string", description: "Id do serviço a agendar." },
-      barberId: { type: "string", description: "Id do barbeiro; omitir para qualquer barbeiro." },
-    },
-    required: ["date", "serviceId"],
-  },
-  criar_agendamento: {
-    type: "object",
-    properties: {
-      clientId: { type: "string", description: "Id do cliente já cadastrado." },
-      serviceId: { type: "string", description: "Id do serviço." },
-      barberId: { type: "string", description: "Id do barbeiro que vai atender." },
-      startsAt: { type: "string", description: "Início do atendimento em ISO 8601." },
-    },
-    required: ["clientId", "serviceId", "barberId", "startsAt"],
-  },
-  remarcar_agendamento: {
-    type: "object",
-    properties: {
-      appointmentId: { type: "string", description: "Id do agendamento a remarcar." },
-      startsAt: { type: "string", description: "Novo início em ISO 8601." },
-    },
-    required: ["appointmentId", "startsAt"],
-  },
-  cancelar_agendamento: {
-    type: "object",
-    properties: {
-      appointmentId: { type: "string", description: "Id do agendamento a cancelar." },
-      reason: { type: "string", description: "Motivo do cancelamento (opcional)." },
-    },
-    required: ["appointmentId"],
-  },
-};
-
-/** Definições prontas para o parâmetro `tools` de uma chamada à Claude API. */
-export function getClaudeToolDefinitions(): ClaudeToolDefinition[] {
-  return agendaTools.map((tool) => ({
-    name: tool.name,
-    description: tool.description,
-    input_schema: JSON_SCHEMAS[tool.name] ?? { type: "object", properties: {} },
-  }));
+export interface DomainToolContext {
+  conversationId: string;
+  /** Telefone já resolvido da conversa — nunca aceito como argumento do modelo (design.md
+   * Decision 6/7). */
+  phone: string;
 }
 
 /**
- * Executa a tool pelo nome — ponto único que a Fase 5 chama ao processar uma
- * resposta de tool-use do modelo. Valida a entrada pelo mesmo Zod schema do
- * core antes de delegar ao `AgendaService`.
+ * Despacha uma tool de domínio pelo nome. `barbershopId` vem SEMPRE do orquestrador (nunca de
+ * um campo dentro de `input`, mesmo que o modelo tente incluir um) — design.md Decision 7,
+ * defesa estrutural contra prompt injection.
  */
-export async function executeTool(barbershopId: string, name: string, input: unknown): Promise<unknown> {
+export async function executeDomainTool(
+  barbershopId: string,
+  name: string,
+  input: unknown,
+  context: DomainToolContext,
+): Promise<unknown> {
+  if (name === cadastrarClienteBasicoDefinition.name) {
+    return executeCadastrarClienteBasico(barbershopId, context, input);
+  }
+
   const tool = agendaTools.find((t) => t.name === name);
   if (!tool) {
     throw new Error(`tool desconhecida: ${name}`);
   }
   const parsed = tool.inputSchema.parse(input);
   return tool.handler(barbershopId, parsed);
+}
+
+/**
+ * Normaliza "sucesso" entre formatos de retorno diferentes (`AgendaResult` das tools de
+ * agenda; `CreateClientResult` da tool de cadastro) para o contador de estagnação (design.md
+ * Decision 3). Qualquer chamada de tool de domínio — sucesso ou falha de negócio (ex.: horário
+ * ocupado) — mostra que o bot está agindo estruturadamente; só CONTA como estagnação quando
+ * NENHUMA tool de domínio foi chamada no turno, não quando a tool foi chamada e recusou.
+ */
+export function wasDomainToolCalled(toolName: string): boolean {
+  return toolName !== "escalar_para_humano";
 }
