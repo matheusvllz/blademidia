@@ -32,9 +32,10 @@ em [`openspec/workflow.md`](../workflow.md).
 |---|---|---|---|
 | `add-agency-ops-panel` | Painel de Operação da Agência | Approved (só Fase 0 de 5 entregue; 5/21 tasks) | operacional (`automation/`, `infra/`) — fora do fluxo SDD do produto |
 
-> Mantenha esta tabela atualizada ao criar/arquivar changes. Próxima a abrir:
-> `add-reativacao-clientes` (Fase 5.4 do produto) — ver
-> [`docs/sdd/06-plano-execucao-fase-5.md`](../../docs/sdd/06-plano-execucao-fase-5.md).
+> Mantenha esta tabela atualizada ao criar/arquivar changes. **A Fase 5 do produto está
+> concluída (4/4 changes)** — não há próxima change do produto identificada no momento; ver
+> [`docs/sdd/06-plano-execucao-fase-5.md`](../../docs/sdd/06-plano-execucao-fase-5.md) para o
+> histórico completo da fase antes de propor a Fase 6.
 
 ## Índice de changes arquivadas (produto, concluídas)
 
@@ -48,6 +49,7 @@ em [`openspec/workflow.md`](../workflow.md).
 | `add-whatsapp-canal` | `whatsapp-canal`, `crm-clientes` (delta) | 5 (1/4) |
 | `add-atendimento-ia` | `atendimento-ia` | 5 (2/4) |
 | `add-confirmacao-agendamento` | `confirmacao-agendamento`, `atendimento-ia` (delta) | 5 (3/4) |
+| `add-reativacao-clientes` | `reativacao-clientes` | 5 (4/4 — Fase 5 concluída) |
 | `init-project-skeleton` | — (infraestrutura; `Superseded`, nunca chegou a `Approved` — ver o proposal arquivado) | — |
 
 Todas em `openspec/changes/archive/`, specs permanentes correspondentes em `openspec/specs/`.

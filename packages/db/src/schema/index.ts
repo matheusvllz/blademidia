@@ -24,3 +24,5 @@ export * from "./whatsapp-messages";
 export * from "./ai-usage-events";
 // Fase 5.3 — confirmação automática de agendamento
 export * from "./confirmation-reminders";
+// Fase 5.4 — reativação automática de clientes
+export * from "./reactivation-sends";
