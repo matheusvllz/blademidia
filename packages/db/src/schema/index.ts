@@ -17,3 +17,6 @@ export * from "./report-snapshots";
 // Fase 4 — fidelização + papel de funcionário
 export * from "./loyalty-settings";
 export * from "./loyalty-redemptions";
+// Fase 5 — canal WhatsApp
+export * from "./whatsapp-conversations";
+export * from "./whatsapp-messages";

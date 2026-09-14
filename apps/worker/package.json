@@ -13,6 +13,7 @@
   "dependencies": {
     "@blademidia/core": "workspace:*",
     "@blademidia/db": "workspace:*",
+    "@blademidia/whatsapp": "workspace:*",
     "dotenv": "^17.4.2",
     "pg-boss": "^10.1.5"
   },

@@ -19,3 +19,6 @@ export * from "./repositories/agenda-settings";
 export * from "./repositories/reports";
 // Fase 4 — fidelização + papel de funcionário
 export * from "./repositories/loyalty";
+// Fase 5 — canal WhatsApp
+export * from "./repositories/whatsapp-conversations";
+export * from "./repositories/whatsapp-messages";

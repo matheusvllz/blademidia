@@ -631,11 +631,13 @@ Fase 0  (higiene, ADRs, custo Meta, provisionamento)
         ▸ BSP específico escolhido e contratado, credenciais em mãos (§ 5.10)
 
 Change 1  add-whatsapp-canal
-        ▸ proposal → Approved
-        ▸ tasks → aprovadas
-        ▸ antes de ativar a coexistência num número real: consentimento de
-          sincronização de histórico decidido (180 dias) e barbeiro avisado do fluxo
-        ▸ PR + checklist do avaliador
+        ✅ implementada e verificada de ponta a ponta em 2026-09-10 (189 testes,
+          `curl` real contra Postgres real, boot real do worker) — ver CHANGELOG.md
+          e openspec/changes/archive/add-whatsapp-canal/
+        ▸ falta só o grupo 9 do tasks.md: BSP contratado, credenciais reais,
+          confirmar formato do adapter contra a doc do BSP, ativar coexistência
+          num número real — depende da cotação/contratação do BSP (§ 5.9/5.10)
+        ▸ PR ainda não aberto/mergeado (branch feature/add-whatsapp-canal local)
 
 Change 2  add-atendimento-ia
         ▸ proposal → Approved

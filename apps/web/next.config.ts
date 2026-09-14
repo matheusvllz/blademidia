@@ -14,7 +14,7 @@ if (existsSync(rootEnvPath)) {
 }
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@blademidia/db"],
+  transpilePackages: ["@blademidia/db", "@blademidia/whatsapp"],
 };
 
 export default nextConfig;

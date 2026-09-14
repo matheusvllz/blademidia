@@ -5,6 +5,59 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 ## [Unreleased]
 
 ### Added
+- **Canal WhatsApp (Fase 5)** (`add-whatsapp-canal`), aprovada e implementada — primeira das
+  4 changes da Fase 5 (canal WhatsApp + atendimento por IA), fundação de que as outras três
+  (`atendimento-ia`, `confirmacao-agendamento`, `reativacao-clientes`) dependem inteiramente.
+  D2/ADR-0004 resolvida: Meta Cloud API, integrada via **coexistência** (o número continua no
+  WhatsApp Business App do barbeiro, respondendo também pela Cloud API ao mesmo tempo — não é
+  mais necessário tirar o número do celular), via BSP de mensalidade fixa ainda a contratar.
+  - **`packages/whatsapp`** (novo pacote): interface `WhatsAppProvider` desacoplada de
+    provedor; adapter dry-run (loga em vez de enviar, usado sem credencial); adapter contra o
+    formato Meta Cloud API (assinatura HMAC sobre corpo cru, verificação de challenge,
+    envio de texto e template); normalização de telefone BR (E.164 + nono dígito).
+  - **`whatsapp-canal`** (capability nova): ingestão assíncrona (webhook só persiste e
+    enfileira — ADR-0011 novo; loop de IA nunca roda inline, entra na Fase 5.2); deduplicação
+    de mensagem por restrição de unicidade no banco (`wamid`); conversa por telefone, com ou
+    sem cliente cadastrado; janela de 24h aplicada no domínio, não só na UI; `handover`
+    bot/humano, detectando quando o barbeiro responde pelo próprio app (mensagem espelhada
+    pela coexistência); opt-out (`PARE`/`SAIR`); tela `/conversas` de leitura (não é caixa de
+    entrada — o barbeiro responde pelo próprio WhatsApp).
+  - **`crm-clientes`** (delta): exclusão LGPD de cliente passa a anonimizar também as
+    conversas de WhatsApp associadas (telefone → NULL, vínculo removido), preservando o
+    conteúdo das mensagens — mesma transação da anonimização do cliente.
+  - **Achados de arquiteto durante a pesquisa que precedeu a implementação**: custo de
+    mensageria confirmado contra a documentação oficial da Meta (`atendimento-ia` e
+    `confirmacao-agendamento` saem baratos/grátis; `reativacao-clientes`, categoria
+    marketing, é o único ponto real de atenção de orçamento); coexistência confirmada como
+    real e oficial (corrigindo uma hipótese anterior de que o número sairia do celular);
+    achado novo não previsto na decisão original — ativar a coexistência exige status de
+    Meta Tech Provider ou um BSP que já tenha, resolvido pela escolha de BSP com mensalidade
+    fixa.
+  - **Achados durante a implementação, corrigidos no próprio design**: faltava o mecanismo de
+    roteamento do webhook único (compartilhado por todas as barbearias) até a barbearia dona
+    do número — `barbershops` ganhou `whatsapp_phone_number_id`; o `middleware.ts` de sessão
+    bloqueava o webhook antes mesmo da verificação de assinatura rodar — `/api/webhooks/
+    whatsapp` entrou na lista de rotas públicas (autenticada pela própria assinatura, não por
+    cookie); rotas de API JSON para leitura de conversa (`/api/conversations/**`) foram
+    descartadas do design original por não terem consumidor — as telas buscam direto via
+    Server Component, mesmo padrão de `/clientes`.
+  - Verificado de verdade: 189 testes automatizados no total do monorepo (`packages/whatsapp`
+    35 novos, `packages/db` 47 incluindo os 6 novos deste change, `apps/worker` 21 incluindo
+    15 novos) + fluxo HTTP real via `curl` contra Postgres real (challenge em texto puro;
+    envio assinado criando conversa e mensagem; boot real do worker processando a fila e
+    atualizando `last_inbound_at`; reentrega da mesma mensagem não duplicando; assinatura
+    inválida recusada com 401; mensagem espelhada do WhatsApp Business App marcando
+    `handover=humano`; mensagem para número não reconhecido tratada sem erro; opt-out por
+    `PARE` verificado; acesso cruzado entre barbearias em `/conversas/:id` confirmado como
+    404) + verificação de que nenhum conteúdo de mensagem nem telefone completo aparece nos
+    logs do servidor. Change **concluída (Done)**: spec permanente nova em
+    [openspec/specs/whatsapp-canal/spec.md](openspec/specs/whatsapp-canal/spec.md), delta
+    aplicado em [openspec/specs/crm-clientes/spec.md](openspec/specs/crm-clientes/spec.md),
+    ADR-0004 atualizado para Aceito e ADR-0011 novo em
+    [docs/architecture/decisions/](docs/architecture/decisions/), change arquivada em
+    `openspec/changes/archive/add-whatsapp-canal/`. **Pendente antes de produção** (fora
+    desta change, tarefa comercial do Matheus): cotar e contratar o BSP específico, ativar a
+    coexistência com credenciais reais. [add-whatsapp-canal]
 - **Os 3 guias estratégicos oficiais aprovados e SDD inteiro sincronizado** (2026-07-28).
   [Guia da Dor](docs/business/dor-central.md), [Guia da Persona](docs/business/persona-icp.md) e
   [Guia de COPY](docs/business/guia-de-copy.md) passam a ser a **principal fonte de verdade
