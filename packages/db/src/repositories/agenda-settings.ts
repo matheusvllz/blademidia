@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../client";
 import {
   agendaSettings,
+  DEFAULT_CONFIRMATION_AUTOMATION_ENABLED,
   DEFAULT_CONFIRMATION_LEAD_HOURS,
   DEFAULT_MIN_ADVANCE_MIN,
   DEFAULT_NO_SHOW_AFTER_MIN,
@@ -15,6 +16,7 @@ export interface AgendaSettingsValues {
   minAdvanceMin: number;
   noShowAfterMin: number;
   confirmationLeadHours: number;
+  confirmationAutomationEnabled: boolean;
 }
 
 export const DEFAULT_AGENDA_SETTINGS: AgendaSettingsValues = {
@@ -22,6 +24,7 @@ export const DEFAULT_AGENDA_SETTINGS: AgendaSettingsValues = {
   minAdvanceMin: DEFAULT_MIN_ADVANCE_MIN,
   noShowAfterMin: DEFAULT_NO_SHOW_AFTER_MIN,
   confirmationLeadHours: DEFAULT_CONFIRMATION_LEAD_HOURS,
+  confirmationAutomationEnabled: DEFAULT_CONFIRMATION_AUTOMATION_ENABLED,
 };
 
 /** Retorna as regras da barbearia, usando os padrões quando nunca configurada. */
@@ -36,6 +39,8 @@ export async function getAgendaSettings(
     minAdvanceMin: row?.minAdvanceMin ?? DEFAULT_AGENDA_SETTINGS.minAdvanceMin,
     noShowAfterMin: row?.noShowAfterMin ?? DEFAULT_AGENDA_SETTINGS.noShowAfterMin,
     confirmationLeadHours: row?.confirmationLeadHours ?? DEFAULT_AGENDA_SETTINGS.confirmationLeadHours,
+    confirmationAutomationEnabled:
+      row?.confirmationAutomationEnabled ?? DEFAULT_AGENDA_SETTINGS.confirmationAutomationEnabled,
   };
 }
 

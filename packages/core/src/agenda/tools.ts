@@ -8,6 +8,7 @@ import {
   type AgendaResult,
   bookAppointment,
   cancelAppointment,
+  confirmAppointment,
   getAvailability,
   rescheduleAppointment,
 } from "./agenda-service";
@@ -61,6 +62,10 @@ const cancelarAgendamentoInput = z.object({
   reason: z.string().optional().describe("Motivo do cancelamento (opcional)."),
 });
 
+const confirmarAgendamentoInput = z.object({
+  appointmentId: z.string().describe("Id do agendamento a confirmar."),
+});
+
 export const consultarDisponibilidadeTool: AgendaTool<z.infer<typeof consultarDisponibilidadeInput>> = {
   name: "consultar_disponibilidade",
   description:
@@ -104,10 +109,24 @@ export const cancelarAgendamentoTool: AgendaTool<z.infer<typeof cancelarAgendame
     cancelAppointment(barbershopId, input.appointmentId, input.reason),
 };
 
+/**
+ * Change `add-confirmacao-agendamento` (Fase 5.3, design.md Decision 6): usada quando o
+ * cliente responde confirmando o lembrete automático. Idempotente por herança de
+ * `confirmAppointment` — chamar de novo sobre um agendamento já `confirmado` não falha nem
+ * gera efeito duplicado.
+ */
+export const confirmarAgendamentoTool: AgendaTool<z.infer<typeof confirmarAgendamentoInput>> = {
+  name: "confirmar_agendamento",
+  description: "Confirma um agendamento existente a pedido do cliente.",
+  inputSchema: confirmarAgendamentoInput,
+  handler: (barbershopId, input) => confirmAppointment(barbershopId, input.appointmentId),
+};
+
 /** Todas as tools da agenda, na ordem de uso típico da conversa. */
 export const agendaTools: AgendaTool<unknown>[] = [
   consultarDisponibilidadeTool,
   criarAgendamentoTool,
   remarcarAgendamentoTool,
   cancelarAgendamentoTool,
+  confirmarAgendamentoTool,
 ] as AgendaTool<unknown>[];

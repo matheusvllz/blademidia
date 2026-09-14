@@ -48,7 +48,7 @@ Tudo roda em **Node puro (18+), sem `npm install`**. Ver `automation/README.md` 
 de cliente final nem telefone completo (mascarar `***1234`); todo acesso a dado é escopado por
 barbearia; o número de WhatsApp é o ativo do barbeiro (warm-up/rate-limit não são opcionais).
 
-## Estado atual e próximos passos (atualizado 2026-09-07 — manter este bloco em dia)
+## Estado atual e próximos passos (atualizado 2026-09-11 — manter este bloco em dia)
 
 **Garantia rápida**: `node automation/check.mjs` — 17 checks que provam a estrutura
 íntegra em segundos. Rode antes de demo, onboarding ou depois de qualquer mudança.
@@ -71,20 +71,30 @@ barbearia; o número de WhatsApp é o ativo do barbeiro (warm-up/rate-limit não
   `add-agenda-visao-semanal`), relatórios com PDF (`add-relatorios`), fidelização de
   clientes + papéis dono/funcionário (`add-fidelizacao-e-funcionarios`). Todas arquivadas em
   `openspec/changes/archive/`, specs permanentes em `openspec/specs/`.
+- **Fase 5 do produto, 3 das 4 changes concluídas** (ainda só em branches locais
+  `feature/<change-id>`, NÃO mergeadas na `main` — Matheus não pediu): `add-whatsapp-canal`
+  (canal WhatsApp via Meta Cloud API/BSP, coexistência), `add-atendimento-ia` (loop de
+  conversa por IA) e `add-confirmacao-agendamento` (lembrete automático + confirmação via
+  tool do bot). Todas arquivadas em `openspec/changes/archive/`, specs permanentes em
+  `openspec/specs/`.
 
 **Próximos passos, em ordem:**
-1. **Fase 5 do produto — canal WhatsApp + atendimento por IA.** É o item ativo agora.
-   Plano de execução completo (decisões de arquitetura, contratos da Meta/BSP, barra de
-   verificação) em [`docs/sdd/06-plano-execucao-fase-5.md`](docs/sdd/06-plano-execucao-fase-5.md)
-   — leia-o inteiro antes de tocar em qualquer coisa desta fase. Sequência:
-   `add-whatsapp-canal` → `add-atendimento-ia` → `add-confirmacao-agendamento` →
-   `add-reativacao-clientes`. D2 (provedor) resolvida: Meta Cloud API via BSP com
-   coexistência (número continua no celular do barbeiro) — ver ADR-0004.
-2. **Pendências comerciais da operação da agência (Matheus)**: preço da taxa de gestão,
+1. **`add-reativacao-clientes` (Fase 5.4) — última change da Fase 5.** Plano de execução
+   completo (decisões de arquitetura, contratos da Meta/BSP, barra de verificação) em
+   [`docs/sdd/06-plano-execucao-fase-5.md`](docs/sdd/06-plano-execucao-fase-5.md) § 9 — leia-o
+   antes de começar. Categoria *marketing* (regras de opt-out mais rígidas, custo real por
+   mensagem — ver § 3.5) — diferente das 3 anteriores. Autorizada por Matheus, com 3 ressalvas
+   registradas que continuam valendo (ver § 9).
+2. **Pendência comercial que bloqueia o primeiro envio real das 2 changes de mensageria
+   proativa** (`add-confirmacao-agendamento` já feita, `add-reativacao-clientes` a seguir):
+   contratar o BSP com mensalidade fixa (D2/ADR-0004 § 5.9, ainda não cotado) e submeter/aprovar
+   os templates junto à Meta. Não bloqueia o fechamento técnico das changes (fecham com o
+   adapter dry-run), só o uso em produção.
+3. **Pendências comerciais da operação da agência (Matheus)**: preço da taxa de gestão,
    texto de contrato (cancelamento/limites de responsabilidade), regra de carência de
    inadimplência — ver perguntas bloqueantes em
    `openspec/changes/add-agency-ops-panel/exploration.md`.
-3. **Validar dor e persona em campo (Matheus)**: [dor-central.md](docs/business/dor-central.md)
+4. **Validar dor e persona em campo (Matheus)**: [dor-central.md](docs/business/dor-central.md)
    e [persona-icp.md](docs/business/persona-icp.md) listam as hipóteses a validar (H1-H8 e
    P1-P8) em conversas reais de prospecção. H1 e H2 (ele perde por demora **e não sabe disso**)
    são as decisivas: se caírem, a dor central muda e os três documentos de negócio se reescrevem.

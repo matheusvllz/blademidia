@@ -5,6 +5,49 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) · Versiona
 ## [Unreleased]
 
 ### Added
+- **Confirmação automática de agendamento (Fase 5.3)** (`add-confirmacao-agendamento`),
+  aprovada e implementada — terceira das 4 changes da Fase 5, liga o esqueleto de seleção da
+  Fase 2 (`apps/worker/src/jobs/send-confirmation.ts`, que só logava) ao envio real de
+  template pelo canal WhatsApp entregue em `add-whatsapp-canal`. É a primeira vez que o
+  produto inicia contato proativo com o cliente final (até aqui, `atendimento-ia` só
+  respondia).
+  - **`packages/db`**: `agenda_settings` ganha `confirmationAutomationEnabled` (booleano,
+    default `false`) — gate por barbearia, ligado manualmente pelo Matheus só depois de
+    confirmar o template aprovado pela Meta. Tabela nova `confirmation_reminders` (`UNIQUE
+    (appointment_id)`) garante, no próprio banco, que o lembrete nunca é reenviado para o
+    mesmo agendamento. `listAppointmentsNeedingConfirmation` ganha os 2 gates (automação
+    habilitada + nunca reenviar) e passa a trazer os dados do cliente necessários para montar
+    o template.
+  - **`packages/core`**: tool nova `confirmar_agendamento` no contrato do bot — achado da
+    exploração: sem ela, o bot não tinha como registrar a confirmação quando o cliente
+    respondesse "sim" ao lembrete (só existiam tools de consultar/criar/remarcar/cancelar).
+    Mapeia 1:1 para `AgendaService.confirmAppointment` (já existente, já idempotente); pedido
+    de remarcação continua usando `remarcar_agendamento`, sem tool nova.
+  - **`apps/worker`**: `send-confirmation.ts` reescrito — envia o template via
+    `WhatsAppProvider.sendTemplate` (primeiro consumidor real dessa interface em produção),
+    relê o status do agendamento imediatamente antes de enviar (defesa contra race entre
+    seleção e envio), registra o envio e a mensagem, e uma falha de provedor num agendamento
+    nunca interrompe os demais do mesmo lote.
+  - **Ativação operacional**: script novo `enable-confirmation-automation.ts` (padrão de
+    `create-barbershop.ts`) recusa ligar a automação se a barbearia ainda não tiver
+    `whatsappPhoneNumberId` configurado — nunca deixa uma barbearia "pronta para confirmar"
+    sem ter como enviar. Runbook de onboarding atualizado com o passo.
+  - Verificado de verdade: 227 testes automatizados no monorepo (Postgres real) +
+    demonstração ponta a ponta com o adapter dry-run REAL, sem mock (agendamento entra na
+    janela → log real `[whatsapp:dry-run] enviaria template "confirmacao_agendamento"...` →
+    registro criado → confirmação simulada via `confirmarAgendamentoTool` → status
+    `confirmado` no banco) + boot real do worker confirmando `agenda.send-confirmation` ainda
+    registrado em `pgboss.schedule` com o cron `0 * * * *` inalterado. Change **concluída
+    (Done)**: spec permanente nova em
+    [openspec/specs/confirmacao-agendamento/spec.md](openspec/specs/confirmacao-agendamento/spec.md),
+    delta aplicado em
+    [openspec/specs/atendimento-ia/spec.md](openspec/specs/atendimento-ia/spec.md) (tool
+    nova), change arquivada em `openspec/changes/archive/add-confirmacao-agendamento/`.
+    **Achado registrado, não corrigido aqui** (fora de escopo): `monthly-snapshot.test.ts`
+    falha por timeout pré-existente, confirmado independente desta change.
+    **Pendente antes de produção** (tarefa comercial do Matheus, fora do fluxo técnico):
+    contratar o BSP específico, submeter e aprovar o template `confirmacao_agendamento` pela
+    Meta, e então rodar `enable-confirmation-automation` por barbearia. [add-confirmacao-agendamento]
 - **Atendimento por IA (Fase 5.2)** (`add-atendimento-ia`), aprovada e implementada — segunda
   das 4 changes da Fase 5, conecta o loop de conversa por IA ao canal WhatsApp entregue por
   `add-whatsapp-canal`. É aqui que a tese central do produto ("o zap continua atendendo quando

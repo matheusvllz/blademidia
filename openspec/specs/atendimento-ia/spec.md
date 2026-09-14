@@ -6,12 +6,16 @@
 > Histórico:
 > - Fase 5.2 (loop de conversa, tools de domínio, escalação, estagnação, degradação, custo por
 >   tenant) estabelecida pela change `add-atendimento-ia` (concluída 2026-09-10).
+> - Fase 5.3 (`add-confirmacao-agendamento`, concluída 2026-09-11): delta acrescentando a
+>   regra de que a confirmação de agendamento também só acontece via tool
+>   (`confirmar_agendamento`), nunca por texto livre do modelo — mesma regra já aplicada às
+>   demais ações estruturadas.
 >
 > Escopo atual: responde mensagens recebidas pelo canal `whatsapp-canal` usando
-> `claude-haiku-4-5` com tool use sobre as tools de agenda (`packages/core`) e uma tool de
-> cadastro básico de cliente. Envio iniciado pela barbearia fora da janela de 24h
-> (`confirmacao-agendamento`, `reativacao-clientes`) e qualquer UI de resposta pelo painel são
-> capabilities/escopos separados — não estão aqui.
+> `claude-haiku-4-5` com tool use sobre as tools de agenda (`packages/core`, agora incluindo
+> `confirmar_agendamento`) e uma tool de cadastro básico de cliente. Envio iniciado pela
+> barbearia fora da janela de 24h (`confirmacao-agendamento`, `reativacao-clientes`) e
+> qualquer UI de resposta pelo painel são capabilities/escopos separados — não estão aqui.
 
 ## Requirement: Loop de conversa roda no worker, nunca no webhook
 O sistema SHALL processar toda resposta automática de IA dentro de um job assíncrono
@@ -30,8 +34,8 @@ O sistema SHALL processar toda resposta automática de IA dentro de um job assí
 
 ## Requirement: Ações estruturadas só acontecem via tool, nunca por texto livre do modelo
 O sistema SHALL executar qualquer efeito colateral (consultar disponibilidade, criar/remarcar/
-cancelar agendamento, cadastrar cliente básico) exclusivamente através de tools validadas por
-schema, nunca inferindo uma ação a partir do texto gerado pelo modelo.
+cancelar/confirmar agendamento, cadastrar cliente básico) exclusivamente através de tools
+validadas por schema, nunca inferindo uma ação a partir do texto gerado pelo modelo.
 
 #### Scenario: Horário oferecido ao cliente sempre vem de tool
 - GIVEN uma conversa em que o cliente pede para agendar
@@ -41,6 +45,26 @@ schema, nunca inferindo uma ação a partir do texto gerado pelo modelo.
 
 #### Scenario: Tool nunca recebe o tenant como argumento livre
 - GIVEN uma chamada de tool feita pelo modelo com um campo extra tentando indicar outro tenant
+- WHEN o sistema executa a tool
+- THEN o sistema SHALL usar exclusivamente o `barbershopId` da conversa em processamento,
+  ignorando qualquer valor de tenant presente no input do modelo
+
+## Requirement: Confirmação de agendamento só acontece via tool
+O sistema SHALL executar a confirmação de um agendamento exclusivamente através da tool
+`confirmar_agendamento`, nunca inferindo a confirmação a partir do texto gerado pelo modelo —
+mesma regra do requisito anterior, aplicada especificamente à confirmação (change
+`add-confirmacao-agendamento`, Fase 5.3).
+
+#### Scenario: Cliente responde confirmando o lembrete
+- GIVEN uma conversa em que o cliente final recebeu um lembrete de confirmação de agendamento
+- WHEN o cliente responde de forma afirmativa
+- THEN o sistema SHALL chamar a tool `confirmar_agendamento` com o `appointmentId` correspondente
+- AND o texto de resposta ao cliente SHALL refletir o resultado real retornado pela tool, nunca
+  assumir sucesso antes da chamada
+
+#### Scenario: Tool nunca recebe o tenant como argumento livre
+- GIVEN uma chamada à tool `confirmar_agendamento` feita pelo modelo com um campo extra
+  tentando indicar outro tenant
 - WHEN o sistema executa a tool
 - THEN o sistema SHALL usar exclusivamente o `barbershopId` da conversa em processamento,
   ignorando qualquer valor de tenant presente no input do modelo

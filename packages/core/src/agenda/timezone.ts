@@ -63,6 +63,21 @@ export function instantToZonedDateISO(date: Date, timeZone: string): string {
   }).format(date);
 }
 
+/**
+ * Hora local ("HH:MM") de um instante no fuso da barbearia (change
+ * `add-confirmacao-agendamento`, design.md Decision 7) — usada para montar o parâmetro de
+ * horário do template de confirmação, texto para o CLIENTE, não para o modelo (por isso
+ * "HH:MM", não ISO 8601).
+ */
+export function instantToZonedTimeHHMM(date: Date, timeZone: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+}
+
 /** Início do dia local (00:00) e do dia seguinte, como instantes — janela de consulta. */
 export function zonedDayBounds(dateISO: string, timeZone: string): { start: Date; end: Date } {
   return {

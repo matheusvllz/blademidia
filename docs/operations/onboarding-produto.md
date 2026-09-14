@@ -125,6 +125,19 @@
    exatamente como antes no celular — nada muda na rotina dele até a Fase 5.2
    (`add-atendimento-ia`) começar a responder automaticamente.
 
+8. **Ligar a confirmação automática de agendamento** (Fase 5.3, `add-confirmacao-agendamento`)
+   — só depois do passo 5 (barbearia já com `whatsappPhoneNumberId`) e de o template
+   `confirmacao_agendamento` (categoria *utility*, `pt_BR`) estar **submetido e aprovado pela
+   Meta** para esta barbearia (texto de referência em `design.md` da change, checklist do guia
+   de copy § 14 já aplicado):
+   ```sh
+   pnpm --filter @blademidia/db enable-confirmation-automation -- --slug=<slug>
+   ```
+   O script recusa ligar (com mensagem clara) se a barbearia ainda não tiver
+   `whatsappPhoneNumberId` configurado — nunca deixa uma barbearia "pronta para confirmar" sem
+   ter como enviar. Sem este passo, `apps/worker` nunca seleciona agendamentos dessa barbearia
+   para o lembrete (default `false`).
+
 ### O que a coexistência NÃO faz (limitações confirmadas)
 
 - **Chat em grupo não sincroniza** — só conversas individuais.

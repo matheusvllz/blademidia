@@ -24,3 +24,5 @@ export * from "./repositories/whatsapp-conversations";
 export * from "./repositories/whatsapp-messages";
 // Fase 5.2 — atendimento por IA
 export * from "./repositories/ai-usage";
+
+export * from "./repositories/confirmation-reminders";
